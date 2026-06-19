@@ -40,7 +40,7 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 
 /* MINUTES */
 .min-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:stretch}
-.min-stat{flex:1;text-align:center;padding:0 16px;border-right:.5px solid #f0f0f0}
+.min-stat{flex:1;text-align:center;padding:0 16px;border-right:.5px solid #f0f0f0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .min-stat:last-child{border-right:none}
 .ms-label{font-size:12px;color:#888;margin-bottom:4px}
 .ms-val{font-size:26px;font-weight:600;color:#111}
@@ -59,13 +59,14 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 .ccrd{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px}
 .cttl{font-size:13px;font-weight:600;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .cttl::before{content:'';width:7px;height:7px;border-radius:50%;background:#FF6B00;flex-shrink:0}
-.ratio-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px}
-.ratio-num{font-size:36px;font-weight:600;color:#FF6B00;line-height:1}
-.ratio-sub{font-size:12px;color:#888;margin-top:4px}
+.ratio-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ratio-num{font-size:36px;font-weight:700;color:#FF6B00;line-height:1}
+.ratio-sub{font-size:12px;color:#888;margin-top:6px}
+.ratio-stats{margin-top:16px;font-size:13px;color:#555;line-height:2.2;text-align:center}
 
 /* VIDEO SLOT */
 .video-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:16px;margin-bottom:14px}
-.video-title{font-size:14px;font-weight:600;color:#333;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.video-title{font-size:15px;font-weight:700;color:#222;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .video-title::before{content:'';width:7px;height:7px;border-radius:50%;background:#FF6B00;flex-shrink:0}
 .video-empty{background:#fafafa;border-radius:8px;padding:32px;text-align:center;color:#ccc;font-size:13px}
 .video-empty span{display:block;font-size:32px;margin-bottom:8px}
@@ -74,7 +75,7 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 
 /* ANALYSIS SLOTS */
 .analysis-section{margin-bottom:14px}
-.analysis-title{font-size:13px;font-weight:600;color:#333;margin-bottom:10px;padding-left:12px;border-left:3px solid #FF6B00}
+.analysis-title{font-size:15px;font-weight:700;color:#222;margin-bottom:10px;padding-left:12px;border-left:3px solid #FF6B00}
 .analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .analysis-slot{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;overflow:hidden}
 .slot-img{width:100%;height:220px;object-fit:contain;display:block;background:#f5f5f3}
@@ -265,9 +266,21 @@ body{
 }
 .ccrd,
 .ratio-card{
-  padding:11px 12px !important;
+  padding:14px 12px !important;
   min-width:0 !important;
   overflow:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+}
+.ratio-num{
+  font-size:38px !important;
+}
+.analysis-title{
+  font-size:15px !important;
+  font-weight:700 !important;
 }
 .cttl{
   font-size:13px !important;
@@ -429,13 +442,13 @@ window.addEventListener('DOMContentLoaded', function(){
   <div class="charts3">
     <div class="ccrd"><div class="cttl">Shots (Total vs On Target)</div><canvas id="c-shot"></canvas></div>
     <div class="ratio-card">
-      <div class="cttl" style="margin-bottom:14px">Shot Efficiency</div>
+      <div class="cttl" style="margin-bottom:10px;justify-content:center">Shot Efficiency</div>
       <div class="ratio-num" id="ratio-num">—</div>
       <div class="ratio-sub">shots on target per goal</div>
-      <div style="margin-top:14px;font-size:11px;color:#aaa;line-height:1.9">
-        <span style="color:#FF6B00;font-weight:600" id="ratio-ts">—</span> total shots<br>
-        <span style="color:#FF6B00;font-weight:600" id="ratio-ot">—</span> on target<br>
-        <span style="color:#FF6B00;font-weight:600" id="ratio-g">—</span> goals
+      <div class="ratio-stats">
+        <span style="color:#FF6B00;font-weight:700" id="ratio-ts">—</span> <span style="color:#888">total shots</span><br>
+        <span style="color:#FF6B00;font-weight:700" id="ratio-ot">—</span> <span style="color:#888">on target</span><br>
+        <span style="color:#FF6B00;font-weight:700" id="ratio-g">—</span> <span style="color:#888">goals</span>
       </div>
     </div>
     <div class="ccrd"><div class="cttl">Balls Lost vs Recoveries</div><canvas id="c-lost-rec"></canvas></div>
@@ -570,13 +583,13 @@ window.addEventListener('DOMContentLoaded', function(){
   <div class="charts3">
     <div class="ccrd"><div class="cttl">Shots (Total vs On Target)</div><canvas id="wc-shot"></canvas></div>
     <div class="ratio-card">
-      <div class="cttl" style="margin-bottom:14px">Shot Efficiency</div>
+      <div class="cttl" style="margin-bottom:10px;justify-content:center">Shot Efficiency</div>
       <div class="ratio-num" id="wratio-num">—</div>
       <div class="ratio-sub">shots on target per goal</div>
-      <div style="margin-top:14px;font-size:11px;color:#aaa;line-height:1.9">
-        <span style="color:#FF6B00;font-weight:600" id="wratio-ts">—</span> total shots<br>
-        <span style="color:#FF6B00;font-weight:600" id="wratio-ot">—</span> on target<br>
-        <span style="color:#FF6B00;font-weight:600" id="wratio-g">—</span> goals
+      <div class="ratio-stats">
+        <span style="color:#FF6B00;font-weight:700" id="wratio-ts">—</span> <span style="color:#888">total shots</span><br>
+        <span style="color:#FF6B00;font-weight:700" id="wratio-ot">—</span> <span style="color:#888">on target</span><br>
+        <span style="color:#FF6B00;font-weight:700" id="wratio-g">—</span> <span style="color:#888">goals</span>
       </div>
     </div>
     <div class="ccrd"><div class="cttl">Balls Lost vs Recoveries</div><canvas id="wc-lost-rec"></canvas></div>
