@@ -1056,10 +1056,16 @@ function renderAll(){
   const labels=d.map(r=>r.game);
   const mins=d.map(r=>minToNum(r.min));
   renderStats(d,'');
+  const tPass=d.reduce((a,r)=>a+(r.pass||0),0);
+  const tFail=d.reduce((a,r)=>a+(r.passFail||0),0);
+  const el_mp=document.getElementById('m-pass'); if(el_mp) el_mp.textContent=tPass;
+  const el_mpa=document.getElementById('m-pass-avg'); if(el_mpa) el_mpa.textContent=(tPass/d.length).toFixed(1);
+  const el_mf=document.getElementById('m-fail'); if(el_mf) el_mf.textContent=tFail;
+  const el_mfa=document.getElementById('m-fail-avg'); if(el_mfa) el_mfa.textContent=(tFail/d.length).toFixed(1);
   mkLine('c-min',labels,mins);
   mkGrouped('c-pass',labels,[
-    {label:'Accurate passes',data:d.map(r=>r.pass),    backgroundColor:OR,borderRadius:3},
-    {label:'Failed passes',  data:d.map(r=>r.passFail),backgroundColor:OR3,borderRadius:3},
+    {label:'Accurate passes',data:d.map(r=>r.pass||0),    backgroundColor:OR,borderRadius:3},
+    {label:'Failed passes',  data:d.map(r=>r.passFail||0),backgroundColor:OR3,borderRadius:3},
   ]);
   mkGrouped('c-shot',labels,[
     {label:'Total shots',data:d.map(r=>r.shot),  backgroundColor:OR,borderRadius:3},
