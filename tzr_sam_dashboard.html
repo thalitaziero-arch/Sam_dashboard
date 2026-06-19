@@ -42,22 +42,22 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 .min-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:stretch}
 .min-stat{flex:1;text-align:center;padding:0 16px;border-right:.5px solid #f0f0f0}
 .min-stat:last-child{border-right:none}
-.ms-label{font-size:11px;color:#888;margin-bottom:4px}
+.ms-label{font-size:12px;color:#888;margin-bottom:4px}
 .ms-val{font-size:26px;font-weight:600;color:#111}
-.ms-sub{font-size:11px;color:#aaa;margin-top:2px}
+.ms-sub{font-size:12px;color:#aaa;margin-top:2px}
 
 /* METRIC CARDS */
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
 .mcard{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px}
-.mlabel{font-size:11px;color:#888;margin-bottom:5px}
+.mlabel{font-size:12px;color:#888;margin-bottom:5px}
 .mval{font-size:24px;font-weight:600;color:#111}
-.mdelta{font-size:11px;color:#FF6B00;margin-top:3px}
+.mdelta{font-size:12px;color:#FF6B00;margin-top:3px}
 
 /* CHARTS */
 .charts2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .charts3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .ccrd{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px}
-.cttl{font-size:12px;font-weight:600;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.cttl{font-size:13px;font-weight:600;color:#333;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .cttl::before{content:'';width:7px;height:7px;border-radius:50%;background:#FF6B00;flex-shrink:0}
 .ratio-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px}
 .ratio-num{font-size:36px;font-weight:600;color:#FF6B00;line-height:1}
@@ -65,7 +65,7 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 
 /* VIDEO SLOT */
 .video-card{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:16px;margin-bottom:14px}
-.video-title{font-size:12px;font-weight:600;color:#333;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.video-title{font-size:14px;font-weight:600;color:#333;margin-bottom:12px;display:flex;align-items:center;gap:6px}
 .video-title::before{content:'';width:7px;height:7px;border-radius:50%;background:#FF6B00;flex-shrink:0}
 .video-empty{background:#fafafa;border-radius:8px;padding:32px;text-align:center;color:#ccc;font-size:13px}
 .video-empty span{display:block;font-size:32px;margin-bottom:8px}
@@ -251,7 +251,7 @@ body{
 .mdelta,
 .ms-label,
 .ms-sub{
-  font-size:10px !important;
+  font-size:12px !important;
 }
 .charts2{
   grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
@@ -270,7 +270,7 @@ body{
   overflow:hidden !important;
 }
 .cttl{
-  font-size:11px !important;
+  font-size:13px !important;
   margin-bottom:7px !important;
 }
 canvas{
@@ -1161,7 +1161,7 @@ function renderVideo(season){
   if(url){
     emptyEl.style.display='none';
     wrapEl.style.display='block';
-    wrapEl.innerHTML=makeVideoLink(url,'▶️ Watch on YouTube');
+    wrapEl.innerHTML=makeVideoLink(url,'Watch on YouTube');
   } else {
     emptyEl.style.display='flex';
     wrapEl.style.display='none';
