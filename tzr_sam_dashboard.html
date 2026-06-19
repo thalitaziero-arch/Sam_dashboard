@@ -123,6 +123,27 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 .cs-badge{display:inline-block;background:#111;color:#FF6B00;font-size:11px;font-weight:700;padding:5px 16px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;margin-top:12px}
 
 .footer{text-align:center;font-size:11px;color:#bbb;margin-top:8px;padding-bottom:20px}
+
+/* NPLW BENCHMARK */
+.bench-section{margin-bottom:14px}
+.bench-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.bench-row{margin-bottom:10px}
+.bench-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.bench-label{font-size:11px;font-weight:600;color:#444}
+.bench-vals{font-size:10px;color:#aaa}
+.bench-track{position:relative;height:8px;background:#f0ede8;border-radius:4px;overflow:visible}
+.bench-fill{height:100%;border-radius:4px;background:#FF6B00;transition:width .4s}
+.bench-mark{position:absolute;top:-3px;width:2px;height:14px;border-radius:1px}
+.bench-mark.avg{background:#999}
+.bench-mark.top{background:#ddd}
+.bench-rank{background:#FF6B00;color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:6px}
+.bench-rank.good{background:#2E7D32}
+.bench-insight{font-size:10px;color:#aaa;margin-top:2px}
+.bench-league-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.bench-badge{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:8px;padding:8px 12px;font-size:11px;color:#555;line-height:1.4}
+.bench-badge strong{font-size:15px;color:#FF6B00;display:block}
+.bench-badge.star strong{color:#2E7D32}
+.bench-badge span{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:#aaa}
 @media(max-width:700px){.metrics,.charts2,.analysis-grid,.coach-grid{grid-template-columns:1fr 1fr}.charts3{grid-template-columns:1fr}.min-card{flex-wrap:wrap}}
 @media(max-width:480px){.metrics,.charts2,.charts3,.analysis-grid,.coach-grid,.min-card{grid-template-columns:1fr;flex-direction:column}}
 
@@ -735,6 +756,48 @@ window.addEventListener('DOMContentLoaded', function(){
   </div>
 
 
+
+  <!-- NPLW BENCHMARK -->
+  <div class="bench-section" id="nplw-bench" style="display:none">
+    <div class="analysis-title">NPLW 2026 · Benchmark Comparison</div>
+
+    <!-- League ranking badges -->
+    <div class="bench-league-badges" style="margin-top:10px">
+      <div class="bench-badge star">
+        <span>Dribbles</span>
+        <strong>#5 in league</strong>
+        4.48 / 90min
+      </div>
+      <div class="bench-badge star">
+        <span>Corners Taken</span>
+        <strong>#7 in league</strong>
+        1.99 / 90min
+      </div>
+      <div class="bench-badge">
+        <span>Interceptions</span>
+        <strong id="bench-intercept-rank">—</strong>
+        <span id="bench-intercept-val">— / 90min</span>
+      </div>
+      <div class="bench-badge">
+        <span>Minutes Played</span>
+        <strong id="bench-min-total">—</strong>
+        <span>2026 season</span>
+      </div>
+    </div>
+
+    <!-- Radar chart -->
+    <div class="ccrd" style="margin-bottom:10px">
+      <div class="cttl">Performance Radar — Sam vs NPLW Average</div>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:#FF6B00">● Sam Brady</span>
+        <span style="font-size:10px;color:#bbb">● NPLW Average</span>
+      </div>
+      <canvas id="sc-radar" style="height:260px !important;max-height:260px !important"></canvas>
+    </div>
+
+    <!-- 12 metric bars in 2 columns -->
+    <div class="bench-grid" id="bench-bars"></div>
+  </div>
 
   <!-- 4 ANALYSIS SLOTS -->
   <div class="analysis-section">
@@ -1414,7 +1477,118 @@ function renderSoccer(){
     {label:'Total',    data:d.map(r=>r.passFinal),    backgroundColor:OR3,borderRadius:3},
     {label:'Accurate', data:d.map(r=>r.passFinalAcc), backgroundColor:OR, borderRadius:3},
   ]);
+  renderNPLWComparison(d);
   renderCoachSlots('soccer'); renderVideo('soccer');
+}
+
+// ── NPLW BENCHMARK ──────────────────────────────────────────────
+const NPLW_BENCH = [
+  // {key, label, samFn, avg, top, unit, lowerBetter, fixed, rankLabel}
+  {key:'goals',      label:'Goals',                   avg:0.30,  top:1.94,  unit:'/90'},
+  {key:'keyPasses',  label:'Key Passes',               avg:1.20,  top:2.42,  unit:'/90'},
+  {key:'finalThird', label:'Passes to Final Third',    avg:5.50,  top:11.11, unit:'/90'},
+  {key:'progRuns',   label:'Progressive Runs',         avg:1.80,  top:3.68,  unit:'/90'},
+  {key:'corners',    label:'Corners Taken',            avg:2.00,  top:4.85,  unit:'/90', fixed:1.99, rankLabel:'#7 NPLW'},
+  {key:'shots',      label:'Shots',                   avg:2.50,  top:6.41,  unit:'/90'},
+  {key:'dribbles',   label:'Dribbles',                avg:3.50,  top:9.27,  unit:'/90', rankLabel:'#5 NPLW'},
+  {key:'intercepts', label:'Interceptions',           avg:4.50,  top:7.24,  unit:'/90'},
+  {key:'recoveries', label:'Recoveries',              avg:8.30,  top:15.16, unit:'/90'},
+  {key:'duelWin',    label:'Duel Win Rate',           avg:70,    top:79,    unit:'%'},
+  {key:'clearances', label:'Clearances / Shots Block.',avg:2.16, top:4.16,  unit:'/90'},
+  {key:'fouls',      label:'Fouls Committed',         avg:1.50,  top:0.60,  unit:'/90', lowerBetter:true},
+];
+
+function renderNPLWComparison(d){
+  const sec = document.getElementById('nplw-bench');
+  if(!d || !d.length){sec.style.display='none';return;}
+  sec.style.display='block';
+
+  const p90 = d.reduce((a,r)=>a+r.min,0)/90;
+  if(p90 <= 0) return;
+
+  // compute sam's per-90 values
+  const s = k => d.reduce((a,r)=>a+(r[k]||0),0);
+  const samVals = {
+    goals:      s('goal')/p90,
+    keyPasses:  s('passFinalAcc')/p90,
+    finalThird: s('passFinal')/p90,
+    progRuns:   s('progRun')/p90,
+    corners:    1.99, // fixed from NPLW season report (7th in league)
+    shots:      s('shot')/p90,
+    dribbles:   s('dribbleTotal')/p90,
+    intercepts: s('intercept')/p90,
+    recoveries: (s('recOwnHalf')+s('recOppHalf'))/p90,
+    duelWin:    s('duelTotal')>0?Math.round(s('duelWon')/s('duelTotal')*100):0,
+    clearances: s('clearance')/p90,
+    fouls:      s('foulCom')/p90,
+  };
+
+  // update badges
+  document.getElementById('bench-min-total').textContent = Math.round(p90*90);
+  const intPer90 = samVals.intercepts.toFixed(2);
+  document.getElementById('bench-intercept-val').textContent = intPer90+' / 90min';
+  const intRank = samVals.intercepts >= 7.0 ? '#1-3' : samVals.intercepts >= 5.5 ? 'Top 5' : samVals.intercepts >= 4.5 ? 'Top 10' : 'Top 15';
+  document.getElementById('bench-intercept-rank').textContent = intRank+' NPLW';
+
+  // radar chart (8 metrics, normalized 0-100)
+  const radarMeta = [
+    {label:'Goals',            samV:samVals.goals,      avg:0.30,  top:1.94},
+    {label:'Key Passes',       samV:samVals.keyPasses,  avg:1.20,  top:2.42},
+    {label:'Final Third Pass', samV:samVals.finalThird, avg:5.50,  top:11.11},
+    {label:'Prog. Runs',       samV:samVals.progRuns,   avg:1.80,  top:3.68},
+    {label:'Dribbles',         samV:samVals.dribbles,   avg:3.50,  top:9.27},
+    {label:'Interceptions',    samV:samVals.intercepts, avg:4.50,  top:7.24},
+    {label:'Recoveries',       samV:samVals.recoveries, avg:8.30,  top:15.16},
+    {label:'Duel Win %',       samV:samVals.duelWin,    avg:70,    top:79},
+  ];
+  const norm=(v,t)=>Math.min(100,Math.round(v/t*100));
+  const samNorm  = radarMeta.map(m=>norm(m.samV, m.top));
+  const avgNorm  = radarMeta.map(m=>norm(m.avg,  m.top));
+
+  const rctx = document.getElementById('sc-radar');
+  if(rctx._chart){rctx._chart.destroy();}
+  rctx._chart = new Chart(rctx, {
+    type:'radar',
+    data:{
+      labels: radarMeta.map(m=>m.label),
+      datasets:[
+        {label:'Sam Brady', data:samNorm,
+         backgroundColor:'rgba(255,107,0,0.15)',borderColor:'#FF6B00',pointBackgroundColor:'#FF6B00',pointRadius:4,borderWidth:2},
+        {label:'NPLW Avg',  data:avgNorm,
+         backgroundColor:'rgba(180,180,180,0.08)',borderColor:'#bbb',pointBackgroundColor:'#bbb',pointRadius:3,borderWidth:1.5,borderDash:[4,3]},
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      scales:{r:{min:0,max:100,ticks:{display:false,stepSize:25},grid:{color:'rgba(0,0,0,0.06)'},pointLabels:{font:{size:10,family:"'gibson','Gill Sans',sans-serif"},color:'#555'}}},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.raw+'%'}}}
+    }
+  });
+
+  // 12 metric bars
+  const bars = document.getElementById('bench-bars');
+  bars.innerHTML = NPLW_BENCH.map(m=>{
+    const sam = samVals[m.key];
+    const pSam  = Math.min(100, sam/m.top*100);
+    const pAvg  = Math.min(100, m.avg/m.top*100);
+    const isAboveAvg = m.lowerBetter ? sam <= m.avg : sam >= m.avg;
+    const rankBadge = m.rankLabel ? `<span class="bench-rank good">${m.rankLabel}</span>` : '';
+    const insight = m.lowerBetter
+      ? (sam <= m.avg ? '✓ Below average (good)' : `${(sam-m.avg).toFixed(2)} above avg — reduce`)
+      : (sam >= m.avg ? `✓ Above avg (+${(sam-m.avg).toFixed(2)})` : `${(m.avg-sam).toFixed(2)} below avg — improve`);
+    return `<div class="bench-row">
+      <div class="bench-meta">
+        <span class="bench-label">${m.label}${rankBadge}</span>
+        <span class="bench-vals">Sam <b style="color:#FF6B00">${sam.toFixed(2)}${m.unit}</b> · Avg ${m.avg}${m.unit} · Best ${m.top}${m.unit}</span>
+      </div>
+      <div class="bench-track">
+        <div class="bench-fill" style="width:${pSam.toFixed(1)}%;background:${isAboveAvg?'#FF6B00':'#FF6B00'}"></div>
+        <div class="bench-mark avg" style="left:${pAvg.toFixed(1)}%" title="NPLW Average"></div>
+        <div class="bench-mark top" style="left:99%" title="NPLW Top"></div>
+      </div>
+      <div class="bench-insight">${insight}</div>
+    </div>`;
+  }).join('');
 }
 
 function rebuildSoccerSelector(){
