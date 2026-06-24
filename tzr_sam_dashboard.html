@@ -443,6 +443,7 @@ window.addEventListener('DOMContentLoaded', function(){
   <div class="stab active" id="tab-summer" onclick="switchSeason('summer')"><span class="dot"></span>Summer Season 2025 · Futsal</div>
   <div class="stab" id="tab-winter" onclick="switchSeason('winter')"><span class="dot"></span>Winter Season 2025 · Futsal</div>
   <div class="stab" id="tab-soccer" onclick="switchSeason('soccer')"><span class="dot" style="background:#2E7D32"></span>Soccer · Fremantle</div>
+  <div class="stab" id="tab-training" onclick="switchSeason('training')"><span class="dot" style="background:#888"></span>Training Log</div>
 </div>
 
 <!-- ═══ SUMMER ═══ -->
@@ -874,6 +875,25 @@ window.addEventListener('DOMContentLoaded', function(){
 
 </div><!-- end soccer -->
 
+<!-- ═══ TRAINING LOG ═══ -->
+<div id="season-training" style="display:none">
+
+  <div class="winter-controls">
+    <span id="t-session-count" style="font-size:12px;color:#aaa">No sessions yet</span>
+  </div>
+
+  <div class="analysis-section">
+    <div class="analysis-title">Training Sessions</div>
+    <div id="t-sessions-list" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <div class="analysis-section">
+    <div class="analysis-title">Videos</div>
+    <div id="t-videos-list" style="display:flex;flex-direction:column;gap:10px"></div>
+  </div>
+
+</div><!-- end training -->
+
 
 <!-- COACH BUTTON (always visible) -->
 <div class="topbar">
@@ -899,10 +919,28 @@ window.addEventListener('DOMContentLoaded', function(){
       <button id="ce-tab-summer" onclick="coachEditSeason('summer')" style="background:#FF6B00;color:#fff;border:none;padding:7px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">Summer Season</button>
       <button id="ce-tab-winter" onclick="coachEditSeason('winter')" style="background:#2e2e2e;color:#888;border:none;padding:7px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">Winter Season</button>
       <button id="ce-tab-soccer" onclick="coachEditSeason('soccer')" style="background:#2e2e2e;color:#888;border:none;padding:7px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">Soccer · Fremantle</button>
+      <button id="ce-tab-training" onclick="coachEditSeason('training')" style="background:#2e2e2e;color:#888;border:none;padding:7px 18px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">Training Log</button>
+    </div>
+
+    <!-- TRAINING LOG: excel upload + videos (own section, shown only for training tab) -->
+    <div class="coach-section" id="coach-training-section" style="display:none">
+      <div class="coach-section-label">🏋️ Training Log — Excel</div>
+      <div class="coach-excel-row">
+        <p>Upload a spreadsheet with columns <strong style="color:#FF6B00">Date, Training Load, Hours, Content</strong>. One row per session.</p>
+        <button class="upload-btn" onclick="document.getElementById('training-file-input').click()">📊 Load Excel</button>
+        <input type="file" id="training-file-input" accept=".xlsx,.xls" style="display:none" onchange="loadTrainingExcel(event)">
+      </div>
+      <p id="training-excel-status" style="color:#FF6B00;font-size:12px;margin-top:8px;display:none"></p>
+      <div style="margin-top:16px">
+        <label style="font-size:11px;color:#888;margin-bottom:6px;display:block;font-weight:600;letter-spacing:.5px;text-transform:uppercase">YouTube video links (one per line)</label>
+        <textarea class="coach-caption-input" id="training-videos-input" placeholder="https://www.youtube.com/watch?v=...
+https://www.youtube.com/watch?v=..."></textarea>
+        <button class="coach-save-btn" onclick="saveTrainingVideos()" style="margin-top:8px">💾 Save videos</button>
+      </div>
     </div>
 
     <!-- EXCEL UPLOAD -->
-    <div class="coach-section">
+    <div class="coach-section" id="coach-excel-section">
       <div class="coach-section-label">📊 Update Data — Excel</div>
       <div class="coach-excel-row">
         <p>Upload the <strong style="color:#FF6B00">sam_winter_2025.xlsx</strong> file after each game.<br><span style="color:#666">Columns detected automatically from the template.</span></p>
@@ -913,7 +951,7 @@ window.addEventListener('DOMContentLoaded', function(){
     </div>
 
     <!-- VIDEO LINK -->
-    <div class="coach-section">
+    <div class="coach-section" id="coach-video-section">
       <div class="coach-section-label">▶️ YouTube Video Links</div>
       <div style="background:#1e1e1e;border-radius:8px;padding:14px;border:.5px solid #2e2e2e;display:flex;flex-direction:column;gap:10px">
         <div>
@@ -1023,6 +1061,10 @@ let SOCCER = [{"game": "Sorrento - Fremantle City 3:4 · 2026-06-21", "min": 95,
 
 let WINTER = [{"game": "Internationale", "min": 0, "pass": 34, "passFail": 0, "keyPass": 0, "shot": 1, "shot5m": 0, "shot10m": 0, "shotOT": 0, "goal": 2, "assist": 2, "dribble": 0, "duel": 0, "recovery": 15, "lost": 7, "intercept": 8, "pressure": 0, "block": 0, "foulWon": 1, "foulCom": 0, "counter": 0, "defCover": 0, "recOppPress": 0}, {"game": "Perth United", "min": 0, "pass": 20, "passFail": 5, "keyPass": 0, "shot": 4, "shot5m": 0, "shot10m": 0, "shotOT": 7, "goal": 3, "assist": 0, "dribble": 2, "duel": 7, "recovery": 3, "lost": 2, "intercept": 5, "pressure": 0, "block": 3, "foulWon": 0, "foulCom": 1, "counter": 0, "defCover": 0, "recOppPress": 0}];
 
+// TRAINING LOG: sessions {date, load, hours, content} + a list of YouTube links
+let TRAINING = [];
+let TRAINING_VIDEOS = [];
+
 // Restore game data saved by the coach in this browser (Excel uploads are otherwise lost on reload)
 (function restoreSeasonData(){
   const savedSummer = localStorage.getItem('tzr_data');
@@ -1031,6 +1073,10 @@ let WINTER = [{"game": "Internationale", "min": 0, "pass": 34, "passFail": 0, "k
   if(savedWinter){ try{ WINTER = JSON.parse(savedWinter); }catch(e){} }
   const savedSoccer = localStorage.getItem('tzrs_data');
   if(savedSoccer){ try{ SOCCER = JSON.parse(savedSoccer); }catch(e){} }
+  const savedTraining = localStorage.getItem('tzrt_data');
+  if(savedTraining){ try{ TRAINING = JSON.parse(savedTraining); }catch(e){} }
+  const savedTrainingVideos = localStorage.getItem('tzrt_videos');
+  if(savedTrainingVideos){ try{ TRAINING_VIDEOS = JSON.parse(savedTrainingVideos); }catch(e){} }
 })();
 
 // Coach content — persists in localStorage
@@ -1340,7 +1386,7 @@ function makeVideoLink(url,label){
 }
 
 function switchSeason(s){
-  ['summer','winter','soccer'].forEach(k=>{
+  ['summer','winter','soccer','training'].forEach(k=>{
     const sec=document.getElementById('season-'+k);
     if(sec) sec.style.display=s===k?'block':'none';
     const tab=document.getElementById('tab-'+k);
@@ -1354,12 +1400,13 @@ function switchSeason(s){
   } else if(s==='winter'){
     if(heroLabel) heroLabel.textContent='Winter Season 2025';
     if(heroGames) heroGames.textContent=WINTER.length>0?WINTER.length+' games analysed':'Season in progress';
-  } else {
+  } else if(s==='soccer'){
     if(heroLabel) heroLabel.textContent='NPL Women · Fremantle City';
     if(heroGames) heroGames.textContent=SOCCER.length>0?SOCCER.length+' games analysed':'';
   }
   if(s==='winter') renderWinter();
   if(s==='soccer') renderSoccer();
+  if(s==='training') renderTraining();
 }
 
 function toggleCoach(){
@@ -1378,19 +1425,29 @@ function coachLogin(){
 
 function coachEditSeason(s){
   coachEditingSeason=s;
-  ['summer','winter','soccer'].forEach(k=>{
+  ['summer','winter','soccer','training'].forEach(k=>{
     const el=document.getElementById('ce-tab-'+k);
     if(el){el.style.background=s===k?'#FF6B00':'#2e2e2e';el.style.color=s===k?'#fff':'#888';}
   });
   const wGameRow=document.getElementById('coach-w-feedback-section');
   if(wGameRow) wGameRow.style.display=s==='winter'?'block':'none';
   const imgSection=document.getElementById('coach-img-section');
-  if(imgSection) imgSection.style.display=s==='winter'?'none':'block';
+  if(imgSection) imgSection.style.display=(s==='winter'||s==='training')?'none':'block';
+  const excelSection=document.getElementById('coach-excel-section');
+  if(excelSection) excelSection.style.display=s==='training'?'none':'block';
+  const videoSection=document.getElementById('coach-video-section');
+  if(videoSection) videoSection.style.display=s==='training'?'none':'block';
+  const trainingSection=document.getElementById('coach-training-section');
+  if(trainingSection) trainingSection.style.display=s==='training'?'block':'none';
   if(s==='winter') rebuildCoachWinterGameSelector();
+  if(s==='training'){
+    document.getElementById('training-videos-input').value=TRAINING_VIDEOS.join('\n');
+  }
   loadCoachForm(s);
 }
 
 function loadCoachForm(s){
+  if(s==='training') return;
   // Show goals video row only for soccer
   const goalsRow=document.getElementById('coach-goals-video-row');
   if(goalsRow) goalsRow.style.display=s==='soccer'?'block':'none';
@@ -1542,6 +1599,71 @@ function loadExcel(e){
   reader.readAsBinaryString(file);
 }
 
+// TRAINING LOG IMPORT
+function loadTrainingExcel(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const wb=XLSX.read(ev.target.result,{type:'binary'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws);
+    if(!raw.length){alert('Empty spreadsheet');return;}
+    const parsed=raw.map(r=>({
+      date:    r['Date']||r['date']||'',
+      load:    r['Training Load']||r['Load']||r['load']||'',
+      hours:   r['Hours']||r['hours']||'',
+      content: r['Content']||r['content']||'',
+    })).filter(r=>r.date||r.content);
+    TRAINING=parsed;
+    localStorage.setItem('tzrt_data',JSON.stringify(TRAINING));
+    renderTraining();
+    const msg=document.getElementById('training-excel-status');
+    msg.textContent='✅ '+parsed.length+' training sessions loaded!';
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none',4000);
+  };
+  reader.readAsBinaryString(file);
+}
+
+function saveTrainingVideos(){
+  const raw=document.getElementById('training-videos-input').value;
+  TRAINING_VIDEOS=raw.split('\n').map(s=>s.trim()).filter(Boolean);
+  localStorage.setItem('tzrt_videos',JSON.stringify(TRAINING_VIDEOS));
+  renderTraining();
+  const msg=document.getElementById('coach-save-msg');
+  if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);}
+}
+
+function renderTraining(){
+  const countEl=document.getElementById('t-session-count');
+  if(countEl) countEl.textContent=TRAINING.length?TRAINING.length+' session'+(TRAINING.length!==1?'s':'')+' logged':'No sessions yet';
+  const list=document.getElementById('t-sessions-list');
+  if(list){
+    if(!TRAINING.length){
+      list.innerHTML='<p style="color:#999;font-size:13px">No training sessions logged yet.</p>';
+    } else {
+      const sorted=[...TRAINING].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+      list.innerHTML=sorted.map(s=>(
+        '<div style="background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:14px 16px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px">'
+        +'<span style="font-weight:700;font-size:14px;color:#222">'+(s.date||'—')+'</span>'
+        +'<span style="font-size:12px;color:#FF6B00;font-weight:600">Load: '+(s.load||'—')+'</span>'
+        +'<span style="font-size:12px;color:#888">'+(s.hours||'—')+' h</span>'
+        +'</div>'
+        +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+(s.content||'').replace(/</g,'&lt;')+'</div>'
+        +'</div>'
+      )).join('');
+    }
+  }
+  const vidList=document.getElementById('t-videos-list');
+  if(vidList){
+    if(!TRAINING_VIDEOS.length){
+      vidList.innerHTML='<p style="color:#999;font-size:13px">No videos added yet.</p>';
+    } else {
+      vidList.innerHTML=TRAINING_VIDEOS.map(url=>makeVideoLink(url,'Watch on YouTube')).join('');
+    }
+  }
+}
 
 // ══ SOCCER
 function initSoccerSlots(){
@@ -1806,10 +1928,11 @@ function downloadForAthlete(){
     sv: coachVideoUrl, si: coachImgData, sc: coachCapsData,
     wv: wCoachVideoUrl, xv: sCoachVideoUrl, xi: sCoachImgData, xc: sCoachCapsData, xg: sCoachGoalsVideo,
     sd: SUMMER, wd: WINTER, xd: SOCCER,
-    wib: wImgByGame, wcb: wCapsByGame, wfb: wFeedbackByGame
+    wib: wImgByGame, wcb: wCapsByGame, wfb: wFeedbackByGame,
+    td: TRAINING, tv: TRAINING_VIDEOS
   };
   const injectScript = '\x3Cscript>window.__TZR__=' + JSON.stringify(data) + ';\x3C/script>';
-  const loaderScript = "if(window.__TZR__){var d=window.__TZR__;coachVideoUrl=d.sv;coachImgData=d.si;coachCapsData=d.sc;wCoachVideoUrl=d.wv;sCoachVideoUrl=d.xv;sCoachImgData=d.xi;sCoachCapsData=d.xc;sCoachGoalsVideo=d.xg||'';SUMMER=d.sd||SUMMER;WINTER=d.wd||WINTER;SOCCER=d.xd||SOCCER;wImgByGame=d.wib||wImgByGame;wCapsByGame=d.wcb||wCapsByGame;wFeedbackByGame=d.wfb||wFeedbackByGame;}"+"\n// INIT\nrenderAll();"
+  const loaderScript = "if(window.__TZR__){var d=window.__TZR__;coachVideoUrl=d.sv;coachImgData=d.si;coachCapsData=d.sc;wCoachVideoUrl=d.wv;sCoachVideoUrl=d.xv;sCoachImgData=d.xi;sCoachCapsData=d.xc;sCoachGoalsVideo=d.xg||'';SUMMER=d.sd||SUMMER;WINTER=d.wd||WINTER;SOCCER=d.xd||SOCCER;wImgByGame=d.wib||wImgByGame;wCapsByGame=d.wcb||wCapsByGame;wFeedbackByGame=d.wfb||wFeedbackByGame;TRAINING=d.td||TRAINING;TRAINING_VIDEOS=d.tv||TRAINING_VIDEOS;}"+"\n// INIT\nrenderAll();"
   let src = document.documentElement.outerHTML;
   src = src.replace('<head>', '<head>' + injectScript);
   src = src.replace('// INIT\nrenderAll();', loaderScript);
