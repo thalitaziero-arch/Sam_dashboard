@@ -911,6 +911,10 @@ window.addEventListener('DOMContentLoaded', function(){
     <!-- ANALYSIS IMAGES -->
     <div class="coach-section">
       <div class="coach-section-label">📷 Analysis Images & Captions</div>
+      <div id="coach-w-game-row" style="display:none;margin-bottom:12px">
+        <label style="font-size:11px;color:#FF6B00;margin-bottom:6px;display:block;font-weight:600;letter-spacing:.5px;text-transform:uppercase">Which Winter game are these images for?</label>
+        <select id="coach-w-game" class="coach-text-input" onchange="loadCoachForm('winter')"></select>
+      </div>
       <div class="coach-grid">
         <div class="coach-slot-c">
           <label>Image 1</label>
@@ -981,6 +985,16 @@ let SOCCER = [{"game": "Sorrento - Fremantle City 3:4 · 2026-06-21", "min": 95,
 
 let WINTER = [{"game": "Internationale", "min": 0.0, "pass": 34, "passFail": 0, "keyPass": 0, "shot": 1, "shot5m": 0, "shot10m": 0, "shotOT": 0, "goal": 1, "assist": 1, "dribble": 0, "duel": 1, "recovery": 15, "lost": 7, "intercept": 8, "pressure": 0, "block": 0, "foulWon": 1, "foulCom": 0, "counter": 0, "defCover": 0, "recOppPress": 0}];
 
+// Restore game data saved by the coach in this browser (Excel uploads are otherwise lost on reload)
+(function restoreSeasonData(){
+  const savedSummer = localStorage.getItem('tzr_data');
+  if(savedSummer){ try{ SUMMER = JSON.parse(savedSummer); }catch(e){} }
+  const savedWinter = localStorage.getItem('tzrw_data');
+  if(savedWinter){ try{ WINTER = JSON.parse(savedWinter); }catch(e){} }
+  const savedSoccer = localStorage.getItem('tzrs_data');
+  if(savedSoccer){ try{ SOCCER = JSON.parse(savedSoccer); }catch(e){} }
+})();
+
 // Coach content — persists in localStorage
 let coachImgData  = JSON.parse(localStorage.getItem('tzr_imgdata')  || '["","","",""]');
 let coachCapsData = JSON.parse(localStorage.getItem('tzr_capsdata') || '["","","",""]');
@@ -988,6 +1002,9 @@ let coachVideoUrl = localStorage.getItem('tzr_video') || '';
 let wCoachImgData  = JSON.parse(localStorage.getItem('tzrw_imgdata')  || '["","","",""]');
 let wCoachCapsData = JSON.parse(localStorage.getItem('tzrw_capsdata') || '["","","",""]');
 let wCoachVideoUrl = localStorage.getItem('tzrw_video') || '';
+// Winter analysis images/captions are kept per-game so uploading new ones each week doesn't erase older games
+let wImgByGame  = JSON.parse(localStorage.getItem('tzrw_imgdata_bygame')  || '{}');
+let wCapsByGame = JSON.parse(localStorage.getItem('tzrw_capsdata_bygame') || '{}');
 let sCoachImgData  = JSON.parse(localStorage.getItem('tzrs_imgdata')  || '["","","",""]');
 let sCoachCapsData = JSON.parse(localStorage.getItem('tzrs_capsdata') || '["","","",""]');
 let sCoachVideoUrl = localStorage.getItem('tzrs_video') || '';
@@ -1175,11 +1192,50 @@ function rebuildWinterSelector(){
     o.value='g'+i; o.textContent='Game '+(i+1)+' — '+r.game;
     sel.appendChild(o);
   });
+  rebuildCoachWinterGameSelector();
+}
+
+function rebuildCoachWinterGameSelector(){
+  const sel=document.getElementById('coach-w-game');
+  if(!sel) return;
+  const prev=sel.value;
+  if(!WINTER.length){
+    sel.innerHTML='<option value="">No games yet — load Excel first</option>';
+    return;
+  }
+  sel.innerHTML='';
+  WINTER.forEach((r,i)=>{
+    const o=document.createElement('option');
+    o.value='g'+i; o.textContent='Game '+(i+1)+' — '+r.game;
+    sel.appendChild(o);
+  });
+  // Keep the previous selection if it still exists, otherwise default to the most recent game
+  if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
+  else sel.value='g'+(WINTER.length-1);
+}
+
+function currentWinterGameKey(){
+  const wSel=document.getElementById('w-period');
+  const wv=wSel?wSel.value:'all';
+  if(wv && wv!=='all') return wv;
+  return WINTER.length ? 'g'+(WINTER.length-1) : null; // 'All games' falls back to the most recent game's images
 }
 
 function renderCoachSlots(season){
-  const imgData=season==='summer'?coachImgData:season==='winter'?wCoachImgData:sCoachImgData;
-  const capsData=season==='summer'?coachCapsData:season==='winter'?wCoachCapsData:sCoachCapsData;
+  let imgData, capsData;
+  if(season==='winter'){
+    const key=currentWinterGameKey();
+    imgData = (key && wImgByGame[key]) ? wImgByGame[key] : ["","","",""];
+    capsData = (key && wCapsByGame[key]) ? wCapsByGame[key] : ["","","",""];
+    const title=document.querySelector('#season-winter .analysis-title');
+    if(title){
+      const idx=key?parseInt(key.slice(1)):-1;
+      title.textContent = (key && WINTER[idx]) ? 'Match Analysis — '+WINTER[idx].game : 'Match Analysis';
+    }
+  } else {
+    imgData=season==='summer'?coachImgData:sCoachImgData;
+    capsData=season==='summer'?coachCapsData:sCoachCapsData;
+  }
   const pfx=season==='summer'?'':season==='winter'?'w':'s';
   for(let i=0;i<4;i++){
     const slot=document.getElementById(pfx+'slot-'+i);
@@ -1275,6 +1331,9 @@ function coachEditSeason(s){
     const el=document.getElementById('ce-tab-'+k);
     if(el){el.style.background=s===k?'#FF6B00':'#2e2e2e';el.style.color=s===k?'#fff':'#888';}
   });
+  const wGameRow=document.getElementById('coach-w-game-row');
+  if(wGameRow) wGameRow.style.display=s==='winter'?'block':'none';
+  if(s==='winter') rebuildCoachWinterGameSelector();
   loadCoachForm(s);
 }
 
@@ -1284,8 +1343,16 @@ function loadCoachForm(s){
   if(goalsRow) goalsRow.style.display=s==='soccer'?'block':'none';
   const goalsInput=document.getElementById('coach-goals-video-url');
   if(goalsInput) goalsInput.value=s==='soccer'?(sCoachGoalsVideo||''):'';
-  const imgData=s==='summer'?coachImgData:s==='winter'?wCoachImgData:sCoachImgData;
-  const capsData=s==='summer'?coachCapsData:s==='winter'?wCoachCapsData:sCoachCapsData;
+  let imgData, capsData;
+  if(s==='winter'){
+    const wgSel=document.getElementById('coach-w-game');
+    const key=wgSel?wgSel.value:'';
+    imgData = (key && wImgByGame[key]) ? wImgByGame[key] : ["","","",""];
+    capsData = (key && wCapsByGame[key]) ? wCapsByGame[key] : ["","","",""];
+  } else {
+    imgData=s==='summer'?coachImgData:sCoachImgData;
+    capsData=s==='summer'?coachCapsData:sCoachCapsData;
+  }
   const videoUrl=s==='summer'?coachVideoUrl:s==='winter'?wCoachVideoUrl:sCoachVideoUrl;
   document.getElementById('coach-video-url').value=videoUrl||'';
   for(let i=0;i<4;i++){
@@ -1298,12 +1365,21 @@ function loadCoachForm(s){
 
 function previewCoachImg(i,input){
   const file=input.files[0];if(!file)return;
+  if(coachEditingSeason==='winter'){
+    const wgSel=document.getElementById('coach-w-game');
+    const key=wgSel?wgSel.value:'';
+    if(!key){ alert('Select which Winter game these images belong to first (load the Excel for that game if it\'s not listed yet).'); input.value=''; return; }
+  }
   const reader=new FileReader();
   reader.onload=e=>{
     const p=document.getElementById('cp-'+i);
     p.src=e.target.result;p.style.display='block';
     if(coachEditingSeason==='summer') coachImgData[i]=e.target.result;
-    else if(coachEditingSeason==='winter') wCoachImgData[i]=e.target.result;
+    else if(coachEditingSeason==='winter'){
+      const key=document.getElementById('coach-w-game').value;
+      if(!wImgByGame[key]) wImgByGame[key]=["","","",""];
+      wImgByGame[key][i]=e.target.result;
+    }
     else sCoachImgData[i]=e.target.result;
   };
   reader.readAsDataURL(file);
@@ -1312,10 +1388,17 @@ function previewCoachImg(i,input){
 function saveCoachContent(){
   const s=coachEditingSeason;
   const videoInput=document.getElementById('coach-video-url').value.trim();
+  const wgSel=document.getElementById('coach-w-game');
+  const wKey=s==='winter'&&wgSel?wgSel.value:null;
   for(let i=0;i<4;i++){
     const cap=document.getElementById('cc-'+i).value;
     if(s==='summer') coachCapsData[i]=cap;
-    else if(s==='winter') wCoachCapsData[i]=cap;
+    else if(s==='winter'){
+      if(wKey){
+        if(!wCapsByGame[wKey]) wCapsByGame[wKey]=["","","",""];
+        wCapsByGame[wKey][i]=cap;
+      }
+    }
     else sCoachCapsData[i]=cap;
   }
   if(s==='summer'){
@@ -1326,8 +1409,8 @@ function saveCoachContent(){
     renderCoachSlots('summer'); renderVideo('summer');
   } else if(s==='winter'){
     wCoachVideoUrl=videoInput;
-    localStorage.setItem('tzrw_imgdata',JSON.stringify(wCoachImgData));
-    localStorage.setItem('tzrw_capsdata',JSON.stringify(wCoachCapsData));
+    localStorage.setItem('tzrw_imgdata_bygame',JSON.stringify(wImgByGame));
+    localStorage.setItem('tzrw_capsdata_bygame',JSON.stringify(wCapsByGame));
     localStorage.setItem('tzrw_video',wCoachVideoUrl);
     renderCoachSlots('winter'); renderVideo('winter');
   } else {
@@ -1380,13 +1463,19 @@ function loadExcel(e){
     })).filter(r=>r.pass+r.shot+r.recovery+r.goal>0);
     if(coachEditingSeason==='summer'){
       SUMMER=parsed;
+      localStorage.setItem('tzr_data',JSON.stringify(SUMMER));
       renderAll();
     } else if(coachEditingSeason==='winter'){
       WINTER=parsed;
+      localStorage.setItem('tzrw_data',JSON.stringify(WINTER));
       rebuildWinterSelector();
       renderWinter();
+      // Auto-select the newest game so the coach can drop photos for it right away
+      const wgSel=document.getElementById('coach-w-game');
+      if(wgSel && WINTER.length){ wgSel.value='g'+(WINTER.length-1); loadCoachForm('winter'); }
     } else {
       SOCCER=parsed;
+      localStorage.setItem('tzrs_data',JSON.stringify(SOCCER));
       rebuildSoccerSelector();
       renderSoccer();
     }
