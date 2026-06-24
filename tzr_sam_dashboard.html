@@ -1749,11 +1749,12 @@ function rebuildSoccerSelector(){
 function downloadForAthlete(){
   const data = {
     sv: coachVideoUrl, si: coachImgData, sc: coachCapsData,
-    wv: wCoachVideoUrl, wi: wCoachImgData, wc: wCoachCapsData,
-    xv: sCoachVideoUrl, xi: sCoachImgData, xc: sCoachCapsData, xg: sCoachGoalsVideo
+    wv: wCoachVideoUrl, xv: sCoachVideoUrl, xi: sCoachImgData, xc: sCoachCapsData, xg: sCoachGoalsVideo,
+    sd: SUMMER, wd: WINTER, xd: SOCCER,
+    wib: wImgByGame, wcb: wCapsByGame
   };
   const injectScript = '\x3Cscript>window.__TZR__=' + JSON.stringify(data) + ';\x3C/script>';
-  const loaderScript = "if(window.__TZR__){var d=window.__TZR__;coachVideoUrl=d.sv;coachImgData=d.si;coachCapsData=d.sc;wCoachVideoUrl=d.wv;wCoachImgData=d.wi;wCoachCapsData=d.wc;sCoachVideoUrl=d.xv;sCoachImgData=d.xi;sCoachCapsData=d.xc;sCoachGoalsVideo=d.xg||'';}"+"\n// INIT\nrenderAll();"
+  const loaderScript = "if(window.__TZR__){var d=window.__TZR__;coachVideoUrl=d.sv;coachImgData=d.si;coachCapsData=d.sc;wCoachVideoUrl=d.wv;sCoachVideoUrl=d.xv;sCoachImgData=d.xi;sCoachCapsData=d.xc;sCoachGoalsVideo=d.xg||'';SUMMER=d.sd||SUMMER;WINTER=d.wd||WINTER;SOCCER=d.xd||SOCCER;wImgByGame=d.wib||wImgByGame;wCapsByGame=d.wcb||wCapsByGame;}"+"\n// INIT\nrenderAll();"
   let src = document.documentElement.outerHTML;
   src = src.replace('<head>', '<head>' + injectScript);
   src = src.replace('// INIT\nrenderAll();', loaderScript);
