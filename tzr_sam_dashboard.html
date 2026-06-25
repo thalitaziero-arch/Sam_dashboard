@@ -498,14 +498,6 @@ window.addEventListener('DOMContentLoaded', function(){
     <div class="ccrd"><div class="cttl">Balls Lost vs Recoveries</div><canvas id="c-lost-rec"></canvas></div>
   </div>
 
-  <!-- VIDEO -->
-  <div class="video-card">
-    <div class="video-title">Match Video</div>
-    <div id="video-area">
-      <div class="video-empty" id="video-empty"><span>▶️</span>No video added yet — coach will add a link here</div>
-      <div id="video-embed-wrap" style="display:none"></div>
-    </div>
-  </div>
 
   <!-- 4 ANALYSIS SLOTS -->
   <div class="analysis-section">
@@ -635,14 +627,6 @@ window.addEventListener('DOMContentLoaded', function(){
     <div class="ccrd"><div class="cttl">Balls Lost vs Recoveries</div><canvas id="wc-lost-rec"></canvas></div>
   </div>
 
-  <!-- VIDEO WINTER -->
-  <div class="video-card">
-    <div class="video-title">Match Video</div>
-    <div id="w-video-area">
-      <div class="video-empty" id="w-video-empty"><span>▶️</span>No video added yet — coach will add a link here</div>
-      <div id="w-video-embed-wrap" style="display:none"></div>
-    </div>
-  </div>
 
 
   <!-- 4 ANALYSIS SLOTS WINTER -->
@@ -1352,6 +1336,7 @@ function renderVideo(season){
   const url=season==='summer'?coachVideoUrl:season==='winter'?wCoachVideoUrl:sCoachVideoUrl;
   const emptyEl=document.getElementById(season==='summer'?'video-empty':season==='winter'?'w-video-empty':'s-video-empty');
   const wrapEl=document.getElementById(season==='summer'?'video-embed-wrap':season==='winter'?'w-video-embed-wrap':'s-video-embed-wrap');
+  if(!emptyEl||!wrapEl) return;
   if(url){
     emptyEl.style.display='none';
     wrapEl.style.display='block';
