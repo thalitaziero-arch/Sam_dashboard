@@ -641,7 +641,7 @@ window.addEventListener('DOMContentLoaded', function(){
   </div>
 
   <!-- 4 ANALYSIS SLOTS WINTER -->
-  <div class="analysis-section">
+  <div class="analysis-section" id="winter-analysis-section">
     <div class="analysis-title">Match Analysis</div>
     <div class="analysis-grid">
       <div class="analysis-slot" id="wslot-0"><div class="slot-empty" id="wempty-0"><svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" width="90" height="54">
@@ -724,7 +724,7 @@ window.addEventListener('DOMContentLoaded', function(){
   </div>
 
   <!-- COACH FEEDBACK WINTER -->
-  <div class="analysis-section">
+  <div class="analysis-section" id="winter-feedback-section">
     <div class="analysis-title">Coach Feedback</div>
     <div style="background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px">
       <div>
@@ -1296,7 +1296,7 @@ function currentWinterGameKey(){
   const wSel=document.getElementById('w-period');
   const wv=wSel?wSel.value:'all';
   if(wv && wv!=='all') return wv;
-  return WINTER.length ? 'g'+(WINTER.length-1) : null; // 'All games' falls back to the most recent game's images
+  return null; // 'All games' selected — no single game, so no images/feedback to show
 }
 
 function renderWinterFeedback(){
@@ -1314,6 +1314,10 @@ function renderCoachSlots(season){
   let imgData, capsData;
   if(season==='winter'){
     const key=currentWinterGameKey();
+    const analysisSection=document.getElementById('winter-analysis-section');
+    const feedbackSection=document.getElementById('winter-feedback-section');
+    if(analysisSection) analysisSection.style.display=key?'block':'none';
+    if(feedbackSection) feedbackSection.style.display=key?'block':'none';
     imgData = (key && wImgByGame[key]) ? wImgByGame[key] : ["","","",""];
     capsData = (key && wCapsByGame[key]) ? wCapsByGame[key] : ["","","",""];
     const title=document.querySelector('#season-winter .analysis-title');
