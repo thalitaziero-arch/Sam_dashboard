@@ -1049,7 +1049,7 @@ let SOCCER = [{"game": "Sorrento - Fremantle City 3:4 · 2026-06-21", "min": 95,
 let WINTER = [{"game": "Internationale", "min": 0, "pass": 34, "passFail": 0, "keyPass": 0, "shot": 3, "shot5m": 0, "shot10m": 0, "shotOT": 0, "goal": 2, "assist": 2, "dribble": 0, "duel": 0, "recovery": 15, "lost": 7, "intercept": 8, "pressure": 0, "block": 0, "foulWon": 1, "foulCom": 0, "counter": 0, "defCover": 0, "recOppPress": 0}, {"game": "Perth United", "min": 0, "pass": 20, "passFail": 5, "keyPass": 0, "shot": 10, "shot5m": 0, "shot10m": 0, "shotOT": 7, "goal": 2, "assist": 0, "dribble": 2, "duel": 7, "recovery": 3, "lost": 2, "intercept": 5, "pressure": 0, "block": 3, "foulWon": 0, "foulCom": 1, "counter": 0, "defCover": 0, "recOppPress": 0}];
 
 // TRAINING LOG: sessions {date, load, hours, content} + a list of YouTube links
-let TRAINING = [{"date": "2026-06-15", "load": "1", "hours": "1h", "content": "Attacking the ball quickly.\nCreating space from defenders.\nFinishing in different areas of the goal.\nShooting from different positions.\nDecision-making under pressure."}, {"date": "2026-06-22", "load": "2", "hours": "1h", "content": "Attacking the ball quickly.\nCreating space from defenders.\nFinishing from different positions and angles.\nFirst touch with both the left and right foot.\n1v1 situations against the goalkeeper.\nAcceleration before finishing.\nVolley finishing."}];
+let TRAINING = [{"date": "2026-06-15", "load": "1", "hours": "1h", "content": "Attacking the ball quickly.\nCreating space from defenders.\nFinishing in different areas of the goal.\nShooting from different positions.\nDecision-making under pressure.", "why": "To improve reaction time in attacking situations.\nTo create higher-quality scoring opportunities.\nTo increase confidence and efficiency in front of goal.\nTo encourage players to attack space aggressively and finish with purpose."}, {"date": "2026-06-22", "load": "2", "hours": "1h", "content": "Attacking the ball quickly.\nCreating space from defenders.\nFinishing from different positions and angles.\nFirst touch with both the left and right foot.\n1v1 situations against the goalkeeper.\nAcceleration before finishing.\nVolley finishing.", "why": "To improve ball control under pressure.\nTo develop the ability to finish with either foot.\nTo improve speed of execution in attacking situations.\nTo increase composure and decision-making in 1v1 scenarios.\nTo prepare players to finish effectively from a variety of game situations and angles."}];
 let TRAINING_VIDEOS = [];
 
 // Restore game data saved by the coach in this browser (Excel uploads are otherwise lost on reload)
@@ -1625,6 +1625,8 @@ function renderTraining(){
         +'<span style="font-size:12px;color:#888">'+(s.hours||'—')+' h</span>'
         +'</div>'
         +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+(s.content||'').replace(/</g,'&lt;')+'</div>'
+        +(s.why?('<div style="margin-top:8px;font-size:12px;color:#888;font-weight:600">Why this training:</div>'
+        +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+s.why.replace(/</g,'&lt;')+'</div>'):'')
         +'</div>'
       )).join('');
     }
