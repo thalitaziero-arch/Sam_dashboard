@@ -146,11 +146,10 @@ def split_chart_blocks(img, gap_thresh=250, min_gap=25):
     return [autocrop(top_half), autocrop(bottom_half)]
 
 
-def extract_pdf_images(pdf_path, zoom=3, pages=(1, 2), max_images=4):
-    """Reads only the given 0-indexed pages (default: PDF pages 2 and 3 — the
-    ones with the pitch/goal diagrams, skipping the page 1 comparison chart
-    and any later pages), splits each page into separate chart blocks, and
-    returns up to max_images base64 PNGs."""
+def extract_pdf_images(pdf_path, zoom=3, pages=(0, 1), max_images=4):
+    """Reads only the given 0-indexed pages (default: PDF pages 1 and 2 — the
+    ones with the pitch/goal diagrams), splits each page into separate chart
+    blocks, and returns up to max_images base64 PNGs."""
     doc = fitz.open(pdf_path)
     blocks = []
     for p in pages:
