@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""
+Update the Winter season data + analysis images directly inside tzr_sam_dashboard.html,
+then commit and push so the published Streamlit site updates.
+
+Usage:
+    python3 update_winter.py
+        (uses default paths below)
+    python3 update_winter.py /path/to/excel.xlsx /path/to/analysis.pdf
+    python3 update_winter.py /path/to/excel.xlsx /path/to/analysis.pdf --no-push
+
+What it does:
+  1. Reads the wide-format LiveTag Excel (one column per game, one row per stat)
+     and rebuilds the Winter season's game list.
+  2. Reads pages 2, 3 and 4 of the PDF, auto-crops each to just the chart
+     (removing the yellow header band, footer and white margins), and attaches
+     them as the analysis images for the MOST RECENT game (last column in the
+     Excel) — overwriting only that game's images, others are kept untouched.
+  3. Patches tzr_sam_dashboard.html in this folder, commits and pushes to GitHub.
+"""
+import sys
+import re
+import json
+import base64
+import io
+import subprocess
+from pathlib import Path
+
+import openpyxl
+import fitz  # PyMuPDF
+from PIL import Image
+import numpy as np
+
+REPO_DIR = Path(__file__).parent
+HTML_PATH = REPO_DIR / "tzr_sam_dashboard.html"
+
+DEFAULT_EXCEL = Path.home() / "Desktop/sam_dashboard/excel_sam.xlsx"
+DEFAULT_PDF = Path.home() / "Desktop/sam_dashboard/untitled.pdf"
+
+# Maps the WINTER schema field -> list of possible column header names in the Excel (first match wins)
+FIELD_MAP = {
+    "pass":        ["PASS SUCCESS", "PASS"],
+    "passFail":    ["PASS FAIL"],
+    "keyPass":     ["KEY PASS"],
+    "shot":        ["Total SHOT", "SHOT"],
+    "shot5m":      ["SHOT 5m"],
+    "shot10m":     ["SHOT 10m"],
+    "shotOT":      ["SHOT ON TARGET"],
+    "goal":        ["GOAL"],
+    "assist":      ["ASSIST"],
+    "dribble":     ["DRIBBLE SUCCESS", "DRIBBLE"],
+    "duel":        ["DUEL WON", "DUEL"],
+    "recovery":    ["RECOVERY"],
+    "lost":        ["BALL LOST", "LOSS"],
+    "intercept":   ["INTERCEPTION"],
+    "pressure":    ["PRESSURE"],
+    "block":       ["BLOCK SHOT", "BLOCK"],
+    "foulWon":     ["FOUL WON"],
+    "foulCom":     ["FOUL COMMITTED"],
+    "counter":     ["COUNTER ATTACK"],
+    "defCover":    ["DEFENSIVE COVER"],
+    "recOppPress": ["RECOVERIES OPP PRESS"],
+}
+
+
+def parse_excel(path):
+    wb = openpyxl.load_workbook(path, data_only=True)
+    ws = wb[wb.sheetnames[0]]
+    rows = list(ws.iter_rows(values_only=True))
+    header = rows[0]
+    games = [g for g in header[1:] if g is not None]
+    stats = {}
+    for row in rows[1:]:
+        if not row or row[0] is None:
+            continue
+        stats[str(row[0]).strip()] = row[1:]
+
+    winter = []
+    for idx, gname in enumerate(games):
+        entry = {"game": gname, "min": 0}
+        for field, candidates in FIELD_MAP.items():
+            val = 0
+            for c in candidates:
+                if c in stats and idx < len(stats[c]) and stats[c][idx] is not None:
+                    val = stats[c][idx]
+                    break
+            entry[field] = val
+        winter.append(entry)
+    return winter
+
+
+def autocrop(img, pad=20, thresh=250):
+    arr = np.array(img.convert("L"))
+    mask = arr < thresh
+    if not mask.any():
+        return img
+    ys, xs = mask.nonzero()
+    top, bottom = max(0, ys.min() - pad), min(img.height, ys.max() + pad)
+    left, right = max(0, xs.min() - pad), min(img.width, xs.max() + pad)
+    return img.crop((left, top, right, bottom))
+
+
+def extract_pdf_images(pdf_path, pages=(1, 2, 3), zoom=3):
+    """pages is 0-indexed; default (1,2,3) = PDF pages 2,3,4."""
+    doc = fitz.open(pdf_path)
+    out = []
+    for p in pages:
+        if p >= doc.page_count:
+            continue
+        pix = doc[p].get_pixmap(matrix=fitz.Matrix(zoom, zoom))
+        img = Image.open(io.BytesIO(pix.tobytes("png")))
+        w, h = img.size
+        header_h = int(h * 62 / 1684)
+        footer_h = int(h * 70 / 1684)
+        sub = img.crop((0, header_h, w, h - footer_h))
+        cropped = autocrop(sub)
+        buf = io.BytesIO()
+        cropped.save(buf, format="PNG")
+        out.append("data:image/png;base64," + base64.b64encode(buf.getvalue()).decode())
+    while len(out) < 4:
+        out.append("")
+    return out[:4]
+
+
+def patch_winter(html, winter):
+    pattern = re.compile(r"let WINTER = \[.*?\];\n")
+    m = pattern.search(html)
+    if not m:
+        raise RuntimeError("Could not find WINTER literal in html")
+    new = "let WINTER = " + json.dumps(winter, ensure_ascii=False) + ";\n"
+    return html[:m.start()] + new + html[m.end():]
+
+
+def patch_image_default(html, varname, key, value):
+    """Update one key inside the `let <varname> = JSON.parse(...) || {...};` default object."""
+    start_marker = f"let {varname}"
+    si = html.index(start_marker)
+    # find the `) || {` that closes JSON.parse(...) and precedes the default object literal
+    close_marker = ") || {"
+    ci = html.index(close_marker, si)
+    oi = ci + len(close_marker) - 1  # position of the opening '{'
+    # the default object literal runs until its matching top-level `};`
+    end = html.index("};\n", oi) + 2  # index just past the ';'
+    obj_literal = html[oi:end - 1]  # from '{' up to and including the matching '}' (no trailing ';')
+    obj = json.loads(obj_literal)
+    obj[key] = value
+    new_literal = json.dumps(obj, ensure_ascii=False) + ";"
+    return html[:oi] + new_literal + html[end - 1:]
+
+
+def git(*args):
+    subprocess.run(["git", *args], cwd=REPO_DIR, check=True)
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    no_push = "--no-push" in sys.argv
+    excel_path = Path(args[0]) if len(args) > 0 else DEFAULT_EXCEL
+    pdf_path = Path(args[1]) if len(args) > 1 else DEFAULT_PDF
+
+    if not excel_path.exists():
+        sys.exit(f"Excel not found: {excel_path}")
+    if not pdf_path.exists():
+        sys.exit(f"PDF not found: {pdf_path}")
+
+    print(f"Reading excel: {excel_path}")
+    winter = parse_excel(excel_path)
+    for g in winter:
+        print(f"  {g['game']}: pass={g['pass']} shot={g['shot']} goal={g['goal']}")
+
+    latest_key = f"g{len(winter)-1}"
+    print(f"Reading PDF pages 2-4: {pdf_path} -> attaching to {winter[-1]['game']} ({latest_key})")
+    images = extract_pdf_images(pdf_path)
+    captions = [
+        "Goal points & pitch points — shots, recoveries, interceptions",
+        "Shot zones & passing lanes (pitch points)",
+        "Full pitch points — passes, duels, recoveries",
+        "",
+    ]
+
+    html = HTML_PATH.read_text(encoding="utf-8")
+    html = patch_winter(html, winter)
+    html = patch_image_default(html, "wImgByGame", latest_key, images)
+    html = patch_image_default(html, "wCapsByGame", latest_key, captions)
+    HTML_PATH.write_text(html, encoding="utf-8")
+    print(f"Patched {HTML_PATH}")
+
+    if no_push:
+        print("Skipping git commit/push (--no-push).")
+        return
+
+    git("add", "tzr_sam_dashboard.html")
+    diff = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=REPO_DIR)
+    if diff.returncode == 0:
+        print("Nothing changed, skipping commit.")
+        return
+    git("commit", "-m", f"Update Winter data and analysis images for {winter[-1]['game']}")
+    git("push", "origin", "main")
+    print("Published! Streamlit will redeploy in 1-2 minutes.")
+
+
+if __name__ == "__main__":
+    main()
