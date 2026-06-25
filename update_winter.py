@@ -114,20 +114,59 @@ def autocrop(img, pad=20, thresh=250):
     return img.crop((left, top, right, bottom))
 
 
-def extract_pdf_images(pdf_path, zoom=3, max_pages=4):
-    """Extracts up to max_pages pages (0-indexed from the start), cropped to just the chart content."""
+def split_chart_blocks(img, gap_thresh=250, min_gap=25):
+    """LiveTag pages always stack exactly two charts (e.g. 'Goal points' above
+    'Pitch points', each with its own title/diagram/legend). Splits the page
+    in two at the blank horizontal band closest to the vertical middle, so
+    each chart becomes its own, larger image — picking the middle gap (rather
+    than just the largest) avoids cutting at title-to-diagram or trailing
+    whitespace gaps near the top/bottom instead of the real chart boundary."""
+    arr = np.array(img.convert("L"))
+    row_has_content = (arr < gap_thresh).any(axis=1)
+    gaps = []
+    start = None
+    for y, has in enumerate(row_has_content):
+        if not has:
+            if start is None:
+                start = y
+        else:
+            if start is not None:
+                gaps.append((start, y))
+                start = None
+    if start is not None:
+        gaps.append((start, len(row_has_content)))
+    h = img.height
+    candidates = [g for g in gaps if g[1] - g[0] >= min_gap and g[0] > 0 and g[1] < h]
+    if not candidates:
+        return [autocrop(img)]
+    mid = h / 2
+    gap_top, gap_bottom = min(candidates, key=lambda g: abs((g[0] + g[1]) / 2 - mid))
+    top_half = img.crop((0, 0, img.width, gap_top))
+    bottom_half = img.crop((0, gap_bottom, img.width, h))
+    return [autocrop(top_half), autocrop(bottom_half)]
+
+
+def extract_pdf_images(pdf_path, zoom=3, pages=(1, 2), max_images=4):
+    """Reads only the given 0-indexed pages (default: PDF pages 2 and 3 — the
+    ones with the pitch/goal diagrams, skipping the page 1 comparison chart
+    and any later pages), splits each page into separate chart blocks, and
+    returns up to max_images base64 PNGs."""
     doc = fitz.open(pdf_path)
-    out = []
-    for p in range(min(doc.page_count, max_pages)):
+    blocks = []
+    for p in pages:
+        if p >= doc.page_count:
+            continue
         pix = doc[p].get_pixmap(matrix=fitz.Matrix(zoom, zoom))
         img = Image.open(io.BytesIO(pix.tobytes("png")))
         w, h = img.size
         header_h = int(h * 62 / 1684)
         footer_h = int(h * 70 / 1684)
         sub = img.crop((0, header_h, w, h - footer_h))
-        cropped = autocrop(sub)
+        blocks.extend(split_chart_blocks(sub))
+    out = []
+    for block in blocks[:max_images]:
         buf = io.BytesIO()
-        cropped.save(buf, format="PNG")
+        block.save(buf, format="PNG")
         out.append("data:image/png;base64," + base64.b64encode(buf.getvalue()).decode())
     while len(out) < 4:
         out.append("")
