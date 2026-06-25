@@ -640,15 +640,6 @@ window.addEventListener('DOMContentLoaded', function(){
     </div>
   </div>
 
-  <div class="analysis-section">
-    <div class="analysis-title">Videos</div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <a href="https://www.youtube.com/playlist?list=PLCiTolkeqpjdu0zgk4ok0wzRsKHx8I0dH" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;background:#111;border-radius:10px;padding:16px 20px;text-decoration:none;color:#fff;font-size:14px;font-weight:600">
-        <span style="background:#FF0000;border-radius:6px;padding:5px 9px;font-size:16px">▶</span>
-        <span>Full video playlist (YouTube)</span>
-      </a>
-    </div>
-  </div>
 
   <!-- 4 ANALYSIS SLOTS WINTER -->
   <div class="analysis-section" id="winter-analysis-section">
@@ -900,6 +891,14 @@ window.addEventListener('DOMContentLoaded', function(){
 
 </div><!-- end training -->
 
+
+<!-- FULL VIDEO PLAYLIST (always visible, site-wide) -->
+<div style="max-width:900px;margin:0 auto 16px;padding:0 16px">
+  <a href="https://www.youtube.com/playlist?list=PLCiTolkeqpjdu0zgk4ok0wzRsKHx8I0dH" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:14px;background:#111;border-radius:12px;padding:22px 26px;text-decoration:none;color:#fff;font-size:18px;font-weight:700">
+    <span style="background:#FF0000;border-radius:8px;padding:8px 13px;font-size:22px">▶</span>
+    <span>Full video playlist - analysis (YouTube)</span>
+  </a>
+</div>
 
 <!-- COACH BUTTON (always visible) -->
 <div class="topbar">
@@ -1324,11 +1323,6 @@ function renderCoachSlots(season){
     if(feedbackSection) feedbackSection.style.display=key?'block':'none';
     imgData = (key && wImgByGame[key]) ? wImgByGame[key] : ["","","",""];
     capsData = (key && wCapsByGame[key]) ? wCapsByGame[key] : ["","","",""];
-    const title=document.querySelector('#season-winter .analysis-title');
-    if(title){
-      const idx=key?parseInt(key.slice(1)):-1;
-      title.textContent = (key && WINTER[idx]) ? 'Match Analysis — '+WINTER[idx].game : 'Match Analysis';
-    }
     renderWinterFeedback();
   } else {
     imgData=season==='summer'?coachImgData:sCoachImgData;
