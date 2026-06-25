@@ -114,14 +114,7 @@ def autocrop(img, pad=20, thresh=250):
     return img.crop((left, top, right, bottom))
 
 
-def split_chart_blocks(img, gap_thresh=250, min_gap=25):
-    """LiveTag pages always stack exactly two charts (e.g. 'Goal points' above
-    'Pitch points', each with its own title/diagram/legend). Splits the page
-    in two at the blank horizontal band closest to the vertical middle, so
-    each chart becomes its own, larger image — picking the middle gap (rather
-    than just the largest) avoids cutting at title-to-diagram or trailing
-    whitespace gaps near the top/bottom instead of the real chart boundary."""
-    arr = np.array(img.convert("L"))
+def find_row_gaps(arr, gap_thresh=250):
     row_has_content = (arr < gap_thresh).any(axis=1)
     gaps = []
     start = None
@@ -135,14 +128,45 @@ def split_chart_blocks(img, gap_thresh=250, min_gap=25):
                 start = None
     if start is not None:
         gaps.append((start, len(row_has_content)))
+    return gaps
+
+
+def drop_isolated_title(img, gap_thresh=250, min_drop_gap=120, max_title_h=220):
+    """LiveTag titles (e.g. 'match 2' / 'Goal points') sit far above the actual
+    diagram, leaving a big blank gap that makes the crop look like 'the whole
+    empty page'. If everything above the first sufficiently large gap is a
+    short title block near the top, drop it and keep only the diagram +
+    legend below."""
+    arr = np.array(img.convert("L"))
+    gaps = find_row_gaps(arr, gap_thresh)
+    big_gap = next((g for g in gaps if g[1] - g[0] >= min_drop_gap), None)
+    if not big_gap:
+        return img
+    lead_height = big_gap[0]  # everything from row 0 up to the start of the big gap
+    if 0 < lead_height <= max_title_h:
+        return img.crop((0, big_gap[1], img.width, img.height))
+    return img
+
+
+def split_chart_blocks(img, gap_thresh=250, min_gap=25):
+    """LiveTag pages always stack exactly two charts (e.g. 'Goal points' above
+    'Pitch points', each with its own title/diagram/legend). Splits the page
+    in two at the blank horizontal band closest to the vertical middle, so
+    each chart becomes its own, larger image — picking the middle gap (rather
+    than just the largest) avoids cutting at title-to-diagram or trailing
+    whitespace gaps near the top/bottom instead of the real chart boundary."""
+    arr = np.array(img.convert("L"))
+    gaps = find_row_gaps(arr, gap_thresh)
     h = img.height
     candidates = [g for g in gaps if g[1] - g[0] >= min_gap and g[0] > 0 and g[1] < h]
     if not candidates:
-        return [autocrop(img)]
+        return [drop_isolated_title(autocrop(img))]
     mid = h / 2
     gap_top, gap_bottom = min(candidates, key=lambda g: abs((g[0] + g[1]) / 2 - mid))
     top_half = img.crop((0, 0, img.width, gap_top))
     bottom_half = img.crop((0, gap_bottom, img.width, h))
+    top_half = drop_isolated_title(autocrop(top_half))
+    bottom_half = drop_isolated_title(autocrop(bottom_half))
     return [autocrop(top_half), autocrop(bottom_half)]
 
 
