@@ -1624,9 +1624,12 @@ function renderTraining(){
         +'<span style="font-size:12px;color:#FF6B00;font-weight:600">Load: '+(s.load||'—')+'</span>'
         +'<span style="font-size:12px;color:#888">'+(s.hours||'—')+' h</span>'
         +'</div>'
-        +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+(s.content||'').replace(/</g,'&lt;')+'</div>'
-        +(s.why?('<div style="margin-top:8px;font-size:12px;color:#888;font-weight:600">Why this training:</div>'
-        +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+s.why.replace(/</g,'&lt;')+'</div>'):'')
+        +'<div style="display:flex;gap:20px;flex-wrap:wrap">'
+        +'<div style="flex:1;min-width:200px"><div style="font-size:12px;color:#888;font-weight:600;margin-bottom:4px">Content</div>'
+        +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+(s.content||'').replace(/</g,'&lt;')+'</div></div>'
+        +(s.why?('<div style="flex:1;min-width:200px"><div style="font-size:12px;color:#888;font-weight:600;margin-bottom:4px">Why this training</div>'
+        +'<div style="font-size:13px;color:#444;white-space:pre-wrap">'+s.why.replace(/</g,'&lt;')+'</div></div>'):'')
+        +'</div>'
         +'</div>'
       )).join('');
     }
