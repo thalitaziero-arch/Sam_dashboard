@@ -5,17 +5,19 @@ then commit and push so the published Streamlit site updates.
 
 Usage:
     python3 update_winter.py
-        (uses default paths below)
-    python3 update_winter.py /path/to/excel.xlsx /path/to/analysis.pdf
-    python3 update_winter.py /path/to/excel.xlsx /path/to/analysis.pdf --no-push
+        (uses the default Excel + scans the default folder for one PDF per game,
+         matched by filename, e.g. "Internationale.pdf" -> the "Internationale" game)
+    python3 update_winter.py /path/to/excel.xlsx /path/to/pdf_folder_or_file
+    python3 update_winter.py ... --no-push
 
 What it does:
   1. Reads the wide-format LiveTag Excel (one column per game, one row per stat)
      and rebuilds the Winter season's game list.
-  2. Reads pages 2, 3 and 4 of the PDF, auto-crops each to just the chart
-     (removing the yellow header band, footer and white margins), and attaches
-     them as the analysis images for the MOST RECENT game (last column in the
-     Excel) — overwriting only that game's images, others are kept untouched.
+  2. For each game, looks for a PDF whose filename matches the game name
+     (spaces/case/punctuation ignored, e.g. "Perth United" <-> "PerthUnited.pdf").
+     Reads up to its first 4 pages, auto-crops each to just the chart (removing
+     the yellow header band, footer and white margins), and attaches them as
+     that game's analysis images — other games' images are left untouched.
   3. Patches tzr_sam_dashboard.html in this folder, commits and pushes to GitHub.
 """
 import sys
@@ -35,7 +37,7 @@ REPO_DIR = Path(__file__).parent
 HTML_PATH = REPO_DIR / "tzr_sam_dashboard.html"
 
 DEFAULT_EXCEL = Path.home() / "Desktop/sam_dashboard/excel_sam.xlsx"
-DEFAULT_PDF = Path.home() / "Desktop/sam_dashboard/untitled.pdf"
+DEFAULT_PDF_DIR = Path.home() / "Desktop/sam_dashboard"
 
 # Maps the WINTER schema field -> list of possible column header names in the Excel (first match wins)
 FIELD_MAP = {
@@ -89,6 +91,18 @@ def parse_excel(path):
     return winter
 
 
+def normalize(name):
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def find_pdf_for_game(pdf_dir, game_name):
+    target = normalize(game_name)
+    for pdf in pdf_dir.glob("*.pdf"):
+        if normalize(pdf.stem) == target:
+            return pdf
+    return None
+
+
 def autocrop(img, pad=20, thresh=250):
     arr = np.array(img.convert("L"))
     mask = arr < thresh
@@ -100,13 +114,11 @@ def autocrop(img, pad=20, thresh=250):
     return img.crop((left, top, right, bottom))
 
 
-def extract_pdf_images(pdf_path, pages=(1, 2, 3), zoom=3):
-    """pages is 0-indexed; default (1,2,3) = PDF pages 2,3,4."""
+def extract_pdf_images(pdf_path, zoom=3, max_pages=4):
+    """Extracts up to max_pages pages (0-indexed from the start), cropped to just the chart content."""
     doc = fitz.open(pdf_path)
     out = []
-    for p in pages:
-        if p >= doc.page_count:
-            continue
+    for p in range(min(doc.page_count, max_pages)):
         pix = doc[p].get_pixmap(matrix=fitz.Matrix(zoom, zoom))
         img = Image.open(io.BytesIO(pix.tobytes("png")))
         w, h = img.size
@@ -145,43 +157,55 @@ def patch_image_default(html, varname, key, value):
     obj = json.loads(obj_literal)
     obj[key] = value
     new_literal = json.dumps(obj, ensure_ascii=False) + ";"
-    return html[:oi] + new_literal + html[end - 1:]
+    return html[:oi] + new_literal + html[end:]
 
 
 def git(*args):
     subprocess.run(["git", *args], cwd=REPO_DIR, check=True)
 
 
+CAPTION_TEMPLATES = [
+    "Goal points & pitch points — shots, recoveries, interceptions",
+    "Shot zones & passing lanes (pitch points)",
+    "Full pitch points — passes, duels, recoveries",
+    "Additional match analysis",
+]
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     no_push = "--no-push" in sys.argv
     excel_path = Path(args[0]) if len(args) > 0 else DEFAULT_EXCEL
-    pdf_path = Path(args[1]) if len(args) > 1 else DEFAULT_PDF
+    pdf_arg = Path(args[1]) if len(args) > 1 else DEFAULT_PDF_DIR
 
     if not excel_path.exists():
         sys.exit(f"Excel not found: {excel_path}")
-    if not pdf_path.exists():
-        sys.exit(f"PDF not found: {pdf_path}")
+    if not pdf_arg.exists():
+        sys.exit(f"PDF path not found: {pdf_arg}")
+    pdf_dir = pdf_arg if pdf_arg.is_dir() else pdf_arg.parent
 
     print(f"Reading excel: {excel_path}")
     winter = parse_excel(excel_path)
     for g in winter:
         print(f"  {g['game']}: pass={g['pass']} shot={g['shot']} goal={g['goal']}")
 
-    latest_key = f"g{len(winter)-1}"
-    print(f"Reading PDF pages 2-4: {pdf_path} -> attaching to {winter[-1]['game']} ({latest_key})")
-    images = extract_pdf_images(pdf_path)
-    captions = [
-        "Goal points & pitch points — shots, recoveries, interceptions",
-        "Shot zones & passing lanes (pitch points)",
-        "Full pitch points — passes, duels, recoveries",
-        "",
-    ]
-
     html = HTML_PATH.read_text(encoding="utf-8")
     html = patch_winter(html, winter)
-    html = patch_image_default(html, "wImgByGame", latest_key, images)
-    html = patch_image_default(html, "wCapsByGame", latest_key, captions)
+
+    updated_games = []
+    for idx, g in enumerate(winter):
+        key = f"g{idx}"
+        pdf_path = pdf_arg if (pdf_arg.is_file() and len(winter) == 1) else find_pdf_for_game(pdf_dir, g["game"])
+        if not pdf_path:
+            print(f"  (no PDF found for '{g['game']}', skipping images)")
+            continue
+        print(f"  Reading {pdf_path.name} -> attaching images to {g['game']} ({key})")
+        images = extract_pdf_images(pdf_path)
+        captions = list(CAPTION_TEMPLATES)
+        html = patch_image_default(html, "wImgByGame", key, images)
+        html = patch_image_default(html, "wCapsByGame", key, captions)
+        updated_games.append(g["game"])
+
     HTML_PATH.write_text(html, encoding="utf-8")
     print(f"Patched {HTML_PATH}")
 
@@ -194,7 +218,8 @@ def main():
     if diff.returncode == 0:
         print("Nothing changed, skipping commit.")
         return
-    git("commit", "-m", f"Update Winter data and analysis images for {winter[-1]['game']}")
+    msg = "Update Winter data" + (f" and images for {', '.join(updated_games)}" if updated_games else "")
+    git("commit", "-m", msg)
     git("push", "origin", "main")
     print("Published! Streamlit will redeploy in 1-2 minutes.")
 
