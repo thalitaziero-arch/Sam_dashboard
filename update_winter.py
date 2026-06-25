@@ -256,10 +256,10 @@ def git(*args):
 
 
 CAPTION_TEMPLATES = [
-    "Goal points & pitch points — shots, recoveries, interceptions",
-    "Shot zones & passing lanes (pitch points)",
-    "Full pitch points — passes, duels, recoveries",
-    "Additional match analysis",
+    "Goals and positioning of shots on goal",
+    "Recoveries and interceptions",
+    "Where the shots are coming from",
+    "Passes, duels and recoveries across the pitch",
 ]
 
 
