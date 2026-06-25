@@ -148,12 +148,24 @@ def drop_isolated_title(img, gap_thresh=250, min_drop_gap=120, max_title_h=220):
     return img
 
 
+def is_colorful(rgb_arr, top, bottom):
+    """True if the row band [top:bottom) contains saturated (non-black/white/gray)
+    pixels — i.e. it's a colour legend swatch, not plain black title text."""
+    band = rgb_arr[top:bottom]
+    mx = band.max(axis=2).astype(int)
+    mn = band.min(axis=2).astype(int)
+    saturated = (mx - mn) > 40
+    return bool(saturated.any())
+
+
 def drop_isolated_trailing_title(img, gap_thresh=250, min_gap=12, max_title_h=45):
     """Mirror of drop_isolated_title: removes a stray title line (e.g. the next
     chart's 'Pitch points' heading) that bled into the bottom of this crop —
     a short text-sized run at the very end, separated by even a small gap
-    from the real content (legend/diagram) above it."""
+    from the real content (legend/diagram) above it. Skips real colour
+    legends (e.g. 'INTERCEPTION / RECOVERY' swatches), which are kept."""
     arr = np.array(img.convert("L"))
+    rgb_arr = np.array(img.convert("RGB"))
     row_has_content = (arr < gap_thresh).any(axis=1)
     runs = []
     start = None
@@ -170,6 +182,8 @@ def drop_isolated_trailing_title(img, gap_thresh=250, min_gap=12, max_title_h=45
     if len(runs) < 2:
         return img
     last_run = runs[-1]
+    if is_colorful(rgb_arr, last_run[0], last_run[1]):
+        return img
     if last_run[1] - last_run[0] <= max_title_h:
         prev_run_end = runs[-2][1]
         if last_run[0] - prev_run_end >= min_gap:
