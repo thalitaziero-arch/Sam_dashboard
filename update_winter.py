@@ -148,6 +148,35 @@ def drop_isolated_title(img, gap_thresh=250, min_drop_gap=120, max_title_h=220):
     return img
 
 
+def drop_isolated_trailing_title(img, gap_thresh=250, min_gap=12, max_title_h=45):
+    """Mirror of drop_isolated_title: removes a stray title line (e.g. the next
+    chart's 'Pitch points' heading) that bled into the bottom of this crop —
+    a short text-sized run at the very end, separated by even a small gap
+    from the real content (legend/diagram) above it."""
+    arr = np.array(img.convert("L"))
+    row_has_content = (arr < gap_thresh).any(axis=1)
+    runs = []
+    start = None
+    for y, has in enumerate(row_has_content):
+        if has:
+            if start is None:
+                start = y
+        else:
+            if start is not None:
+                runs.append((start, y))
+                start = None
+    if start is not None:
+        runs.append((start, len(row_has_content)))
+    if len(runs) < 2:
+        return img
+    last_run = runs[-1]
+    if last_run[1] - last_run[0] <= max_title_h:
+        prev_run_end = runs[-2][1]
+        if last_run[0] - prev_run_end >= min_gap:
+            return img.crop((0, 0, img.width, prev_run_end))
+    return img
+
+
 def split_chart_blocks(img, gap_thresh=250, min_gap=25):
     """LiveTag pages always stack exactly two charts (e.g. 'Goal points' above
     'Pitch points', each with its own title/diagram/legend). Splits the page
@@ -160,13 +189,13 @@ def split_chart_blocks(img, gap_thresh=250, min_gap=25):
     h = img.height
     candidates = [g for g in gaps if g[1] - g[0] >= min_gap and g[0] > 0 and g[1] < h]
     if not candidates:
-        return [drop_isolated_title(autocrop(img))]
+        return [drop_isolated_trailing_title(drop_isolated_title(autocrop(img)))]
     mid = h / 2
     gap_top, gap_bottom = min(candidates, key=lambda g: abs((g[0] + g[1]) / 2 - mid))
     top_half = img.crop((0, 0, img.width, gap_top))
     bottom_half = img.crop((0, gap_bottom, img.width, h))
-    top_half = drop_isolated_title(autocrop(top_half))
-    bottom_half = drop_isolated_title(autocrop(bottom_half))
+    top_half = drop_isolated_trailing_title(drop_isolated_title(autocrop(top_half)))
+    bottom_half = drop_isolated_trailing_title(drop_isolated_title(autocrop(bottom_half)))
     return [autocrop(top_half), autocrop(bottom_half)]
 
 
