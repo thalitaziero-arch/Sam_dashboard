@@ -77,7 +77,8 @@ input,select,textarea,button{font-family:'gibson','Gill Sans','Gill Sans MT','Ca
 .analysis-section{margin-bottom:14px}
 .analysis-title{font-size:15px;font-weight:700;color:#222;margin-bottom:10px;padding-left:12px;border-left:3px solid #FF6B00}
 .analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-#winter-analysis-section .analysis-grid{grid-template-columns:1fr}
+#winter-analysis-section .analysis-grid,
+#summer-analysis-section .analysis-grid{grid-template-columns:1fr}
 .analysis-slot{background:#FAF9F7;border:.5px solid #E0DDD8;border-radius:10px;overflow:hidden}
 .slot-img{width:100%;height:220px;object-fit:contain;display:block;background:#f5f5f3}
 .slot-empty{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#f5f5f3;color:#ccc}
@@ -350,7 +351,8 @@ canvas{
   grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
   gap:14px !important;
 }
-#winter-analysis-section .analysis-grid{
+#winter-analysis-section .analysis-grid,
+#summer-analysis-section .analysis-grid{
   grid-template-columns:1fr !important;
 }
 .analysis-slot{
@@ -500,7 +502,7 @@ window.addEventListener('DOMContentLoaded', function(){
 
 
   <!-- 4 ANALYSIS SLOTS -->
-  <div class="analysis-section">
+  <div class="analysis-section" id="summer-analysis-section">
     <div class="analysis-title">Match Analysis</div>
     <div class="analysis-grid">
       <div class="analysis-slot" id="slot-0"><div class="slot-empty" id="empty-0"><svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" width="90" height="54">
