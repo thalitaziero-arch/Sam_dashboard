@@ -411,6 +411,7 @@ canvas{
   }
 }
 
+#season-soccer .ccrd canvas{height:280px !important;max-height:280px !important;}
 </style>
 
 <script>
@@ -793,10 +794,13 @@ window.addEventListener('DOMContentLoaded', function(){
   </div>
 
   <!-- CHARTS ROW 3: Intercepts + Dribbles + Recoveries -->
-  <div class="charts3">
+  <div class="charts2">
     <div class="ccrd"><div class="cttl">Interceptions per game</div><canvas id="sc-intercept"></canvas></div>
     <div class="ccrd"><div class="cttl">Dribbles — attempted vs successful</div><canvas id="sc-dribble"></canvas></div>
+  </div>
+  <div class="charts2" style="grid-template-columns:1fr 1fr">
     <div class="ccrd"><div class="cttl">Recoveries — own half vs opp half</div><canvas id="sc-rec"></canvas></div>
+    <div style="display:none"></div>
   </div>
 
   <!-- CHARTS ROW 4: Pass direction + Passes to final third -->
