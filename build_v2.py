@@ -65,7 +65,9 @@ body{font-family:'Archivo',system-ui,sans-serif;color:var(--ink);background:var(
 .slide.bone{background:var(--bone)}
 .slide.dark{background:var(--ink);color:var(--paper)}
 .wrap{max-width:var(--max);margin:0 auto;padding:0 40px;width:100%}
-.slide>.wrap{position:relative;z-index:1;margin-top:auto;margin-bottom:auto}
+.slide>.wrap{position:relative;z-index:1;margin-top:auto;margin-bottom:auto;min-width:0}
+.chart-box,.chart-single,.tbl,.an-grid,.hl-grid,.chart-grid{min-width:0}
+.chart-box canvas,.chart-single canvas{max-width:100%}
 
 /* BACKGROUND LINES */
 .bg-lines{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
@@ -217,12 +219,28 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
   .scoreboard{grid-template-columns:repeat(2,1fr)}
   .scoreboard .cell{border-bottom:1px solid var(--line-dark);padding-bottom:22px}
   .hl-grid,.an-grid,.chart-grid{grid-template-columns:1fr}
-  .tbl-futsal .t-row,.tbl-soccer .t-row{grid-template-columns:1fr 1fr 1fr;font-size:12px;gap:8px 6px;padding:14px 0}
-  .t-row .gm{grid-column:1/-1;padding-bottom:8px}
+  /* game tables become cards: one per match, stat chips inside */
+  .tbl{border-top:none;margin-top:18px}
+  .tbl-futsal .t-row,.tbl-soccer .t-row{
+    grid-template-columns:repeat(3,1fr);gap:12px 8px;padding:16px 16px 14px;
+    border:1px solid var(--line);background:var(--paper);margin-bottom:12px}
+  .bone .tbl .t-row{background:#FAFAF8}
+  .t-row .gm{grid-column:1/-1;padding-bottom:10px;margin-bottom:2px;
+    border-bottom:1px solid var(--line);font-size:15px}
+  .t-row .dt{margin-top:2px}
   .t-row.head{display:none}
-  .t-row .v{font-size:19px;display:block;line-height:1.1}
+  .t-row .v{font-size:22px;display:block;line-height:1}
   .t-row .v::after{content:attr(data-k);display:block;font-family:'Archivo',sans-serif;font-size:9px;
-    font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-top:1px}
+    font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-top:3px}
+  /* charts: JS wraps the canvas in .chart-holder and sizes that; the
+     !important here beats the inline height Chart.js writes on each resize */
+  .chart-holder canvas,
+  #soccer-data .chart-holder canvas,
+  #soccer-data .chart-box .chart-holder canvas,
+  #soccer-data .chart-single .chart-holder canvas{
+    height:100% !important;width:100% !important;max-width:none !important}
+  .chart-box,.chart-single{padding:20px 16px 16px}
+  .chart-note{gap:18px;justify-content:flex-start}
   .an-fig img{height:190px}
   .nav{padding:0 14px;height:60px}
   .nav-btn{padding:9px 13px;font-size:11px}
@@ -429,19 +447,36 @@ function cell(v,label,hot){
   const cls = v===0 ? 'v zero' : (hot ? 'v hot' : 'v');
   return '<span class="'+cls+'" data-k="'+label+'">'+v+'</span>';
 }
+const MOBILE = window.matchMedia('(max-width:700px)').matches;
+const CHARTS = [];
+
 function mk(id, labels, datasets){
   const el=document.getElementById(id); if(!el) return;
-  new Chart(el,{
+  // On phones, flip to horizontal bars: 33 matches read as a vertical list
+  // instead of unreadable hair-thin columns.
+  if(MOBILE){
+    const rowPx = datasets.length>1 ? 26 : 20;
+    const h = Math.max(200, labels.length * rowPx + 56);
+    const holder = document.createElement('div');
+    holder.className = 'chart-holder';
+    holder.style.cssText = 'position:relative;width:100%;height:'+h+'px';
+    el.replaceWith(holder); holder.appendChild(el);
+    el.style.setProperty('height', '100%', 'important');
+    el.style.setProperty('width', '100%', 'important');
+  }
+  const cat = {grid:{display:false},ticks:{font:{size:MOBILE?11:10},color:'#5C5C60',
+               maxRotation:MOBILE?0:60,minRotation:MOBILE?0:60,autoSkip:false}};
+  const val = {grid:{color:'rgba(0,0,0,.07)'},ticks:{font:{size:11.5},color:'#5C5C60',precision:0},beginAtZero:true};
+  const chart = new Chart(el,{
     type:'bar', data:{labels, datasets},
     options:{
+      indexAxis: MOBILE ? 'y' : 'x',
       responsive:true, maintainAspectRatio:false,
       plugins:{legend:{display:datasets.length>1,labels:{boxWidth:11,font:{size:11.5},color:'#333',padding:12}}},
-      scales:{
-        x:{grid:{display:false},ticks:{font:{size:10},color:'#5C5C60',maxRotation:60,minRotation:60,autoSkip:false}},
-        y:{grid:{color:'rgba(0,0,0,.07)'},ticks:{font:{size:11.5},color:'#5C5C60',precision:0},beginAtZero:true}
-      }
+      scales: MOBILE ? {x:val, y:cat} : {x:cat, y:val}
     }
   });
+  CHARTS.push(chart);
 }
 
 const SUM = FUTSAL.filter(f=>f.s==='Summer');
@@ -510,7 +545,11 @@ function go(n){
   prevBtn.disabled=i===0; nextBtn.disabled=i===slides.length-1;
   const act=SECTIONS.findIndex(s=>i>=s.start&&i<s.end);
   tabs.forEach((t,n)=>t.classList.toggle('on',n===act));
+  requestAnimationFrame(()=>{
+    CHARTS.forEach(c=>{ if(slides[i].contains(c.canvas)) c.resize(); });
+  });
 }
+window.addEventListener('resize',()=>CHARTS.forEach(c=>c.resize()));
 prevBtn.onclick=()=>go(i-1); nextBtn.onclick=()=>go(i+1);
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')go(i+1);
