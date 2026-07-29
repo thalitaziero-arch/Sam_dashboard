@@ -9,6 +9,8 @@ from pathlib import Path
 
 OUT = Path(__file__).parent / "sam_brady_v2.html"
 A = json.load(open("/tmp/sam_assets.json"))
+TRAINING = json.load(open("/tmp/training_for_deck.json"))
+PLAYLIST = "https://www.youtube.com/playlist?list=PLCiTolkeqpjdu0zgk4ok0wzRsKHx8I0dH"
 
 WINTER_GAMES = ["Internationale", "Perth United", "SPA"]
 
@@ -206,6 +208,35 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
 .lead-row .nm{flex:1;min-width:0;font-size:13.5px;font-weight:600}
 .lead-row .dt{display:block;font-size:11px;color:var(--grey);font-weight:400}
 .lead-row .val{font-family:'Anton',sans-serif;font-size:22px;color:var(--orange);flex:none}
+
+/* MY AREA — PIN GATE + TRAINING LOG */
+.pin-box{margin-top:26px;max-width:340px}
+#pin-input{width:100%;font-family:'Anton',sans-serif;font-size:34px;letter-spacing:.5em;
+  text-align:center;padding:16px 12px;border:1px solid var(--line);background:var(--paper);
+  color:var(--ink);outline:none}
+#pin-input:focus{border-color:var(--orange)}
+.pin-btn{width:100%;margin-top:12px;background:var(--orange);color:#fff;border:none;
+  font-family:'Archivo',sans-serif;font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;padding:15px;cursor:pointer}
+.pin-btn:hover{background:#e55f00}
+.pin-err{margin-top:12px;font-size:13.5px;color:#C0392B;min-height:20px}
+
+.yt-link{display:flex;align-items:center;gap:14px;background:var(--ink);color:#fff;
+  padding:20px 24px;text-decoration:none;font-size:16px;font-weight:700;margin-top:24px}
+.yt-link:hover{background:#222}
+.yt-ico{background:#FF0000;padding:7px 12px;font-size:18px;flex:none}
+
+.tsession{border:1px solid var(--line);background:var(--paper);padding:20px 22px;margin-bottom:14px}
+.tsession .thead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  flex-wrap:wrap;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.tsession .tdate{font-family:'Anton',sans-serif;font-size:20px}
+.tsession .tmeta{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--grey)}
+.tsession .tmeta b{color:var(--orange);font-family:'Anton',sans-serif;font-size:15px;margin-right:5px}
+.tcols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.tcols h4{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--grey);margin-bottom:7px}
+.tcols p{font-size:14px;color:var(--steel);white-space:pre-wrap;line-height:1.55}
+@media(max-width:700px){.tcols{grid-template-columns:1fr;gap:16px}}
 
 /* CHARTS */
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
@@ -419,6 +450,34 @@ SLIDES = [
           <p>312 accurate futsal passes and 3.57 xG in soccer. Consistently involved in build-up rather than only at the end of moves.</p></div>
       </div>
     </div>'''),
+
+    # 9 · MY AREA (PIN)
+    ('paper', WAVES, '''<div class="wrap">
+      <div class="eyebrow">Private</div>
+      <h2 class="display">My Area</h2>
+
+      <div id="pin-gate">
+        <p class="lede">Enter your PIN to see your training log and analysis videos.</p>
+        <div class="pin-box">
+          <input id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*"
+                 maxlength="4" placeholder="••••" autocomplete="off">
+          <button id="pin-go" class="pin-btn">Enter</button>
+          <p id="pin-err" class="pin-err"></p>
+        </div>
+      </div>
+
+      <div id="pin-content" hidden>
+        <p class="lede">Hi Sam — everything from your sessions in one place.</p>
+
+        <a class="yt-link" href="''' + PLAYLIST + '''" target="_blank" rel="noopener">
+          <span class="yt-ico">&#9654;</span>
+          <span>Full video playlist — match analysis (YouTube)</span>
+        </a>
+
+        <div class="sec-rule"><span>Training Log</span></div>
+        <div id="tlog"></div>
+      </div>
+    </div>'''),
 ]
 
 STAT_ROW_CSS = """
@@ -446,7 +505,7 @@ slides_html = "\n".join(
     for i, (cls, bg, body) in enumerate(SLIDES)
 )
 
-SECTIONS = [("Overview", 0, 2), ("Summer", 2, 3), ("Winter", 3, 4), ("Soccer", 4, 6), ("Defensive", 6, 7), ("Attacking", 7, 8)]
+SECTIONS = [("Overview", 0, 2), ("Summer", 2, 3), ("Winter", 3, 4), ("Soccer", 4, 6), ("Defensive", 6, 7), ("Attacking", 7, 8), ("My Area", 8, 9)]
 sections_js = ",\n  ".join(f'{{label:"{l}",start:{s},end:{e}}}' for l, s, e in SECTIONS)
 
 JS_DATA = """
@@ -467,7 +526,7 @@ const FUTSAL=[
 const SOCCER=[{"g":"Subiaco 2:0","d":"2026-07-19","min":97,"goal":0,"pass":18,"passFail":8,"intercept":1,"recOwn":3,"recOpp":9,"duelT":29,"duelW":13,"shot":2,"shotOT":1},{"g":"Perth RedStar 2:0","d":"2026-07-12","min":48,"goal":0,"pass":12,"passFail":7,"intercept":5,"recOwn":0,"recOpp":4,"duelT":14,"duelW":3,"shot":1,"shotOT":1},{"g":"West NTC 1:2","d":"2026-07-04","min":30,"goal":0,"pass":5,"passFail":5,"intercept":1,"recOwn":2,"recOpp":2,"duelT":10,"duelW":5,"shot":0,"shotOT":0},{"g":"Perth 2:1","d":"2026-06-28","min":20,"goal":0,"pass":3,"passFail":4,"intercept":1,"recOwn":1,"recOpp":0,"duelT":1,"duelW":1,"shot":1,"shotOT":0},{"g":"Sorrento 3:4","d":"2026-06-21","min":95,"goal":0,"pass":21,"passFail":2,"intercept":3,"recOwn":2,"recOpp":4,"duelT":6,"duelW":5,"shot":2,"shotOT":0},{"g":"Balcatta 3:3","d":"2026-05-15","min":46,"goal":0,"pass":4,"passFail":4,"intercept":0,"recOwn":2,"recOpp":0,"duelT":6,"duelW":3,"shot":0,"shotOT":0},{"g":"West NTC 0:1","d":"2026-05-03","min":96,"goal":0,"pass":24,"passFail":14,"intercept":11,"recOwn":5,"recOpp":6,"duelT":31,"duelW":11,"shot":1,"shotOT":0},{"g":"Perth RedStar 1:2","d":"2026-04-26","min":93,"goal":1,"pass":18,"passFail":12,"intercept":7,"recOwn":6,"recOpp":2,"duelT":8,"duelW":3,"shot":1,"shotOT":1},{"g":"Sorrento 4:0","d":"2026-04-19","min":56,"goal":0,"pass":23,"passFail":3,"intercept":3,"recOwn":1,"recOpp":5,"duelT":13,"duelW":8,"shot":3,"shotOT":2},{"g":"Perth 0:0","d":"2026-04-10","min":95,"goal":0,"pass":23,"passFail":6,"intercept":3,"recOwn":0,"recOpp":1,"duelT":14,"duelW":6,"shot":0,"shotOT":0},{"g":"Subiaco 2:1","d":"2026-04-05","min":94,"goal":0,"pass":19,"passFail":9,"intercept":7,"recOwn":2,"recOpp":4,"duelT":26,"duelW":14,"shot":1,"shotOT":0},{"g":"UWA Nedlands 5:0","d":"2026-03-29","min":14,"goal":0,"pass":3,"passFail":1,"intercept":1,"recOwn":0,"recOpp":1,"duelT":2,"duelW":2,"shot":0,"shotOT":0},{"g":"Perth RedStar 2:2","d":"2026-03-22","min":49,"goal":0,"pass":9,"passFail":5,"intercept":1,"recOwn":2,"recOpp":1,"duelT":6,"duelW":4,"shot":1,"shotOT":0},{"g":"Perth 4:2","d":"2025-08-24","min":11,"goal":0,"pass":0,"passFail":1,"intercept":2,"recOwn":1,"recOpp":0,"duelT":0,"duelW":0,"shot":0,"shotOT":0},{"g":"Subiaco 1:2","d":"2025-08-16","min":46,"goal":0,"pass":12,"passFail":5,"intercept":2,"recOwn":1,"recOpp":1,"duelT":4,"duelW":4,"shot":0,"shotOT":0},{"g":"Perth RedStar 4:1","d":"2025-08-13","min":7,"goal":0,"pass":2,"passFail":1,"intercept":0,"recOwn":0,"recOpp":0,"duelT":1,"duelW":0,"shot":0,"shotOT":0},{"g":"UWA Nedlands 1:1","d":"2025-08-10","min":63,"goal":0,"pass":25,"passFail":11,"intercept":2,"recOwn":3,"recOpp":4,"duelT":20,"duelW":9,"shot":0,"shotOT":0},{"g":"Murdoch Uni 0:4","d":"2025-08-03","min":95,"goal":0,"pass":9,"passFail":5,"intercept":3,"recOwn":3,"recOpp":1,"duelT":12,"duelW":6,"shot":3,"shotOT":1},{"g":"West NTC 5:1","d":"2025-07-27","min":89,"goal":0,"pass":18,"passFail":10,"intercept":7,"recOwn":10,"recOpp":1,"duelT":9,"duelW":5,"shot":0,"shotOT":0},{"g":"Perth 0:4","d":"2025-07-06","min":48,"goal":0,"pass":15,"passFail":5,"intercept":1,"recOwn":4,"recOpp":3,"duelT":8,"duelW":7,"shot":0,"shotOT":0},{"g":"UWA Nedlands 12:2","d":"2025-06-25","min":92,"goal":1,"pass":20,"passFail":12,"intercept":3,"recOwn":4,"recOpp":4,"duelT":24,"duelW":14,"shot":2,"shotOT":1},{"g":"Subiaco 3:5","d":"2025-06-15","min":13,"goal":0,"pass":1,"passFail":1,"intercept":0,"recOwn":0,"recOpp":0,"duelT":1,"duelW":1,"shot":0,"shotOT":0},{"g":"Murdoch Uni 4:0","d":"2025-06-07","min":93,"goal":0,"pass":16,"passFail":11,"intercept":5,"recOwn":2,"recOpp":3,"duelT":16,"duelW":2,"shot":1,"shotOT":0},{"g":"West NTC 2:4","d":"2025-06-01","min":7,"goal":0,"pass":0,"passFail":0,"intercept":0,"recOwn":0,"recOpp":0,"duelT":1,"duelW":0,"shot":0,"shotOT":0},{"g":"Perth RedStar 2:3","d":"2025-05-24","min":20,"goal":0,"pass":4,"passFail":3,"intercept":1,"recOwn":2,"recOpp":0,"duelT":8,"duelW":7,"shot":0,"shotOT":0},{"g":"Perth 3:0","d":"2025-05-04","min":13,"goal":0,"pass":1,"passFail":2,"intercept":0,"recOwn":1,"recOpp":0,"duelT":2,"duelW":0,"shot":0,"shotOT":0},{"g":"Subiaco 1:3","d":"2025-04-27","min":68,"goal":0,"pass":19,"passFail":11,"intercept":3,"recOwn":1,"recOpp":2,"duelT":13,"duelW":6,"shot":2,"shotOT":0},{"g":"UWA Nedlands 1:4","d":"2025-04-20","min":49,"goal":0,"pass":14,"passFail":4,"intercept":3,"recOwn":5,"recOpp":2,"duelT":9,"duelW":5,"shot":0,"shotOT":0},{"g":"Murdoch Uni 0:4","d":"2025-04-13","min":35,"goal":0,"pass":7,"passFail":5,"intercept":0,"recOwn":2,"recOpp":0,"duelT":7,"duelW":3,"shot":0,"shotOT":0},{"g":"Perth RedStar 1:2","d":"2025-03-30","min":9,"goal":0,"pass":2,"passFail":1,"intercept":1,"recOwn":0,"recOpp":0,"duelT":2,"duelW":2,"shot":0,"shotOT":0},{"g":"Balcatta 3:0","d":"2025-03-23","min":7,"goal":0,"pass":1,"passFail":1,"intercept":1,"recOwn":1,"recOpp":0,"duelT":0,"duelW":0,"shot":0,"shotOT":0},{"g":"Perth 0:4","d":"2024-06-29","min":86,"goal":0,"pass":4,"passFail":3,"intercept":0,"recOwn":2,"recOpp":2,"duelT":16,"duelW":9,"shot":1,"shotOT":0},{"g":"Balcatta 3:0","d":"2024-06-21","min":81,"goal":0,"pass":16,"passFail":5,"intercept":0,"recOwn":1,"recOpp":2,"duelT":23,"duelW":9,"shot":0,"shotOT":0}];
 """
 
-JS_MAIN = """
+JS_MAIN = r"""
 const O='#FF6B00', Osoft='rgba(255,107,0,.30)', INK='#0B0B0C', GREY='#C4C4C6';
 Chart.defaults.font.family="'Archivo',system-ui,sans-serif";
 Chart.defaults.color='#5C5C60';
@@ -604,6 +663,55 @@ function mkBlocks(id, labels, data, colour){
   }));
 }
 
+/* MY AREA */
+const TRAINING = __TRAINING_JSON__;
+const PIN = '2109';
+
+function renderTraining(){
+  const el = document.getElementById('tlog');
+  if(!el) return;
+  const sorted = [...TRAINING].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  el.innerHTML = sorted.map(t=>{
+    // the spreadsheet cells carry stray markdown (**bold**, leading '* ')
+    const esc = v => (v||'')
+      .replace(/</g,'&lt;')
+      .replace(/\*\*/g,'')
+      .replace(/^[ \t]*\*[ \t]+/gm,'')
+      .replace(/\n{3,}/g,'\n\n')
+      .trim();
+    return '<div class="tsession">'
+      +'<div class="thead"><span class="tdate">'+esc(t.date)+'</span>'
+      +'<span class="tmeta"><b>'+esc(t.load)+'</b>load</span>'
+      +'<span class="tmeta"><b>'+esc(t.hours)+'</b>duration</span></div>'
+      +'<div class="tcols">'
+      +'<div><h4>Content</h4><p>'+esc(t.content)+'</p></div>'
+      +(t.why?'<div><h4>Why this training</h4><p>'+esc(t.why)+'</p></div>':'')
+      +'</div></div>';
+  }).join('');
+}
+
+(function pinGate(){
+  const input=document.getElementById('pin-input');
+  const btn=document.getElementById('pin-go');
+  const err=document.getElementById('pin-err');
+  const gate=document.getElementById('pin-gate');
+  const content=document.getElementById('pin-content');
+  if(!input) return;
+
+  function unlock(){
+    gate.hidden=true; content.hidden=false;
+    try{ sessionStorage.setItem('tzr_myarea','1'); }catch(e){}
+    renderTraining();
+  }
+  function check(){
+    if(input.value.trim()===PIN){ err.textContent=''; unlock(); }
+    else { err.textContent='Wrong PIN — try again.'; input.value=''; input.focus(); }
+  }
+  btn.onclick=check;
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
+  try{ if(sessionStorage.getItem('tzr_myarea')==='1') unlock(); }catch(e){}
+})();
+
 /* NAV */
 const slides=[...document.querySelectorAll('.slide')];
 const dotsEl=document.getElementById('dots'), tabsEl=document.getElementById('tabs');
@@ -690,5 +798,6 @@ const SECTIONS=[
 </html>
 """
 
+html = html.replace("__TRAINING_JSON__", json.dumps(TRAINING, ensure_ascii=False))
 OUT.write_text(html, encoding="utf-8")
 print(f"Built {OUT} — {len(SLIDES)} slides, {len(html)/1024/1024:.2f} MB")
