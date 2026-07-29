@@ -132,121 +132,13 @@ EXTRA_CSS = """
 }
 """
 
-# ---------------------------------------------------------------- slides
-SLIDES = [
-    # 1 · HERO
-    ('dark hero-slide', ARCS, f'''<div class="wrap hero">
-      <div class="hero-meta"><span>Sam Brady</span><span>2024 – 2026</span></div>
-      <h1 class="display">SAM<br><em>BRADY</em></h1>
-      <p class="origin">Perth · '08</p>
-      <p class="strap">Performance Dashboard</p>
-      <div class="clubs">
-        <div class="club"><span class="club-k">Soccer · current club</span>
-          <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span>
-          <span class="club-p">LAMF · LAMR</span></div>
-        <div class="club"><span class="club-k">Futsal · current club</span>
-          <span class="club-n">Wolves</span><span class="club-c">Social Supa-Liga</span>
-          <span class="club-p">Fixo · Ala</span></div>
-      </div>
-      <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
-    </div>'''),
 
-    # 2 · OVERVIEW
-    ('dark', WAVES, '''<div class="wrap">
-      <div class="eyebrow">Career at a Glance</div>
-      <h2 class="display">Combined Output</h2>
-      <p class="lede">11 futsal games and 33 soccer games tracked across 2024–2026.</p>
-      <div class="scoreboard">
-        <div class="cell"><span class="num">44</span><span class="k">Total Games</span><span class="lbl">11 futsal<br>33 soccer</span></div>
-        <div class="cell"><span class="num">9</span><span class="k">Goals</span><span class="lbl">7 futsal<br>2 soccer</span></div>
-        <div class="cell"><span class="num">8</span><span class="k">Assists</span><span class="lbl">8 futsal<br>0 soccer</span></div>
-        <div class="cell"><span class="num">97</span><span class="k">Interceptions</span><span class="lbl">19 futsal<br>78 soccer</span></div>
-        <div class="cell"><span class="num">200</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>133 soccer</span></div>
-      </div>
-    </div>'''),
-
-    # 3 · CAREER RECORD
-    ('bone', ARCS, f'''<div class="wrap">
-      <div class="eyebrow">Career Record</div>
-      <h2 class="display">Clubs &amp; Seasons</h2>
-      <p class="lede">Senior record across NPL Women soccer and futsal.</p>
-
-      <div class="c-tot">
-        <div class="t"><span class="tk">Seasons</span><span class="tv">3</span></div>
-        <div class="t"><span class="tk">Clubs</span><span class="tv">4</span></div>
-        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">1673</span></div>
-        <div class="t"><span class="tk">Soccer apps</span><span class="tv">33</span></div>
-      </div>
-
-      <div class="sec-rule"><span>Soccer · NPL Women</span></div>
-      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_SOCCER)}</div>
-
-      <div class="sec-rule"><span>Futsal</span></div>
-      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_FUTSAL)}</div>
-    </div>'''),
-
-    # 4 · DEFENSIVE PROFILE
-    ('dark', WAVES, '''<div class="wrap">
-      <div class="eyebrow">Player Profile</div>
-      <h2 class="display">Defensive<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Ball-winning is the strongest part of her game — top-5 in WA NPLW across every defensive metric tracked.</p>
-      <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">#1</span><span class="prof-k">Defensive Duels</span>
-          <span class="prof-v">10.77</span><span class="prof-u">per 90 · 69% won</span></div>
-        <div class="prof"><span class="prof-rank">#4</span><span class="prof-k">Recoveries</span>
-          <span class="prof-v">13.79</span><span class="prof-u">per 90 · 200 total</span></div>
-        <div class="prof"><span class="prof-rank">#5</span><span class="prof-k">Interceptions</span>
-          <span class="prof-v">6.86</span><span class="prof-u">per 90 · 97 total</span></div>
-      </div>
-      <div style="margin-top:34px;border-top:2px solid var(--orange)">
-        <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
-          <p>167 duels won from 349 contested in soccer, plus 7 in futsal. <strong>#1 in WA NPLW</strong> for defensive duels per 90 — she competes for everything.</p></div>
-        <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
-          <p>133 soccer + 67 futsal recoveries. Peaks of 10 in a single match. Works both halves of the pitch, not just behind the ball.</p></div>
-        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
-          <p>78 in soccer, 19 in futsal. Best game: 11 interceptions vs West NTC. Reads passing lanes early rather than reacting late.</p></div>
-      </div>
-    </div>'''),
-
-    # 5 · ATTACKING PROFILE
-    ('dark', ARCS, '''<div class="wrap">
-      <div class="eyebrow">Player Profile</div>
-      <h2 class="display">Attacking<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Sharpest in futsal — 7 goals in 3 Winter games at 1.1 shots on target per goal.</p>
-      <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">9</span><span class="prof-k">Goals</span>
-          <span class="prof-v">7+2</span><span class="prof-u">futsal + soccer</span></div>
-        <div class="prof"><span class="prof-rank">8</span><span class="prof-k">Assists</span>
-          <span class="prof-v">6+2</span><span class="prof-u">summer + winter</span></div>
-        <div class="prof"><span class="prof-rank">1.1</span><span class="prof-k">Shot Efficiency</span>
-          <span class="prof-v">35%</span><span class="prof-u">on-target rate</span></div>
-      </div>
-      <div style="margin-top:34px;border-top:2px solid var(--orange)">
-        <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
-          <p>Winter 2026: <strong>7 goals from 8 shots on target</strong> — 1.1 shots on target per goal. Ruthless once the chance is created.</p></div>
-        <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
-          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists across both futsal seasons. She generates chances for herself and others.</p></div>
-        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
-          <p>312 accurate futsal passes and 3.57 xG in soccer. Consistently involved in build-up rather than only at the end of moves.</p></div>
-      </div>
-    </div>'''),
-
-    # 6 · MY AREA (PIN) — the detailed season data lives here
-    ('paper', WAVES, f'''<div class="wrap">
-      <div class="eyebrow">Private</div>
-      <h2 class="display">My Area</h2>
-
-      <div id="pin-gate">
-        <p class="lede">Enter your PIN to see your training log, season data and analysis videos.</p>
-        <div class="pin-box">
-          <input id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*"
-                 maxlength="4" placeholder="&bull;&bull;&bull;&bull;" autocomplete="off">
-          <button id="pin-go" class="pin-btn">Enter</button>
-          <p id="pin-err" class="pin-err"></p>
-        </div>
-      </div>
-
-      <div id="pin-content" hidden>
+# --------------------------------------------------- private (encrypted)
+# Everything below the PIN. Built as normal HTML here, then AES-GCM encrypted
+# at the bottom of this file so it never ships readable. Training data rides
+# along inside a JSON <script> tag so it is encrypted too.
+PRIVATE_HTML = f"""<script type="application/json" id="training-data">__TRAINING_JSON__</script>
+<script type="application/json" id="season-data">__SEASON_JSON__</script>
         <p class="lede">Hi Sam — everything from your sessions and seasons in one place.</p>
 
         <a class="yt-link" href="{PLAYLIST}" target="_blank" rel="noopener">
@@ -261,9 +153,7 @@ SLIDES = [
           <button class="sub-tab" data-p="p-soccer">Soccer</button>
         </div>
 
-        <div class="sub-panel on" id="p-train">
-          <div id="tlog"></div>
-        </div>
+        <div class="sub-panel on" id="p-train"><div id="tlog"></div></div>
 
         <div class="sub-panel" id="p-summer">
           <div class="hl-grid">
@@ -302,9 +192,119 @@ SLIDES = [
           <div class="lead" id="sm-lead-int"></div>
           <div class="sec-rule"><span>Game by Game</span></div>
           <div class="tbl tbl-soccer" id="tbl-soccer"></div>
+        </div>"""
+
+# ---------------------------------------------------------------- slides
+SLIDES = [
+    # 1 · HERO
+    ('dark hero-slide', ARCS, f"""<div class="wrap hero">
+      <div class="hero-meta"><span>Sam Brady</span><span>2024 – 2026</span></div>
+      <h1 class="display">SAM<br><em>BRADY</em></h1>
+      <p class="origin">Perth · '08</p>
+      <p class="strap">Performance Dashboard</p>
+      <div class="clubs">
+        <div class="club"><span class="club-k">Soccer · current club</span>
+          <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span>
+          <span class="club-p">LAMF · LAMR</span></div>
+        <div class="club"><span class="club-k">Futsal · current club</span>
+          <span class="club-n">Wolves</span><span class="club-c">Social Supa-Liga</span>
+          <span class="club-p">Fixo · Ala</span></div>
+      </div>
+      <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
+    </div>"""),
+
+    # 2 · OVERVIEW
+    ('dark', WAVES, """<div class="wrap">
+      <div class="eyebrow">Career at a Glance</div>
+      <h2 class="display">Combined Output</h2>
+      <p class="lede">11 futsal games and 33 soccer games tracked across 2024–2026.</p>
+      <div class="scoreboard">
+        <div class="cell"><span class="num">44</span><span class="k">Total Games</span><span class="lbl">11 futsal<br>33 soccer</span></div>
+        <div class="cell"><span class="num">9</span><span class="k">Goals</span><span class="lbl">7 futsal<br>2 soccer</span></div>
+        <div class="cell"><span class="num">8</span><span class="k">Assists</span><span class="lbl">8 futsal<br>0 soccer</span></div>
+        <div class="cell"><span class="num">97</span><span class="k">Interceptions</span><span class="lbl">19 futsal<br>78 soccer</span></div>
+        <div class="cell"><span class="num">200</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>133 soccer</span></div>
+      </div>
+    </div>"""),
+
+    # 3 · CAREER RECORD
+    ('bone', ARCS, f"""<div class="wrap">
+      <div class="eyebrow">Career Record</div>
+      <h2 class="display">Clubs &amp; Seasons</h2>
+      <p class="lede">Senior record across NPL Women soccer and futsal.</p>
+      <div class="c-tot">
+        <div class="t"><span class="tk">Seasons</span><span class="tv">3</span></div>
+        <div class="t"><span class="tk">Clubs</span><span class="tv">4</span></div>
+        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">1673</span></div>
+        <div class="t"><span class="tk">Soccer apps</span><span class="tv">33</span></div>
+      </div>
+      <div class="sec-rule"><span>Soccer · NPL Women</span></div>
+      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_SOCCER)}</div>
+      <div class="sec-rule"><span>Futsal</span></div>
+      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_FUTSAL)}</div>
+    </div>"""),
+
+    # 4 · DEFENSIVE PROFILE
+    ('dark', WAVES, """<div class="wrap">
+      <div class="eyebrow">Player Profile</div>
+      <h2 class="display">Defensive<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
+      <p class="lede">Ball-winning is the strongest part of her game — top-5 in WA NPLW across every defensive metric tracked.</p>
+      <div class="prof-grid">
+        <div class="prof"><span class="prof-rank">#1</span><span class="prof-k">Defensive Duels</span>
+          <span class="prof-v">10.77</span><span class="prof-u">per 90 · 69% won</span></div>
+        <div class="prof"><span class="prof-rank">#4</span><span class="prof-k">Recoveries</span>
+          <span class="prof-v">13.79</span><span class="prof-u">per 90 · 200 total</span></div>
+        <div class="prof"><span class="prof-rank">#5</span><span class="prof-k">Interceptions</span>
+          <span class="prof-v">6.86</span><span class="prof-u">per 90 · 97 total</span></div>
+      </div>
+      <div style="margin-top:34px;border-top:2px solid var(--orange)">
+        <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
+          <p>167 duels won from 349 contested in soccer, plus 7 in futsal. <strong>#1 in WA NPLW</strong> for defensive duels per 90 — she competes for everything.</p></div>
+        <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
+          <p>133 soccer + 67 futsal recoveries. Peaks of 10 in a single match. Works both halves of the pitch, not just behind the ball.</p></div>
+        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
+          <p>78 in soccer, 19 in futsal. Best game: 11 interceptions vs West NTC. Reads passing lanes early rather than reacting late.</p></div>
+      </div>
+    </div>"""),
+
+    # 5 · ATTACKING PROFILE
+    ('dark', ARCS, """<div class="wrap">
+      <div class="eyebrow">Player Profile</div>
+      <h2 class="display">Attacking<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
+      <p class="lede">Sharpest in futsal — 7 goals in 3 Winter games at 1.1 shots on target per goal.</p>
+      <div class="prof-grid">
+        <div class="prof"><span class="prof-rank">9</span><span class="prof-k">Goals</span>
+          <span class="prof-v">7+2</span><span class="prof-u">futsal + soccer</span></div>
+        <div class="prof"><span class="prof-rank">8</span><span class="prof-k">Assists</span>
+          <span class="prof-v">6+2</span><span class="prof-u">summer + winter</span></div>
+        <div class="prof"><span class="prof-rank">1.1</span><span class="prof-k">Shot Efficiency</span>
+          <span class="prof-v">35%</span><span class="prof-u">on-target rate</span></div>
+      </div>
+      <div style="margin-top:34px;border-top:2px solid var(--orange)">
+        <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
+          <p>Winter 2026: <strong>7 goals from 8 shots on target</strong> — 1.1 shots on target per goal. Ruthless once the chance is created.</p></div>
+        <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
+          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists across both futsal seasons. She generates chances for herself and others.</p></div>
+        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
+          <p>312 accurate futsal passes and 3.57 xG in soccer. Consistently involved in build-up rather than only at the end of moves.</p></div>
+      </div>
+    </div>"""),
+
+    # 6 · MY AREA — locked; contents are decrypted into #pin-content
+    ('paper', WAVES, """<div class="wrap">
+      <div class="eyebrow">Private</div>
+      <h2 class="display">My Area</h2>
+      <div id="pin-gate">
+        <p class="lede">Enter your PIN to see your training log, season data and analysis videos.</p>
+        <div class="pin-box">
+          <input id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*"
+                 maxlength="8" placeholder="&bull;&bull;&bull;&bull;" autocomplete="off">
+          <button id="pin-go" class="pin-btn">Enter</button>
+          <p id="pin-err" class="pin-err"></p>
         </div>
       </div>
-    </div>'''),
+      <div id="pin-content" hidden></div>
+    </div>"""),
 ]
 
 SECTIONS = [("Overview", 0, 2), ("Career", 2, 3), ("Defensive", 3, 4),
@@ -327,17 +327,14 @@ function cell(v,label,hot){
   const cls = v===0 ? 'v zero' : (hot ? 'v hot' : 'v');
   return '<span class="'+cls+'" data-k="'+label+'">'+v+'</span>';
 }
-function sizeHolder(el, rows, series){
-  const rowPx = series>1 ? 26 : 20;
-  const h = Math.max(200, rows*rowPx + 56);
-  const holder=document.createElement('div');
-  holder.className='chart-holder';
-  holder.style.cssText='position:relative;width:100%;height:'+h+'px';
-  el.replaceWith(holder); holder.appendChild(el);
-}
 function mk(id, labels, datasets){
   const el=document.getElementById(id); if(!el) return;
-  if(MOBILE) sizeHolder(el, labels.length, datasets.length);
+  if(MOBILE){
+    const h = Math.max(200, labels.length*(datasets.length>1?26:20) + 56);
+    const holder=document.createElement('div');
+    holder.style.cssText='position:relative;width:100%;height:'+h+'px';
+    el.replaceWith(holder); holder.appendChild(el);
+  }
   const cat = {grid:{display:false},ticks:{font:{size:MOBILE?11:10},color:'#5C5C60',
                maxRotation:MOBILE?0:60,minRotation:MOBILE?0:60,autoSkip:false}};
   const val = {grid:{color:'rgba(0,0,0,.07)'},ticks:{font:{size:11.5},color:'#5C5C60',precision:0},beginAtZero:true};
@@ -351,7 +348,6 @@ function mk(id, labels, datasets){
 function mkBlocks(id, labels, data, colour){
   const el=document.getElementById(id); if(!el) return;
   const holder=document.createElement('div');
-  holder.className='chart-holder';
   holder.style.cssText='position:relative;width:100%;height:210px';
   el.replaceWith(holder); holder.appendChild(el);
   CHARTS.push(new Chart(el,{
@@ -362,28 +358,37 @@ function mkBlocks(id, labels, data, colour){
   }));
 }
 
-/* ---- MY AREA: built lazily, only once the PIN is accepted ---- */
-const TRAINING = __TRAINING_JSON__;
-const PIN = '2109';
-let areaBuilt = false;
+/* ---- MY AREA: the payload is encrypted; the PIN is the decryption key ---- */
+const ENC = __ENCRYPTED_BLOB__;
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+
+async function decryptArea(pin){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin),
+    'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt:b64(ENC.salt), iterations:ENC.iter, hash:'SHA-256'},
+    base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+  const plain = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(ENC.nonce)}, key, b64(ENC.data));
+  return new TextDecoder().decode(plain);
+}
 
 function buildArea(){
-  if(areaBuilt) return; areaBuilt = true;
-
-  // training log
+  const TRAINING = JSON.parse(document.getElementById('training-data').textContent);
+  const SEASON = JSON.parse(document.getElementById('season-data').textContent);
+  const FUTSAL = SEASON.futsal, SOCCER = SEASON.soccer;
   const esc = v => (v||'')
     .replace(/</g,'&lt;').replace(/\*\*/g,'')
     .replace(/^[ \t]*\*[ \t]+/gm,'').replace(/\n{3,}/g,'\n\n').trim();
-  const sorted = [...TRAINING].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  document.getElementById('tlog').innerHTML = sorted.map(t=>
-    '<div class="tsession"><div class="thead"><span class="tdate">'+esc(t.date)+'</span>'
-    +'<span class="tmeta"><b>'+esc(t.load)+'</b>load</span>'
-    +'<span class="tmeta"><b>'+esc(t.hours)+'</b>duration</span></div><div class="tcols">'
-    +'<div><h4>Content</h4><p>'+esc(t.content)+'</p></div>'
-    +(t.why?'<div><h4>Why this training</h4><p>'+esc(t.why)+'</p></div>':'')
-    +'</div></div>').join('');
 
-  // futsal tables + charts
+  document.getElementById('tlog').innerHTML =
+    [...TRAINING].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(t=>
+      '<div class="tsession"><div class="thead"><span class="tdate">'+esc(t.date)+'</span>'
+      +'<span class="tmeta"><b>'+esc(t.load)+'</b>load</span>'
+      +'<span class="tmeta"><b>'+esc(t.hours)+'</b>duration</span></div><div class="tcols">'
+      +'<div><h4>Content</h4><p>'+esc(t.content)+'</p></div>'
+      +(t.why?'<div><h4>Why this training</h4><p>'+esc(t.why)+'</p></div>':'')
+      +'</div></div>').join('');
+
   const SUM = FUTSAL.filter(f=>f.s==='Summer'), WIN = FUTSAL.filter(f=>f.s==='Winter');
   const FHEAD = '<div class="t-row head"><span>Game</span><span>Goals</span><span>Assists</span><span>Shots</span><span>Passes</span><span>Recov.</span><span>Intercept</span></div>';
   const fRows = arr => arr.map(f=>'<div class="t-row"><span class="gm">'+f.g+'</span>'
@@ -402,7 +407,6 @@ function buildArea(){
   mk('wi-def',WIL,[{label:'Recoveries',data:WIN.map(f=>f.rec),backgroundColor:O,borderRadius:2},
                    {label:'Interceptions',data:WIN.map(f=>f.int),backgroundColor:INK,borderRadius:2}]);
 
-  // soccer detail — season summary, block averages, best matches, full table
   const SR=[...SOCCER].reverse();
   const sum=f=>SR.reduce((a,g)=>a+f(g),0), rec=g=>g.recOwn+g.recOpp;
   document.getElementById('sm-totals').innerHTML = [
@@ -435,17 +439,15 @@ function buildArea(){
       +cell(s.min,'Min')+cell(s.goal,'Goals',true)+cell(s.shot,'Shots')+cell(s.pass,'Passes')
       +cell(s.duelW,'Duels W')+cell(s.recOwn+s.recOpp,'Recov.')+cell(s.intercept,'Intercept')+'</div>').join('');
 
+  document.querySelectorAll('.sub-tab').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('.sub-tab').forEach(b=>b.classList.toggle('on', b===btn));
+      document.querySelectorAll('.sub-panel').forEach(p=>p.classList.toggle('on', p.id===btn.dataset.p));
+      requestAnimationFrame(()=>CHARTS.forEach(c=>c.resize()));
+    };
+  });
   requestAnimationFrame(()=>CHARTS.forEach(c=>c.resize()));
 }
-
-/* sub-tabs inside My Area */
-document.querySelectorAll('.sub-tab').forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll('.sub-tab').forEach(b=>b.classList.toggle('on', b===btn));
-    document.querySelectorAll('.sub-panel').forEach(p=>p.classList.toggle('on', p.id===btn.dataset.p));
-    requestAnimationFrame(()=>CHARTS.forEach(c=>c.resize()));
-  };
-});
 
 (function pinGate(){
   const input=document.getElementById('pin-input');
@@ -454,18 +456,24 @@ document.querySelectorAll('.sub-tab').forEach(btn=>{
   const gate=document.getElementById('pin-gate');
   const content=document.getElementById('pin-content');
   if(!input) return;
-  function unlock(){
-    gate.hidden=true; content.hidden=false;
-    try{ sessionStorage.setItem('tzr_myarea','1'); }catch(e){}
-    buildArea();
+
+  async function open(pin, remember){
+    if(!pin) return;
+    btn.disabled=true; err.style.color=''; err.textContent='Unlocking…';
+    try{
+      content.innerHTML = await decryptArea(pin);
+      gate.hidden=true; content.hidden=false; err.textContent='';
+      if(remember){ try{ sessionStorage.setItem('tzr_pin', pin); }catch(e){} }
+      buildArea();
+    }catch(e){
+      err.textContent='Wrong PIN — try again.';
+      input.value=''; input.focus();
+      try{ sessionStorage.removeItem('tzr_pin'); }catch(e2){}
+    }finally{ btn.disabled=false; }
   }
-  function check(){
-    if(input.value.trim()===PIN){ err.textContent=''; unlock(); }
-    else { err.textContent='Wrong PIN — try again.'; input.value=''; input.focus(); }
-  }
-  btn.onclick=check;
-  input.addEventListener('keydown',e=>{ if(e.key==='Enter') check(); });
-  try{ if(sessionStorage.getItem('tzr_myarea')==='1') unlock(); }catch(e){}
+  btn.onclick=()=>open(input.value.trim(), true);
+  input.addEventListener('keydown',e=>{ if(e.key==='Enter') open(input.value.trim(), true); });
+  try{ const saved=sessionStorage.getItem('tzr_pin'); if(saved) open(saved, false); }catch(e){}
 })();
 
 /* NAV */
@@ -545,7 +553,6 @@ html = f"""<!DOCTYPE html>
 </div>
 
 <script>
-{JS_DATA}
 const SECTIONS=[
   {sections_js}
 ];
@@ -555,6 +562,18 @@ const SECTIONS=[
 </html>
 """
 
-html = html.replace("__TRAINING_JSON__", json.dumps(TRAINING, ensure_ascii=False))
+# Encrypt the private payload with the PIN before it ever reaches the file.
+from encrypt_area import encrypt
+PIN = "2109"
+season = {
+    "futsal": json.loads(re.sub(r"([{,])(\w+):", r'\1"\2":', _grab(r"const FUTSAL=(\[.*?\]);"))),
+    "soccer": json.loads(_grab(r"const SOCCER=(\[.*?\]);")),
+}
+private_filled = (PRIVATE_HTML
+    .replace("__TRAINING_JSON__", json.dumps(TRAINING, ensure_ascii=False))
+    .replace("__SEASON_JSON__", json.dumps(season, ensure_ascii=False)))
+html = html.replace("__ENCRYPTED_BLOB__", json.dumps(encrypt(private_filled, PIN)))
+
 OUT.write_text(html, encoding="utf-8")
 print(f"Built {OUT} — {len(SLIDES)} slides, {len(html)/1024/1024:.2f} MB")
+print(f"Private payload encrypted: {len(private_filled)} chars -> AES-GCM, PBKDF2 x600k")
