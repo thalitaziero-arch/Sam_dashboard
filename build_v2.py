@@ -310,7 +310,7 @@ SLIDES = [
     ('dark hero-slide', ARCS, f'''<div class="wrap hero">
       <div class="hero-meta"><span>Sam Brady</span><span>2024 – 2026</span></div>
       <h1 class="display">SAM<br><em>BRADY</em></h1>
-      <p class="strap">Performance Dashboard · Futsal &amp; Soccer · TZR Futsal Coaching &amp; Fremantle City</p>
+      <p class="strap">Performance Dashboard</p>
       <div class="clubs">
         <div class="club"><span class="club-k">Soccer · current club</span>
           <span class="club-n">Fremantle City</span><span class="club-p">LAMF · LAMR</span></div>
