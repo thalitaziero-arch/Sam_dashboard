@@ -155,17 +155,29 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
 .tbl-futsal .t-row{grid-template-columns:1.7fr repeat(6,1fr)}
 .tbl-soccer .t-row{grid-template-columns:1.9fr repeat(7,1fr)}
 
+/* RESPONSIVE SWAP + OPTION-B BLOCKS */
+.only-narrow{display:none}
+.blk-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.blk{border:1px solid var(--line);background:var(--paper);padding:16px 16px 14px;min-width:0}
+.blk span{display:block}
+.blk .bk{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--grey)}
+.blk .bv{font-family:'Anton',sans-serif;font-size:32px;color:var(--orange);line-height:1.1;margin:5px 0 2px}
+.blk .bu{font-size:11.5px;color:var(--steel);line-height:1.35}
+.lead{border-top:1px solid var(--line);margin-top:10px}
+.lead-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.lead-row .pos{font-family:'Anton',sans-serif;font-size:15px;color:var(--grey);width:22px;flex:none}
+.lead-row .nm{flex:1;min-width:0;font-size:13.5px;font-weight:600}
+.lead-row .dt{display:block;font-size:11px;color:var(--grey);font-weight:400}
+.lead-row .val{font-family:'Anton',sans-serif;font-size:22px;color:var(--orange);flex:none}
+
 /* CHARTS */
 .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
 .chart-box{border:1px solid var(--line);background:var(--paper);padding:22px 24px 18px}
-.chart-box .ct{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+.ct{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
   color:var(--steel);display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.chart-box .ct::before{content:"";width:19px;height:3px;background:var(--orange);flex:none}
+.ct::before{content:"";width:19px;height:3px;background:var(--orange);flex:none}
 .chart-box canvas{height:225px !important}
 .chart-single{border:1px solid var(--line);background:var(--paper);padding:26px 30px 22px;margin-top:22px}
-.chart-single .ct{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
-  color:var(--steel);display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.chart-single .ct::before{content:"";width:19px;height:3px;background:var(--orange);flex:none}
 .chart-single canvas{height:300px !important}
 /* soccer data slide: full-width, taller charts (33 bars need the room) */
 #soccer-data .chart-grid{grid-template-columns:1fr;gap:22px}
@@ -196,6 +208,8 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
   .t-row .v{font-size:22px;display:block;line-height:1}
   .t-row .v::after{content:attr(data-k);display:block;font-family:'Archivo',sans-serif;font-size:9px;
     font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-top:3px}
+  .only-wide{display:none}
+  .only-narrow{display:block}
   /* charts: JS wraps the canvas in .chart-holder and sizes that; the
      !important here beats the inline height Chart.js writes on each resize */
   .chart-holder canvas,
@@ -353,15 +367,30 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
       <div class="eyebrow">Soccer · Defensive Actions</div>
       <h2 class="display">Full Season Data</h2>
       <p class="lede">All 33 games · Fremantle City &amp; West NTC.</p>
-      <div class="chart-grid">
-        <div class="chart-box"><div class="ct">Interceptions per game</div><canvas id="s-int"></canvas></div>
-        <div class="chart-box"><div class="ct">Recoveries — own vs opp half</div><canvas id="s-rec"></canvas></div>
+      <!-- desktop: full per-match charts -->
+      <div class="only-wide">
+        <div class="chart-grid">
+          <div class="chart-box"><div class="ct">Interceptions per game</div><canvas id="s-int"></canvas></div>
+          <div class="chart-box"><div class="ct">Recoveries — own vs opp half</div><canvas id="s-rec"></canvas></div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-box"><div class="ct">Duels — total vs won</div><canvas id="s-duel"></canvas></div>
+          <div class="chart-box"><div class="ct">Passes — accurate vs failed</div><canvas id="s-pass"></canvas></div>
+        </div>
+        <div class="chart-single"><div class="ct">Minutes played per game</div><canvas id="s-min"></canvas><div class="chart-note"><span><b>53.5</b>average minutes / game</span><span><b>1765</b>total minutes</span><span><b>97</b>longest match</span></div></div>
       </div>
-      <div class="chart-grid">
-        <div class="chart-box"><div class="ct">Duels — total vs won</div><canvas id="s-duel"></canvas></div>
-        <div class="chart-box"><div class="ct">Passes — accurate vs failed</div><canvas id="s-pass"></canvas></div>
+
+      <!-- phone: season totals, 5-match block averages, best matches -->
+      <div class="only-narrow">
+        <div class="blk-grid" id="sm-totals"></div>
+        <div class="chart-box" style="margin-top:20px"><div class="ct">Interceptions — avg per 5-match block</div><canvas id="sm-int"></canvas></div>
+        <div class="chart-box" style="margin-top:16px"><div class="ct">Recoveries — avg per 5-match block</div><canvas id="sm-rec"></canvas></div>
+        <div class="chart-box" style="margin-top:16px"><div class="ct">Minutes — avg per 5-match block</div><canvas id="sm-min"></canvas></div>
+        <div class="ct" style="margin-top:26px">Best matches — interceptions</div>
+        <div class="lead" id="sm-lead-int"></div>
+        <div class="ct" style="margin-top:26px">Best matches — recoveries</div>
+        <div class="lead" id="sm-lead-rec"></div>
       </div>
-      <div class="chart-single"><div class="ct">Minutes played per game</div><canvas id="s-min"></canvas><div class="chart-note"><span><b>53.5</b>average minutes / game</span><span><b>1765</b>total minutes</span><span><b>97</b>longest match</span></div></div>
       <div class="sec-rule"><span>Game by Game</span></div>
       <div class="tbl tbl-soccer" id="tbl-soccer"></div>
     </div>
@@ -531,14 +560,70 @@ mk('wi-def',WIL,[{label:'Recoveries',data:WIN.map(f=>f.rec),backgroundColor:O,bo
                  {label:'Interceptions',data:WIN.map(f=>f.int),backgroundColor:INK,borderRadius:2}]);
 
 const SR=[...SOCCER].reverse(), SL=SR.map((s,n)=>'Match '+(n+1));
-mk('s-int',SL,[{label:'Interceptions',data:SR.map(s=>s.intercept),backgroundColor:O,borderRadius:2}]);
-mk('s-rec',SL,[{label:'Own half',data:SR.map(s=>s.recOwn),backgroundColor:Osoft,borderRadius:2},
-               {label:'Opp half',data:SR.map(s=>s.recOpp),backgroundColor:O,borderRadius:2}]);
-mk('s-duel',SL,[{label:'Total duels',data:SR.map(s=>s.duelT),backgroundColor:Osoft,borderRadius:2},
-                {label:'Won',data:SR.map(s=>s.duelW),backgroundColor:O,borderRadius:2}]);
-mk('s-pass',SL,[{label:'Accurate',data:SR.map(s=>s.pass),backgroundColor:O,borderRadius:2},
-                {label:'Failed',data:SR.map(s=>s.passFail),backgroundColor:GREY,borderRadius:2}]);
-mk('s-min',SL,[{label:'Minutes',data:SR.map(s=>s.min),backgroundColor:INK,borderRadius:2}]);
+
+if(!MOBILE){
+  mk('s-int',SL,[{label:'Interceptions',data:SR.map(s=>s.intercept),backgroundColor:O,borderRadius:2}]);
+  mk('s-rec',SL,[{label:'Own half',data:SR.map(s=>s.recOwn),backgroundColor:Osoft,borderRadius:2},
+                 {label:'Opp half',data:SR.map(s=>s.recOpp),backgroundColor:O,borderRadius:2}]);
+  mk('s-duel',SL,[{label:'Total duels',data:SR.map(s=>s.duelT),backgroundColor:Osoft,borderRadius:2},
+                  {label:'Won',data:SR.map(s=>s.duelW),backgroundColor:O,borderRadius:2}]);
+  mk('s-pass',SL,[{label:'Accurate',data:SR.map(s=>s.pass),backgroundColor:O,borderRadius:2},
+                  {label:'Failed',data:SR.map(s=>s.passFail),backgroundColor:GREY,borderRadius:2}]);
+  mk('s-min',SL,[{label:'Minutes',data:SR.map(s=>s.min),backgroundColor:INK,borderRadius:2}]);
+} else {
+  // Phone view: 33 per-match bars are unreadable, so summarise the season —
+  // totals, 5-match block averages, and the standout games.
+  const sum=(f)=>SR.reduce((a,g)=>a+f(g),0);
+  const rec=(g)=>g.recOwn+g.recOpp;
+  const totals=[
+    ['Interceptions', sum(g=>g.intercept), (sum(g=>g.intercept)/SR.length).toFixed(1)+' per game'],
+    ['Recoveries',    sum(rec),            (sum(rec)/SR.length).toFixed(1)+' per game'],
+    ['Minutes',       sum(g=>g.min),       (sum(g=>g.min)/SR.length).toFixed(1)+' per game'],
+    ['Duels won',     sum(g=>g.duelW),     'of '+sum(g=>g.duelT)+' contested']
+  ];
+  document.getElementById('sm-totals').innerHTML = totals.map(([k,v,u])=>
+    '<div class="blk"><span class="bk">'+k+'</span><span class="bv">'+v+'</span><span class="bu">'+u+'</span></div>'
+  ).join('');
+
+  const CH=5, blocks=[];
+  for(let i=0;i<SR.length;i+=CH){
+    const part=SR.slice(i,i+CH);
+    const mean=f=>+(part.reduce((a,g)=>a+f(g),0)/part.length).toFixed(1);
+    blocks.push({lbl:'M'+(i+1)+'–'+(i+part.length), int:mean(g=>g.intercept), rec:mean(rec), min:mean(g=>g.min)});
+  }
+  const BL=blocks.map(b=>b.lbl);
+  mkBlocks('sm-int', BL, blocks.map(b=>b.int), O);
+  mkBlocks('sm-rec', BL, blocks.map(b=>b.rec), O);
+  mkBlocks('sm-min', BL, blocks.map(b=>b.min), INK);
+
+  leaders('sm-lead-int', g=>g.intercept);
+  leaders('sm-lead-rec', rec);
+
+  function leaders(id, f){
+    const top=SR.map((g,n)=>({...g,n:n+1})).sort((a,b)=>f(b)-f(a)).slice(0,5);
+    document.getElementById(id).innerHTML = top.map((g,i)=>
+      '<div class="lead-row"><span class="pos">'+(i+1)+'</span>'
+      +'<span class="nm">'+g.g+'<span class="dt">Match '+g.n+' · '+g.d+'</span></span>'
+      +'<span class="val">'+f(g)+'</span></div>').join('');
+  }
+}
+
+// Compact vertical-bar chart for the phone block summaries (only 7 bars, so
+// upright columns stay readable).
+function mkBlocks(id, labels, data, colour){
+  const el=document.getElementById(id); if(!el) return;
+  const holder=document.createElement('div');
+  holder.className='chart-holder';
+  holder.style.cssText='position:relative;width:100%;height:210px';
+  el.replaceWith(holder); holder.appendChild(el);
+  CHARTS.push(new Chart(el,{
+    type:'bar',
+    data:{labels, datasets:[{data, backgroundColor:colour, borderRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45,minRotation:45}},
+              y:{grid:{color:'rgba(0,0,0,.07)'},ticks:{font:{size:11}},beginAtZero:true}}}
+  }));
+}
 
 /* NAV */
 const slides=[...document.querySelectorAll('.slide')];
