@@ -140,6 +140,16 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
   max-width:56ch;margin-bottom:38px}
 .tzr-logo{height:52px;width:auto;display:block}
 
+/* CURRENT CLUBS */
+.clubs{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+.club{border:1px solid var(--line-dark);padding:16px 22px 18px;min-width:190px}
+.club span{display:block}
+.club-k{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--orange);margin-bottom:8px}
+.club-n{font-family:'Anton',sans-serif;font-size:24px;color:#fff;line-height:1.05}
+.club-p{font-size:12.5px;color:rgba(255,255,255,.55);margin-top:3px;letter-spacing:.06em}
+@media(max-width:700px){.clubs{flex-direction:column;gap:10px}.club{min-width:0}}
+
 /* SCOREBOARD */
 .scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:40px;
   border-top:1px solid var(--line-dark)}
@@ -298,9 +308,15 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
 SLIDES = [
     # 1 · HERO
     ('dark hero-slide', ARCS, f'''<div class="wrap hero">
-      <div class="hero-meta"><span>Sam Brady</span><span>Midfielder / Winger</span><span>2024 – 2026</span></div>
+      <div class="hero-meta"><span>Sam Brady</span><span>2024 – 2026</span></div>
       <h1 class="display">SAM<br><em>BRADY</em></h1>
       <p class="strap">Performance Dashboard · Futsal &amp; Soccer · TZR Futsal Coaching &amp; Fremantle City</p>
+      <div class="clubs">
+        <div class="club"><span class="club-k">Soccer · current club</span>
+          <span class="club-n">Fremantle City</span><span class="club-p">LAMF · LAMR</span></div>
+        <div class="club"><span class="club-k">Futsal · current club</span>
+          <span class="club-n">Wolves</span><span class="club-p">Fixo · Ala</span></div>
+      </div>
       <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
     </div>'''),
 
