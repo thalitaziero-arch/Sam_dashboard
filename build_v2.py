@@ -138,6 +138,8 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
 .hero h1 em{font-style:normal;color:var(--orange)}
 .hero .strap{font-size:clamp(15px,1.7vw,18px);font-weight:600;color:rgba(255,255,255,.78);
   max-width:56ch;margin-bottom:38px}
+.origin{font-size:13px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,.55);margin-bottom:12px}
 .tzr-logo{height:52px;width:auto;display:block}
 
 /* CURRENT CLUBS */
@@ -147,7 +149,9 @@ h2.display{font-size:clamp(28px,3.8vw,46px)}
 .club-k{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
   color:var(--orange);margin-bottom:8px}
 .club-n{font-family:'Anton',sans-serif;font-size:24px;color:#fff;line-height:1.05}
-.club-p{font-size:12.5px;color:rgba(255,255,255,.55);margin-top:3px;letter-spacing:.06em}
+.club-c{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,.75);margin-top:5px}
+.club-p{font-size:12.5px;color:rgba(255,255,255,.5);margin-top:3px;letter-spacing:.06em}
 @media(max-width:700px){.clubs{flex-direction:column;gap:10px}.club{min-width:0}}
 
 /* SCOREBOARD */
@@ -310,12 +314,13 @@ SLIDES = [
     ('dark hero-slide', ARCS, f'''<div class="wrap hero">
       <div class="hero-meta"><span>Sam Brady</span><span>2024 – 2026</span></div>
       <h1 class="display">SAM<br><em>BRADY</em></h1>
+      <p class="origin">Perth · 08</p>
       <p class="strap">Performance Dashboard</p>
       <div class="clubs">
         <div class="club"><span class="club-k">Soccer · current club</span>
-          <span class="club-n">Fremantle City</span><span class="club-p">LAMF · LAMR</span></div>
+          <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span><span class="club-p">LAMF · LAMR</span></div>
         <div class="club"><span class="club-k">Futsal · current club</span>
-          <span class="club-n">Wolves</span><span class="club-p">Fixo · Ala</span></div>
+          <span class="club-n">Wolves</span><span class="club-c">Social Supa-Liga</span><span class="club-p">Fixo · Ala</span></div>
       </div>
       <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
     </div>'''),
