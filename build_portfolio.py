@@ -89,6 +89,47 @@ def career_rows(rows):
 CAREER_HEAD = ('<div class="c-row head"><span>Season</span><span>Club</span><span>Position</span>'
                '<span>Minutes</span><span>Apps</span><span>Starts</span><span>Goals</span></div>')
 
+
+# ------------------------------------------------------------ honours
+# Year -> list of (headline, detail, is_major)
+HONOURS = [
+    ("2026", [
+        ("Fremantle FC — WNPL", "Signed as a paid contracted player (outdoor)", True),
+        ("Australia — FAF Women's team", "Won the Indonesian Cup in Surabaya (June)", True),
+        ("Offered a training opportunity in Spain", "", True),
+        ("National Futsal Championships — Gold Coast", "Open Women's team (January)", False),
+    ]),
+    ("2025", [
+        ("Cockburn Wolves — WSFL", "Returned to the club", False),
+        ("WNPL with NTC (Football West)", "U18s squad (outdoor)", False),
+    ]),
+    ("2024", [
+        ("Australia U16 — Captain", "Selected through AFA from club championships for the International "
+         "Futsal Alliance World Championships in Malaysia", True),
+        ("Captain — Futsal WA U15 &amp; U16", "State teams", True),
+        ("Futsal WA state teams — U15 &amp; U16", "Also named to play in the Women's Youth Team", False),
+        ("NTC (Football West) U16s", "Playing up in the U21 women's grade", False),
+        ("WA — National Youth Championships", "Selected to represent the state (outdoor)", False),
+    ]),
+    ("2023", [
+        ("League MVP", "Women's B grade — Supa-Liga Summer Season 22/23", True),
+    ]),
+]
+
+
+def honours_html():
+    out = ""
+    for year, items in HONOURS:
+        rows = "".join(
+            f'<div class="h-item{" major" if major else ""}">'
+            f'<span class="h-head">{head}</span>'
+            + (f'<span class="h-det">{det}</span>' if det else "")
+            + "</div>"
+            for head, det, major in items
+        )
+        out += f'<div class="h-year"><span class="h-y">{year}</span><div class="h-items">{rows}</div></div>'
+    return out
+
 # ---------------------------------------------------------------- extra CSS
 EXTRA_CSS = """
 /* CAREER RECORD */
@@ -108,6 +149,36 @@ EXTRA_CSS = """
 .bone .c-tot .t{background:#FAFAF8}
 .c-tot .tk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--grey)}
 .c-tot .tv{font-family:'Anton',sans-serif;font-size:34px;color:var(--orange);line-height:1.1;margin-top:5px;display:block}
+
+/* HONOURS TIMELINE */
+.honours{margin-top:26px;border-top:2px solid var(--ink)}
+.h-year{display:grid;grid-template-columns:110px 1fr;gap:24px;padding:24px 0;
+  border-bottom:1px solid var(--line)}
+.h-year:last-child{border-bottom:none}
+.h-y{font-family:'Anton',sans-serif;font-size:34px;color:var(--orange);line-height:1}
+.h-items{display:flex;flex-direction:column;gap:14px}
+.h-item{padding-left:18px;position:relative}
+.h-item::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;
+  background:var(--line);border-radius:50%}
+.h-item.major::before{background:var(--orange)}
+.h-head{display:block;font-size:15.5px;font-weight:700;line-height:1.35}
+.h-item.major .h-head{font-size:16.5px}
+.h-det{display:block;font-size:13.5px;color:var(--steel);margin-top:3px;line-height:1.45}
+
+/* HIGHLIGHT BADGES */
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+.badge{border:1px solid var(--line-dark);padding:18px 18px 20px}
+.badge span{display:block}
+.badge .b-k{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--orange);margin-bottom:9px}
+.badge .b-v{font-family:'Anton',sans-serif;font-size:19px;color:#fff;line-height:1.15}
+.badge .b-u{font-size:12px;color:rgba(255,255,255,.5);margin-top:5px;line-height:1.4}
+
+@media(max-width:900px){
+  .h-year{grid-template-columns:1fr;gap:12px;padding:20px 0}
+  .h-y{font-size:28px}
+  .badges{grid-template-columns:1fr 1fr;gap:10px}
+}
 
 /* MY AREA SUB-TABS */
 .sub-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 4px}
@@ -225,6 +296,21 @@ SLIDES = [
         <div class="cell"><span class="num">97</span><span class="k">Interceptions</span><span class="lbl">19 futsal<br>78 soccer</span></div>
         <div class="cell"><span class="num">200</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>133 soccer</span></div>
       </div>
+
+      <div class="badges">
+        <div class="badge"><span class="b-k">International</span>
+          <span class="b-v">Australia</span>
+          <span class="b-u">U16 (AFA) &amp; Open Women (FAF)</span></div>
+        <div class="badge"><span class="b-k">Leadership</span>
+          <span class="b-v">Captain</span>
+          <span class="b-u">Australia U16 &amp; Futsal WA state teams</span></div>
+        <div class="badge"><span class="b-k">2026</span>
+          <span class="b-v">Contracted</span>
+          <span class="b-u">Paid player at Fremantle FC, WNPL</span></div>
+        <div class="badge"><span class="b-k">Honours</span>
+          <span class="b-v">League MVP</span>
+          <span class="b-u">Supa-Liga Women's B, 22/23</span></div>
+      </div>
     </div>"""),
 
     # 3 · CAREER RECORD
@@ -242,6 +328,9 @@ SLIDES = [
       <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_SOCCER)}</div>
       <div class="sec-rule"><span>Futsal</span></div>
       <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_FUTSAL)}</div>
+
+      <div class="sec-rule"><span>Honours &amp; Selections</span></div>
+      <div class="honours">{honours_html()}</div>
     </div>"""),
 
     # 4 · DEFENSIVE PROFILE
