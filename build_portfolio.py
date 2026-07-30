@@ -65,7 +65,7 @@ CAREER_SOCCER = [
     ("2024", "West NTC",       "WA NPL Women", "—",           "170'",  2, 2, 0),
 ]
 CAREER_FUTSAL = [
-    ("2026",    "Wolves", "Social Supa-Liga",     "Fixo · Ala", "—",    "—", "—", "—"),
+    ("2026",    "Cockburn Wolves", "WSFL",        "Fixo · Ala", "—",    "—", "—", "—"),
     ("2026",    "TZR",    "Winter Season Futsal", "—",          "—",      3, "—", 7),
     ("2025/26", "TZR",    "Summer Season Futsal", "—",          "196'",   8, "—", 2),
 ]
@@ -96,7 +96,6 @@ HONOURS = [
     ("2026", [
         ("Fremantle FC — WNPL", "Signed as a paid contracted player (outdoor)", True),
         ("Australia — FAF Women's team", "Won the Indonesian Cup in Surabaya (June)", True),
-        ("Offered a training opportunity in Spain", "", True),
         ("National Futsal Championships — Gold Coast", "Open Women's team (January)", False),
     ]),
     ("2025", [
@@ -278,7 +277,7 @@ SLIDES = [
           <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span>
           <span class="club-p">LAMF · LAMR</span></div>
         <div class="club"><span class="club-k">Futsal · current club</span>
-          <span class="club-n">Wolves</span><span class="club-c">Social Supa-Liga</span>
+          <span class="club-n">Cockburn Wolves</span><span class="club-c">WSFL</span>
           <span class="club-p">Fixo · Ala</span></div>
       </div>
       <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
