@@ -58,44 +58,48 @@ def hl(k, big, sub, rows):
 
 
 # ---------------------------------------------------------------- career rows
-CAREER_SOCCER = [
-    # season, club, comp, position, minutes, apps, starts, goals
-    ("2026", "Fremantle City", "WA NPL Women", "LAMF · LAMR", "785'", 13, 9, 1),
-    ("2025", "West NTC",       "WA NPL Women", "—",           "718'", 18, 8, 1),
-    ("2024", "West NTC",       "WA NPL Women", "—",           "170'",  2, 2, 0),
-]
-CAREER_FUTSAL = [
-    ("2026",    "Cockburn Wolves", "WSFL",        "Fixo · Ala", "—",    "—", "—", "—"),
-    ("2026",    "TZR",    "Winter Season Futsal", "—",          "—",      3, "—", 7),
-    ("2025/26", "TZR",    "Summer Season Futsal", "—",          "196'",   8, "—", 2),
+# One table for both codes. Only columns that exist for every row, so there
+# are no empty dashes: minutes/starts differ between soccer and futsal and
+# live in the summary cards instead.
+# (season, code, club, competition, position, apps, goals)
+CAREER = [
+    ("2026",    "Soccer", "Fremantle City",  "WA NPL Women",            "LAMF · LAMR", 13, 1),
+    ("2026",    "Futsal", "Cockburn Wolves", "Supa-Liga · Winter",      "Fixo · Ala",   3, 7),
+    ("2025/26", "Futsal", "Cockburn Wolves", "Supa-Liga · Summer",      "Fixo · Ala",   8, 2),
+    ("2025",    "Soccer", "West NTC",        "WA NPL Women",            "—",           18, 1),
+    ("2024",    "Soccer", "West NTC",        "WA NPL Women",            "—",            2, 0),
 ]
 
 
 def career_rows(rows):
     out = ""
-    for season, club, comp, pos, mins, apps, starts, goals in rows:
+    for season, code, club, comp, pos, apps, goals in rows:
+        cls = "soccer" if code == "Soccer" else "futsal"
+        # Rows with no stats yet get one quiet note instead of empty dashes.
+        if apps == "":
+            stats = '<span class="c-soon">Season in progress</span>'
+        else:
+            stats = (f'<span class="c-v" data-k="Apps">{apps}</span>'
+                     f'<span class="c-v hot" data-k="Goals">{goals}</span>')
         out += ('<div class="c-row">'
                 f'<span class="c-season">{season}</span>'
+                f'<span class="c-code {cls}">{code}</span>'
                 f'<span class="c-club">{club}<span class="c-comp">{comp}</span></span>'
                 f'<span class="c-pos">{pos}</span>'
-                f'<span class="c-v" data-k="Minutes">{mins}</span>'
-                f'<span class="c-v" data-k="Apps">{apps}</span>'
-                f'<span class="c-v" data-k="Starts">{starts}</span>'
-                f'<span class="c-v hot" data-k="Goals">{goals}</span>'
+                f'{stats}'
                 '</div>')
     return out
 
 
-CAREER_HEAD = ('<div class="c-row head"><span>Season</span><span>Club</span><span>Position</span>'
-               '<span>Minutes</span><span>Apps</span><span>Starts</span><span>Goals</span></div>')
-
+CAREER_HEAD = ('<div class="c-row head"><span>Season</span><span>Code</span><span>Club</span>'
+               '<span>Position</span><span>Apps</span><span>Goals</span></div>')
 
 # ------------------------------------------------------------ honours
 # Year -> list of (headline, detail, is_major)
 HONOURS = [
     ("2026", [
         ("Fremantle FC — WNPL", "Signed as a paid contracted player (outdoor)", True),
-        ("Australia — FAF Women's team", "Won the Indonesian Cup in Surabaya (June)", True),
+        ("FAF Women's team — Association side", "Federation of Australian Futsal · won the Indonesian Cup in Surabaya (June)", True),
         ("National Futsal Championships — Gold Coast", "Open Women's team (January)", False),
     ]),
     ("2025", [
@@ -103,8 +107,8 @@ HONOURS = [
         ("WNPL with NTC (Football West)", "U18s squad (outdoor)", False),
     ]),
     ("2024", [
-        ("Australia U16 — Captain", "Selected through AFA from club championships for the International "
-         "Futsal Alliance World Championships in Malaysia", True),
+        ("AFA U16 — Captain", "Australian Futsal Association side, selected from club championships for the "
+         "International Futsal Alliance World Championships in Malaysia", True),
         ("Captain — Futsal WA U15 &amp; U16", "State teams", True),
         ("Futsal WA state teams — U15 &amp; U16", "Also named to play in the Women's Youth Team", False),
         ("NTC (Football West) U16s", "Playing up in the U21 women's grade", False),
@@ -133,8 +137,12 @@ def honours_html():
 EXTRA_CSS = """
 /* CAREER RECORD */
 .c-table{margin-top:24px;border-top:2px solid var(--ink)}
-.c-row{display:grid;grid-template-columns:.7fr 1.7fr 1.1fr .8fr .6fr .7fr .6fr;
-  gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
+.c-row{display:grid;grid-template-columns:.75fr .7fr 1.9fr 1.1fr .55fr .55fr;
+  gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
+.c-code{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  padding:5px 9px;text-align:center;white-space:nowrap}
+.c-code.soccer{background:var(--ink);color:#fff}
+.c-code.futsal{background:var(--orange);color:#fff}
 .c-row.head{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
   color:var(--grey);padding:10px 0;border-bottom:1px solid var(--ink)}
 .c-season{font-family:'Anton',sans-serif;font-size:19px}
@@ -143,6 +151,7 @@ EXTRA_CSS = """
 .c-pos{font-size:12.5px;color:var(--steel);letter-spacing:.04em}
 .c-v{font-family:'Anton',sans-serif;font-size:19px}
 .c-v.hot{color:var(--orange)}
+.c-soon{grid-column:span 2;font-size:12px;color:var(--grey);font-style:italic}
 .c-tot{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:26px}
 .c-tot .t{border:1px solid var(--line);background:var(--paper);padding:18px 20px 16px}
 .bone .c-tot .t{background:#FAFAF8}
@@ -190,14 +199,6 @@ EXTRA_CSS = """
 .sub-panel.on{display:block}
 
 @media(max-width:900px){
-  .c-row{grid-template-columns:1fr 1fr;gap:10px 12px;padding:18px 0}
-  .c-row.head{display:none}
-  .c-season{grid-column:1/-1;font-size:22px}
-  .c-club{grid-column:1/-1}
-  .c-pos{grid-column:1/-1;padding-bottom:4px}
-  .c-v{font-size:20px}
-  .c-v::after{content:attr(data-k);display:block;font-family:'Archivo',sans-serif;font-size:9px;
-    font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-top:2px}
   .c-tot{grid-template-columns:1fr 1fr;gap:12px}
 }
 """
@@ -264,6 +265,22 @@ PRIVATE_HTML = f"""<script type="application/json" id="training-data">__TRAINING
           <div class="tbl tbl-soccer" id="tbl-soccer"></div>
         </div>"""
 
+
+# Career table stays tabular down to phone width, where it stacks into cards.
+EXTRA_CSS += """
+@media(max-width:700px){
+  .c-row{grid-template-columns:1fr 1fr;gap:10px 12px;padding:18px 0}
+  .c-row.head{display:none}
+  .c-season{font-size:22px}
+  .c-code{justify-self:start}
+  .c-club{grid-column:1/-1}
+  .c-pos{grid-column:1/-1;padding-bottom:4px}
+  .c-v{font-size:20px}
+  .c-v::after{content:attr(data-k);display:block;font-family:'Archivo',sans-serif;font-size:9px;
+    font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-top:2px}
+}
+"""
+
 # ---------------------------------------------------------------- slides
 SLIDES = [
     # 1 · HERO
@@ -277,7 +294,7 @@ SLIDES = [
           <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span>
           <span class="club-p">LAMF · LAMR</span></div>
         <div class="club"><span class="club-k">Futsal · current club</span>
-          <span class="club-n">Cockburn Wolves</span><span class="club-c">WSFL</span>
+          <span class="club-n">Cockburn Wolves</span><span class="club-c">Supa-Liga</span>
           <span class="club-p">Fixo · Ala</span></div>
       </div>
       <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
@@ -297,12 +314,12 @@ SLIDES = [
       </div>
 
       <div class="badges">
-        <div class="badge"><span class="b-k">International</span>
-          <span class="b-v">Australia</span>
-          <span class="b-u">U16 (AFA) &amp; Open Women (FAF)</span></div>
+        <div class="badge"><span class="b-k">Representative</span>
+          <span class="b-v">Association</span>
+          <span class="b-u">AFA U16 &amp; FAF Women's sides</span></div>
         <div class="badge"><span class="b-k">Leadership</span>
           <span class="b-v">Captain</span>
-          <span class="b-u">Australia U16 &amp; Futsal WA state teams</span></div>
+          <span class="b-u">AFA U16 &amp; Futsal WA state teams</span></div>
         <div class="badge"><span class="b-k">2026</span>
           <span class="b-v">Contracted</span>
           <span class="b-u">Paid player at Fremantle FC, WNPL</span></div>
@@ -323,10 +340,8 @@ SLIDES = [
         <div class="t"><span class="tk">Soccer minutes</span><span class="tv">1673</span></div>
         <div class="t"><span class="tk">Soccer apps</span><span class="tv">33</span></div>
       </div>
-      <div class="sec-rule"><span>Soccer · NPL Women</span></div>
-      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_SOCCER)}</div>
-      <div class="sec-rule"><span>Futsal</span></div>
-      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_FUTSAL)}</div>
+      <div class="sec-rule"><span>Clubs by season</span></div>
+      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER)}</div>
 
       <div class="sec-rule"><span>Honours &amp; Selections</span></div>
       <div class="honours">{honours_html()}</div>
