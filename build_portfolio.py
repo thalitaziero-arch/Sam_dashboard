@@ -95,27 +95,27 @@ CAREER_HEAD = ('<div class="c-row head"><span>Season</span><span>Code</span><spa
                '<span>Position</span><span>Apps</span><span>Goals</span></div>')
 
 # ------------------------------------------------------------ honours
-# Year -> list of (headline, detail, is_major)
+# Year -> list of (code, headline, detail, is_major)
 HONOURS = [
     ("2026", [
-        ("Fremantle FC — WNPL", "Signed as a paid contracted player (outdoor)", True),
-        ("FAF Women's team — Association side", "Federation of Australian Futsal · won the Indonesian Cup in Surabaya (June)", True),
-        ("National Futsal Championships — Gold Coast", "Open Women's team (January)", False),
+        ("Soccer", "Fremantle FC — WNPL", "Signed as a paid contracted player", True),
+        ("Futsal", "FAF Women's team — Association side", "Federation of Australian Futsal · won the Indonesian Cup in Surabaya (June)", True),
+        ("Futsal", "National Futsal Championships — Gold Coast", "Open Women's team (January)", False),
     ]),
     ("2025", [
-        ("Cockburn Wolves — WSFL", "Returned to the club", False),
-        ("WNPL with NTC (Football West)", "U18s squad (outdoor)", False),
+        ("Futsal", "Cockburn Wolves — WSFL", "Returned to the club", False),
+        ("Soccer", "WNPL with NTC (Football West)", "U18s squad", False),
     ]),
     ("2024", [
-        ("AFA U16 — Captain", "Australian Futsal Association side, selected from club championships for the "
+        ("Futsal", "AFA U16 — Captain", "Australian Futsal Association side, selected from club championships for the "
          "International Futsal Alliance World Championships in Malaysia", True),
-        ("Captain — Futsal WA U15 &amp; U16", "State teams", True),
-        ("Futsal WA state teams — U15 &amp; U16", "Also named to play in the Women's Youth Team", False),
-        ("NTC (Football West) U16s", "Playing up in the U21 women's grade", False),
-        ("WA — National Youth Championships", "Selected to represent the state (outdoor)", False),
+        ("Futsal", "Captain — Futsal WA U15 &amp; U16", "State teams", True),
+        ("Futsal", "Futsal WA state teams — U15 &amp; U16", "Also named to play in the Women's Youth Team", False),
+        ("Soccer", "NTC (Football West) U16s", "Playing up in the U21 women's grade", False),
+        ("Soccer", "WA — National Youth Championships", "Selected to represent the state", False),
     ]),
     ("2023", [
-        ("League MVP", "Women's B grade — Supa-Liga Summer Season 22/23", True),
+        ("Futsal", "League MVP", "Women's B grade — Supa-Liga Summer Season 22/23", True),
     ]),
 ]
 
@@ -125,13 +125,31 @@ def honours_html():
     for year, items in HONOURS:
         rows = "".join(
             f'<div class="h-item{" major" if major else ""}">'
-            f'<span class="h-head">{head}</span>'
+            f'<span class="h-top"><span class="c-code {code.lower()}">{code}</span>'
+            f'<span class="h-head">{head}</span></span>'
             + (f'<span class="h-det">{det}</span>' if det else "")
             + "</div>"
-            for head, det, major in items
+            for code, head, det, major in items
         )
         out += f'<div class="h-year"><span class="h-y">{year}</span><div class="h-items">{rows}</div></div>'
     return out
+
+
+# ------------------------------------------------- split-by-code helper
+def split_block(soccer_rows, futsal_rows):
+    """Two side-by-side cards so soccer and futsal numbers are never mixed."""
+    def card(code, games, rows):
+        cls = "soccer" if code == "Soccer" else "futsal"
+        body = "".join(
+            f'<div class="sp-row"><span class="sp-v">{v}</span>'
+            f'<span class="sp-l">{lbl}</span></div>' for v, lbl in rows)
+        return (f'<div class="sp-card"><div class="sp-head">'
+                f'<span class="c-code {cls}">{code}</span>'
+                f'<span class="sp-games">{games}</span></div>{body}</div>')
+    return ('<div class="split">'
+            + card("Soccer", "33 games", soccer_rows)
+            + card("Futsal", "11 games", futsal_rows)
+            + '</div>')
 
 # ---------------------------------------------------------------- extra CSS
 EXTRA_CSS = """
@@ -142,6 +160,7 @@ EXTRA_CSS = """
 .c-code{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
   padding:5px 9px;text-align:center;white-space:nowrap}
 .c-code.soccer{background:var(--ink);color:#fff}
+.dark .c-code.soccer{background:transparent;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
 .c-code.futsal{background:var(--orange);color:#fff}
 .c-row.head{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
   color:var(--grey);padding:10px 0;border-bottom:1px solid var(--ink)}
@@ -158,6 +177,24 @@ EXTRA_CSS = """
 .c-tot .tk{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--grey)}
 .c-tot .tv{font-family:'Anton',sans-serif;font-size:34px;color:var(--orange);line-height:1.1;margin-top:5px;display:block}
 
+.rank-note{display:flex;align-items:center;gap:12px;margin-top:26px;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,.5)}
+
+/* SPLIT BY CODE */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
+.sp-card{border:1px solid var(--line-dark);padding:20px 22px 8px}
+.sp-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;margin-bottom:6px;
+  border-bottom:1px solid var(--line-dark)}
+.sp-games{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,.45)}
+.sp-row{display:flex;align-items:baseline;gap:12px;padding:11px 0;
+  border-bottom:1px solid rgba(255,255,255,.07)}
+.sp-row:last-child{border-bottom:none}
+.sp-v{font-family:'Anton',sans-serif;font-size:24px;color:var(--orange);min-width:74px}
+.sp-l{font-size:13.5px;color:rgba(255,255,255,.6);line-height:1.35}
+@media(max-width:700px){.split{grid-template-columns:1fr;gap:12px}}
+
 /* HONOURS TIMELINE */
 .honours{margin-top:26px;border-top:2px solid var(--ink)}
 .h-year{display:grid;grid-template-columns:110px 1fr;gap:24px;padding:24px 0;
@@ -169,7 +206,8 @@ EXTRA_CSS = """
 .h-item::before{content:"";position:absolute;left:0;top:8px;width:8px;height:8px;
   background:var(--line);border-radius:50%}
 .h-item.major::before{background:var(--orange)}
-.h-head{display:block;font-size:15.5px;font-weight:700;line-height:1.35}
+.h-top{display:flex;align-items:baseline;gap:11px;flex-wrap:wrap}
+.h-head{font-size:15.5px;font-weight:700;line-height:1.35}
 .h-item.major .h-head{font-size:16.5px}
 .h-det{display:block;font-size:13.5px;color:var(--steel);margin-top:3px;line-height:1.45}
 
@@ -307,9 +345,9 @@ SLIDES = [
       <p class="lede">11 futsal games and 33 soccer games tracked across 2024–2026.</p>
       <div class="scoreboard">
         <div class="cell"><span class="num">44</span><span class="k">Total Games</span><span class="lbl">11 futsal<br>33 soccer</span></div>
-        <div class="cell"><span class="num">9</span><span class="k">Goals</span><span class="lbl">7 futsal<br>2 soccer</span></div>
+        <div class="cell"><span class="num">11</span><span class="k">Goals</span><span class="lbl">9 futsal<br>2 soccer</span></div>
         <div class="cell"><span class="num">8</span><span class="k">Assists</span><span class="lbl">8 futsal<br>0 soccer</span></div>
-        <div class="cell"><span class="num">97</span><span class="k">Interceptions</span><span class="lbl">19 futsal<br>78 soccer</span></div>
+        <div class="cell"><span class="num">113</span><span class="k">Interceptions</span><span class="lbl">35 futsal<br>78 soccer</span></div>
         <div class="cell"><span class="num">200</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>133 soccer</span></div>
       </div>
 
@@ -348,48 +386,74 @@ SLIDES = [
     </div>"""),
 
     # 4 · DEFENSIVE PROFILE
-    ('dark', WAVES, """<div class="wrap">
+    ('dark', WAVES, f"""<div class="wrap">
       <div class="eyebrow">Player Profile</div>
       <h2 class="display">Defensive<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
       <p class="lede">Ball-winning is the strongest part of her game — top-5 in WA NPLW across every defensive metric tracked.</p>
+
+      <div class="rank-note"><span class="c-code soccer">Soccer</span>League rankings · WA NPL Women</div>
       <div class="prof-grid">
         <div class="prof"><span class="prof-rank">#1</span><span class="prof-k">Defensive Duels</span>
           <span class="prof-v">10.77</span><span class="prof-u">per 90 · 69% won</span></div>
         <div class="prof"><span class="prof-rank">#4</span><span class="prof-k">Recoveries</span>
-          <span class="prof-v">13.79</span><span class="prof-u">per 90 · 200 total</span></div>
+          <span class="prof-v">13.79</span><span class="prof-u">per 90</span></div>
         <div class="prof"><span class="prof-rank">#5</span><span class="prof-k">Interceptions</span>
-          <span class="prof-v">6.86</span><span class="prof-u">per 90 · 97 total</span></div>
+          <span class="prof-v">6.86</span><span class="prof-u">per 90</span></div>
       </div>
+
+      {split_block(
+        [("78","Interceptions · 2.4 per game"),
+         ("133","Recoveries · 4.0 per game"),
+         ("167","Duels won of 342 contested"),
+         ("1765","Minutes played")],
+        [("35","Interceptions · 3.2 per game"),
+         ("67","Recoveries · 6.1 per game"),
+         ("36","Balls lost"),
+         ("11","Games analysed")])}
+
       <div style="margin-top:34px;border-top:2px solid var(--orange)">
         <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
-          <p>167 duels won from 349 contested in soccer, plus 7 in futsal. <strong>#1 in WA NPLW</strong> for defensive duels per 90 — she competes for everything.</p></div>
+          <p><strong>#1 in WA NPLW</strong> for defensive duels per 90 in soccer — 167 won from 342 contested. She competes for everything.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
-          <p>133 soccer + 67 futsal recoveries. Peaks of 10 in a single match. Works both halves of the pitch, not just behind the ball.</p></div>
+          <p>133 in soccer and 67 in futsal, 200 in total. Peaks of 10 in a single soccer match. Works both halves of the pitch, not just behind the ball.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
-          <p>78 in soccer, 19 in futsal. Best game: 11 interceptions vs West NTC. Reads passing lanes early rather than reacting late.</p></div>
+          <p>78 in soccer and 35 in futsal. Best game: 11 interceptions against West NTC. Reads passing lanes early rather than reacting late.</p></div>
       </div>
     </div>"""),
 
     # 5 · ATTACKING PROFILE
-    ('dark', ARCS, """<div class="wrap">
+    ('dark', ARCS, f"""<div class="wrap">
       <div class="eyebrow">Player Profile</div>
       <h2 class="display">Attacking<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Sharpest in futsal — 7 goals in 3 Winter games at 1.1 shots on target per goal.</p>
+      <p class="lede">Sharpest in futsal — 9 goals and 8 assists in 11 games, at 1.1 shots on target per goal in the Winter season.</p>
+
+      <div class="rank-note"><span class="c-code futsal">Futsal</span>Where the attacking output comes from</div>
       <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">9</span><span class="prof-k">Goals</span>
-          <span class="prof-v">7+2</span><span class="prof-u">futsal + soccer</span></div>
+        <div class="prof"><span class="prof-rank">11</span><span class="prof-k">Goals</span>
+          <span class="prof-v">9+2</span><span class="prof-u">futsal + soccer</span></div>
         <div class="prof"><span class="prof-rank">8</span><span class="prof-k">Assists</span>
-          <span class="prof-v">6+2</span><span class="prof-u">summer + winter</span></div>
+          <span class="prof-v">6+2</span><span class="prof-u">summer + winter futsal</span></div>
         <div class="prof"><span class="prof-rank">1.1</span><span class="prof-k">Shot Efficiency</span>
-          <span class="prof-v">35%</span><span class="prof-u">on-target rate</span></div>
+          <span class="prof-v">41%</span><span class="prof-u">futsal on-target rate</span></div>
       </div>
+
+      {split_block(
+        [("2","Goals"),
+         ("0","Assists"),
+         ("22","Shots · 7 on target"),
+         ("3.57","Expected goals (xG)")],
+        [("9","Goals"),
+         ("8","Assists"),
+         ("69","Shots · 28 on target"),
+         ("312","Accurate passes")])}
+
       <div style="margin-top:34px;border-top:2px solid var(--orange)">
         <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
-          <p>Winter 2026: <strong>7 goals from 8 shots on target</strong> — 1.1 shots on target per goal. Ruthless once the chance is created.</p></div>
+          <p>Winter 2026 futsal: <strong>7 goals from 8 shots on target</strong> — 1.1 shots on target per goal. Ruthless once the chance is created.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
-          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists across both futsal seasons. She generates chances for herself and others.</p></div>
+          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists. In soccer the role is deeper: 22 shots and 3.57 xG across 33 games.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
-          <p>312 accurate futsal passes and 3.57 xG in soccer. Consistently involved in build-up rather than only at the end of moves.</p></div>
+          <p>312 accurate futsal passes, 28 per game. Consistently involved in build-up rather than only at the end of moves.</p></div>
       </div>
     </div>"""),
 
