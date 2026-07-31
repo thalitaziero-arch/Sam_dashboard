@@ -389,17 +389,7 @@ SLIDES = [
     ('dark', WAVES, f"""<div class="wrap">
       <div class="eyebrow">Player Profile</div>
       <h2 class="display">Defensive<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Ball-winning is the strongest part of her game — top-5 in WA NPLW across every defensive metric tracked.</p>
-
-      <div class="rank-note"><span class="c-code soccer">Soccer</span>League rankings · WA NPL Women</div>
-      <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">#1</span><span class="prof-k">Defensive Duels</span>
-          <span class="prof-v">10.77</span><span class="prof-u">per 90 · 69% won</span></div>
-        <div class="prof"><span class="prof-rank">#4</span><span class="prof-k">Recoveries</span>
-          <span class="prof-v">13.79</span><span class="prof-u">per 90</span></div>
-        <div class="prof"><span class="prof-rank">#5</span><span class="prof-k">Interceptions</span>
-          <span class="prof-v">6.86</span><span class="prof-u">per 90</span></div>
-      </div>
+      <p class="lede">Ball-winning is the strongest part of her game — she is involved in defensive actions constantly in both codes.</p>
 
       {split_block(
         [("78","Interceptions · 2.4 per game"),
@@ -413,7 +403,7 @@ SLIDES = [
 
       <div style="margin-top:34px;border-top:2px solid var(--orange)">
         <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
-          <p><strong>#1 in WA NPLW</strong> for defensive duels per 90 in soccer — 167 won from 342 contested. She competes for everything.</p></div>
+          <p>167 duels won from 342 contested in soccer — a 49% success rate across 33 games. She competes for everything.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
           <p>133 in soccer and 67 in futsal, 200 in total. Peaks of 10 in a single soccer match. Works both halves of the pitch, not just behind the ball.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
