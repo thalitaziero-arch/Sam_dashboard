@@ -732,5 +732,9 @@ private_filled = (PRIVATE_HTML
 html = html.replace("__ENCRYPTED_BLOB__", json.dumps(encrypt(private_filled, PIN)))
 
 OUT.write_text(html, encoding="utf-8")
+# Same page under a clean per-athlete path: <domain>/sambrady/
+athlete_dir = HERE / "sambrady"
+athlete_dir.mkdir(exist_ok=True)
+(athlete_dir / "index.html").write_text(html, encoding="utf-8")
 print(f"Built {OUT} — {len(SLIDES)} slides, {len(html)/1024/1024:.2f} MB")
 print(f"Private payload encrypted: {len(private_filled)} chars -> AES-GCM, PBKDF2 x600k")
