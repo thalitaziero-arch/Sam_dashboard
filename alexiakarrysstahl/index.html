@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  ALEXIA KARRYS-STAHL — ATHLETE PORTFOLIO
+  ============================================================
+  ASSET MAP — place your files at these exact relative paths:
+
+    assets/alexia-hero.jpg           full-bleed HERO background (action/portrait, vertical or wide)
+    assets/alexia-profile.jpg        PLAYER IDENTITY section photo (her playing)
+    assets/alexia-australia.jpg      AUSTRALIA section full-bleed image (national team kit)
+    assets/alexia-gallery-01..11.jpg EXPERIENCE section scrollable photo gallery
+    assets/alexia-action-02.jpg      HIGHLIGHTS video poster frame
+    assets/alexia-split-football.jpg FOOTBALL side image, FOOTBALL x FUTSAL split section
+    assets/alexia-split-futsal.jpg   FUTSAL side image, FOOTBALL x FUTSAL split section
+    assets/alexia-highlights.mp4     main highlight reel, 16:9, muted-start
+    assets/alexia-clip-01.mp4        HIGHLIGHTS 1 — Australia
+    assets/alexia-clip-04.mp4        HIGHLIGHTS 2 — Australia
+    assets/alexia-clip-02.mp4        HIGHLIGHTS 3 — MSP FC
+    assets/alexia-clip-03.mov        HIGHLIGHTS 4 — Football
+    assets/alexia-clip-0N-poster.jpg poster frame for each HIGHLIGHTS clip
+    assets/alexia-cv.pdf             downloadable Player CV
+    assets/alexia-player-report.pdf  downloadable full Player / Scouting Report
+
+  Replace any file with your preferred selects at any time — same filename, same folder.
+  Any image or video that is missing degrades gracefully to a labelled placeholder frame.
+  ============================================================
+-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alexia Karrys-Stahl — Fixo / Ala</title>
+<meta name="description" content="Alexia Karrys-Stahl — Fixo/Ala, Australian National Team. Football + Futsal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0d0c;
+    --ink-soft:#161917;
+    --paper:#f5f3ee;
+    --paper-dim:#eae7dd;
+    --green:#0a2019;
+    --green-2:#0f2e24;
+    --gold:#a8863f;
+    --gold-soft:#c9ab6f;
+    --line-dark: rgba(245,243,238,0.16);
+    --line-light: rgba(12,13,12,0.12);
+    --ease: cubic-bezier(.16,.8,.24,1);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,video{ max-width:100%; display:block; }
+  a{ color:inherit; text-decoration:none; }
+  ul{ margin:0; padding:0; list-style:none; }
+  section{ position:relative; width:100%; }
+
+  .eyebrow{
+    font-size:clamp(.68rem,1vw,.8rem);
+    font-weight:600;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ---------- reveal animation ---------- */
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+  .reveal-img{ opacity:0; transform:scale(1.06); transition:opacity 1.2s var(--ease), transform 1.4s var(--ease); }
+  .reveal-img.is-visible{ opacity:1; transform:scale(1); }
+  .delay-1{ transition-delay:.08s; }
+  .delay-2{ transition-delay:.16s; }
+  .delay-3{ transition-delay:.24s; }
+  .delay-4{ transition-delay:.32s; }
+
+  /* ---------- fixed mark + progress ---------- */
+  .mark{
+    position:fixed; top:28px; left:28px; z-index:50;
+    font-size:.72rem; font-weight:700; letter-spacing:.18em;
+    color:var(--paper); mix-blend-mode:difference;
+  }
+  .progress{
+    position:fixed; top:0; left:0; height:2px; width:0%;
+    background:var(--gold); z-index:60; transition:width .1s linear;
+  }
+  .lang-switch{
+    position:fixed; top:28px; right:28px; z-index:50;
+    display:flex; align-items:center; gap:7px;
+    font-size:.68rem; font-weight:700; letter-spacing:.1em;
+    color:var(--paper); mix-blend-mode:difference;
+  }
+  .lang-switch span{ opacity:.4; }
+  .lang-switch button{
+    background:none; border:none; color:inherit; font:inherit; cursor:pointer;
+    padding:2px 1px; opacity:.5; transition:opacity .25s;
+  }
+  .lang-switch button.active{ opacity:1; }
+  .lang-switch button:hover{ opacity:.85; }
+
+  /* ================= HERO ================= */
+  #hero{
+    height:100svh; min-height:560px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    color:var(--paper); background:var(--ink);
+  }
+  .hero-media{ position:absolute; inset:0; overflow:hidden; }
+  .hero-media img{
+    width:100%; height:100%; object-fit:cover; object-position:center 20%;
+    transform:translateY(0); will-change:transform;
+    filter:brightness(.62) saturate(.9);
+  }
+  .hero-media::after{
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(10,12,11,.5) 0%, rgba(10,12,11,.62) 55%, rgba(8,10,9,.95) 100%);
+  }
+  .hero-inner{ position:relative; z-index:2; padding:0 clamp(20px,5vw,64px) clamp(48px,7vh,96px); }
+  .hero-kicker{ display:flex; gap:14px; align-items:center; margin-bottom:18px; }
+  .hero-kicker span{ font-size:.72rem; font-weight:600; letter-spacing:.24em; text-transform:uppercase; opacity:.75; }
+  .hero-kicker .dot{ width:5px; height:5px; border-radius:50%; background:var(--gold); }
+  h1.hero-name{
+    margin:0; font-weight:900; text-transform:uppercase;
+    font-size:clamp(3.4rem, 11.5vw, 10.5rem);
+    line-height:.86; letter-spacing:-.02em;
+  }
+  .hero-meta{
+    display:flex; flex-wrap:wrap; gap:6px 28px; align-items:baseline;
+    margin-top:22px;
+  }
+  .hero-meta{ flex-direction:column; }
+  .hero-meta .big{ font-size:clamp(1.1rem,2.4vw,1.6rem); font-weight:700; letter-spacing:.02em; }
+  .hero-meta .hero-code{ font-size:.6em; font-weight:600; letter-spacing:.14em; text-transform:uppercase; opacity:.65; margin-left:8px; }
+  .hero-meta .small{ font-size:.85rem; letter-spacing:.14em; text-transform:uppercase; opacity:.7; margin-top:2px; }
+  .hero-foot{ margin-top:6px; font-size:.82rem; letter-spacing:.1em; text-transform:uppercase; opacity:.55; }
+
+  .scroll-cue{
+    position:absolute; right:clamp(20px,5vw,64px); bottom:clamp(36px,6vh,72px);
+    z-index:2; display:flex; align-items:center; gap:10px;
+    font-size:.75rem; letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+    color:var(--paper); opacity:.85; cursor:pointer; background:none; border:none;
+  }
+  .scroll-cue .arrow{ display:inline-block; animation:bob 2.2s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(6px);} }
+
+  /* ================= QUICK PROFILE ================= */
+  #profile{ background:var(--paper); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); }
+  .profile-grid{
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--line-light);
+  }
+  .stat{
+    padding:26px 20px 26px 0; border-bottom:1px solid var(--line-light); border-right:1px solid var(--line-light);
+  }
+  .stat:nth-child(3n){ border-right:none; }
+  .stat .num{ font-size:clamp(1.7rem,3vw,2.7rem); font-weight:800; letter-spacing:-.01em; line-height:1.05; }
+  .stat .lab{ margin-top:10px; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; opacity:.55; font-weight:600; }
+
+  /* ================= HIGHLIGHTS ================= */
+  #highlights{ background:var(--ink); color:var(--paper); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); }
+  .section-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:clamp(28px,5vh,56px); flex-wrap:wrap; }
+  .section-title{ font-size:clamp(2.6rem,7vw,6rem); font-weight:900; text-transform:uppercase; line-height:.92; letter-spacing:-.01em; }
+  .video-frame{
+    position:relative; width:100%; aspect-ratio:16/9; overflow:hidden;
+    background:var(--green); cursor:pointer; border:1px solid var(--line-dark);
+  }
+  .video-frame video{ width:100%; height:100%; object-fit:cover; }
+  .video-frame .poster-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .video-frame .veil{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.5)); }
+  .play-btn{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:clamp(72px,9vw,110px); height:clamp(72px,9vw,110px); border-radius:50%;
+    background:rgba(245,243,238,.94); display:flex; align-items:center; justify-content:center;
+    transition:transform .5s var(--ease), background .3s;
+  }
+  .video-frame:hover .play-btn{ transform:translate(-50%,-50%) scale(1.08); }
+  .play-btn svg{ width:30%; height:30%; margin-left:4px; }
+  .video-frame.playing .play-btn,
+  .video-frame.playing .veil,
+  .video-frame.playing .poster-img{ opacity:0; pointer-events:none; }
+  .video-frame .play-btn,
+  .video-frame .veil,
+  .video-frame .poster-img{ transition:opacity .5s var(--ease); }
+  .media-fallback{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green-2) 60%, var(--ink) 100%);
+    color:var(--gold-soft); font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600; text-align:center; padding:20px;
+  }
+
+  /* ================= PLAYER IDENTITY ================= */
+  #identity{ background:var(--paper-dim); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); border-top:1px solid var(--line-light); }
+  .identity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,6vw,90px); align-items:center; }
+  .identity-photo{ position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--paper-dim); }
+  .identity-photo img{ width:100%; height:100%; object-fit:cover; }
+  .identity-statement{ font-size:clamp(2.4rem,5.2vw,4.6rem); font-weight:900; text-transform:uppercase; line-height:1.02; letter-spacing:-.01em; }
+  .identity-statement span{ display:block; }
+  .identity-statement span:nth-child(2){ color:var(--gold); }
+  .identity-intro{ margin-top:26px; font-size:clamp(1rem,1.4vw,1.2rem); line-height:1.6; max-width:46ch; opacity:.85; font-weight:400; }
+  .traits{ margin-top:44px; display:grid; gap:0; border-top:1px solid var(--line-light); }
+  .trait{ display:grid; grid-template-columns:140px 1fr; gap:20px; padding:20px 0; border-bottom:1px solid var(--line-light); }
+  .trait .t-label{ font-size:.78rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); }
+  .trait .t-desc{ font-size:.98rem; line-height:1.5; opacity:.85; }
+
+  /* ================= AUSTRALIA ================= */
+  #australia{ min-height:100svh; color:var(--paper); background:var(--green); display:flex; align-items:flex-end; }
+  .aus-media{ position:absolute; inset:0; overflow:hidden; }
+  .aus-media img{ width:100%; height:100%; object-fit:cover; }
+  .aus-media::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,32,25,.25) 0%, rgba(10,32,25,.55) 55%, rgba(8,18,14,.94) 100%); }
+  .aus-inner{ position:relative; z-index:2; width:100%; padding:clamp(56px,9vh,110px) clamp(20px,5vw,64px); }
+  .aus-title{ font-size:clamp(4rem,15vw,13rem); font-weight:900; letter-spacing:-.02em; line-height:.82; text-transform:uppercase; }
+  .aus-caps{ margin-top:clamp(28px,5vh,54px); display:grid; grid-template-columns:repeat(4,1fr); gap:28px; border-top:1px solid var(--line-dark); padding-top:26px; }
+  .aus-cap .comp.gt-inline{ color:var(--gold-soft); }
+  .aus-cap .comp{ font-size:clamp(1rem,1.6vw,1.3rem); font-weight:800; text-transform:uppercase; letter-spacing:.01em; }
+  .aus-cap .loc{ margin-top:8px; font-size:.85rem; opacity:.7; letter-spacing:.04em; }
+
+  /* ================= HIGHLIGHTS 2–4 ================= */
+  .hl-more{ background:var(--ink); color:var(--paper); padding:clamp(56px,9vh,110px) clamp(20px,5vw,64px); border-top:1px solid var(--line-dark); }
+  .hl-frame{ aspect-ratio:16/9;
+  }
+
+  /* ================= EXPERIENCE ================= */
+  #experience{ background:var(--ink); color:var(--paper); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); }
+  .exp-layout{ display:grid; grid-template-columns:.9fr 1.1fr; gap:clamp(28px,5vw,70px); align-items:start; }
+  .exp-img{ position:relative; aspect-ratio:3/4; overflow:hidden; background:var(--green); align-self:stretch; }
+  .exp-img img{ width:100%; height:100%; object-fit:cover; }
+  .exp-gallery-track{ display:flex; height:100%; width:100%; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .exp-gallery-track::-webkit-scrollbar{ display:none; }
+  .exp-gallery-track img{ flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; transition:filter .6s var(--ease); }
+  .exp-img.dimmed .exp-gallery-track img{ filter:brightness(.35) saturate(.85); }
+  .exp-list{
+    position:relative; z-index:1;
+    background:rgba(12,13,12,.72);
+    -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
+    padding:14px 18px; margin:-14px -18px;
+  }
+  .exp-gallery-arrow{
+    position:absolute; right:16px; bottom:16px; z-index:2; width:52px; height:52px; border-radius:50%;
+    background:rgba(245,243,238,.94); border:none; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform .35s var(--ease);
+  }
+  .exp-gallery-arrow:hover{ transform:scale(1.08); }
+  .exp-gallery-arrow svg{ width:20px; height:20px; }
+  .exp-gallery-counter{
+    position:absolute; left:16px; bottom:16px; z-index:2; font-size:.68rem; font-weight:700; letter-spacing:.1em;
+    color:var(--paper); background:rgba(10,12,11,.45); padding:7px 12px; border-radius:20px;
+  }
+  .exp-item{ display:grid; grid-template-columns:96px 1fr; gap:20px; padding:20px 0; border-bottom:1px solid var(--line-dark); }
+  .exp-item:first-child{ border-top:1px solid var(--line-dark); }
+  .exp-year{ font-size:.85rem; font-weight:700; letter-spacing:.06em; opacity:.6; padding-top:3px; }
+  .exp-org{ font-size:clamp(1.1rem,2vw,1.5rem); font-weight:800; text-transform:uppercase; letter-spacing:-.005em; }
+  .exp-comp{ margin-top:4px; font-size:.85rem; opacity:.6; }
+  .exp-more{ max-height:0; overflow:hidden; transition:max-height .7s var(--ease); }
+  .view-more-btn{
+    margin-top:26px; background:none; border:1px solid var(--line-dark); color:var(--paper);
+    padding:14px 22px; font-size:.75rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+    cursor:pointer; transition:background .3s, color .3s, border-color .3s;
+  }
+  .view-more-btn:hover{ background:var(--paper); color:var(--ink); border-color:var(--paper); }
+
+  /* ================= FOOTBALL x FUTSAL ================= */
+  #split{ display:grid; grid-template-columns:1fr 1fr; min-height:100svh; }
+  .split-half{ position:relative; padding:clamp(56px,10vh,110px) clamp(20px,5vw,60px); display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
+  .split-half.left{ background:var(--paper); color:var(--ink); }
+  .split-half.right{ background:var(--green); color:var(--paper); }
+  .split-media{ position:absolute; inset:0; z-index:0; }
+  .split-media img{ width:100%; height:100%; object-fit:cover; }
+  .split-half.left .split-media::after{ content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(245,243,238,.97) 0%, rgba(245,243,238,.86) 42%, rgba(245,243,238,.55) 100%); }
+  .split-half.right .split-media::after{ content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(10,32,25,.97) 0%, rgba(10,32,25,.88) 42%, rgba(10,32,25,.6) 100%); }
+  .split-half > *:not(.split-media){ position:relative; z-index:1; }
+  .split-title{ font-size:clamp(2.4rem,6vw,4.6rem); font-weight:900; text-transform:uppercase; letter-spacing:-.01em; line-height:.95; margin-bottom:clamp(28px,5vh,54px); }
+  .split-half.left .split-title{ color:var(--ink); }
+  .split-half.right .split-title{ color:var(--gold-soft); }
+  .split-list li{
+    font-size:clamp(1.1rem,2.2vw,1.7rem); font-weight:600; padding:14px 0;
+    border-bottom:1px solid var(--line-light);
+  }
+  .split-half.right .split-list li{ border-bottom:1px solid var(--line-dark); }
+
+  /* ================= DOCUMENTS ================= */
+  #documents{ background:var(--paper); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); border-top:1px solid var(--line-light); }
+  .doc-links{ display:grid; grid-template-columns:1fr; gap:0; margin-top:10px; }
+  .doc-link{
+    display:flex; align-items:center; justify-content:space-between; gap:18px;
+    padding:clamp(28px,5vh,44px) 4px; border-top:1px solid var(--line-light);
+    font-size:clamp(1.15rem,2.3vw,1.8rem); font-weight:800; text-transform:uppercase;
+    transition:opacity .3s;
+  }
+  .doc-link:hover{ opacity:.55; }
+  .doc-link .arr{ font-size:1.4rem; color:var(--gold); }
+
+  /* ================= CONTACT ================= */
+  #contact{ background:var(--ink); color:var(--paper); min-height:90svh; display:flex; flex-direction:column; justify-content:center; padding:clamp(56px,10vh,110px) clamp(20px,5vw,64px); }
+  .contact-title{ font-size:clamp(3.4rem,11vw,9rem); font-weight:900; text-transform:uppercase; letter-spacing:-.02em; line-height:.86; }
+  .contact-links{ margin-top:clamp(36px,6vh,68px); display:flex; flex-direction:column; gap:6px; }
+  .contact-links a{
+    font-size:clamp(1.3rem,3.4vw,2.3rem); font-weight:600; padding:16px 0; border-bottom:1px solid var(--line-dark);
+    display:flex; justify-content:space-between; align-items:center; transition:color .3s, padding-left .3s;
+  }
+  .contact-links a:hover{ color:var(--gold-soft); padding-left:10px; }
+  .contact-links a .tag{ font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; opacity:.45; font-weight:700; }
+  .contact-symbol{ width:44px; height:44px; margin-top:14px; opacity:.85; }
+  footer{ margin-top:clamp(44px,7vh,84px); font-size:.72rem; opacity:.4; letter-spacing:.04em; }
+
+  /* ================= RESPONSIVE ================= */
+  @media (max-width:900px){
+    .profile-grid{ grid-template-columns:repeat(2,1fr); }
+    .stat:nth-child(3n){ border-right:1px solid var(--line-light); }
+    .stat:nth-child(2n){ border-right:none; }
+    .identity-grid{ grid-template-columns:1fr; }
+    .identity-photo{ order:-1; aspect-ratio:16/10; }
+    .aus-caps{ grid-template-columns:1fr; gap:18px; }
+    .exp-layout{ grid-template-columns:1fr; }
+    .exp-img{ aspect-ratio:16/9; }
+    #split{ grid-template-columns:1fr; }
+  }
+
+  /* ---------------- MOBILE ---------------- */
+  @media (max-width:560px){
+    .mark{ top:16px; left:16px; font-size:.66rem; }
+    .lang-switch{ top:16px; right:16px; font-size:.6rem; gap:5px; }
+
+    /* hero: keep the name readable, never let it overflow */
+    #hero{ min-height:100svh; }
+    h1.hero-name{ font-size:clamp(2.6rem,13vw,4.6rem); line-height:.9; word-break:break-word; }
+    .hero-inner{ padding-bottom:clamp(72px,14vh,110px); }
+    .hero-meta{ gap:6px 18px; margin-top:16px; }
+    .scroll-cue{ right:auto; left:clamp(20px,5vw,64px); bottom:clamp(22px,4vh,40px); font-size:.68rem; }
+
+    /* one stat per row reads better than a cramped 2-up */
+    .profile-grid{ grid-template-columns:1fr; }
+    .stat{ padding:22px 0; border-right:none !important; }
+    .stat .num{ font-size:clamp(1.9rem,9vw,2.6rem); }
+
+    .section-title{ font-size:clamp(2.1rem,10vw,3.2rem); }
+    .section-head{ margin-bottom:24px; }
+
+    .identity-statement{ font-size:clamp(2rem,10vw,3rem); }
+    .trait{ grid-template-columns:1fr; gap:6px; }
+    .trait .t-label{ font-size:.72rem; }
+
+    .aus-title{ font-size:clamp(3rem,17vw,5.5rem); }
+    .aus-caps{ gap:16px; padding-top:20px; }
+    .aus-cap .comp{ font-size:1.05rem; }
+
+    .exp-item{ grid-template-columns:64px 1fr; gap:12px; }
+    .exp-org{ font-size:1.05rem; }
+    /* the readability veil must not push the layout sideways on small screens */
+    .exp-list{ padding:12px; margin:-12px; }
+    .exp-gallery-arrow{ width:44px; height:44px; right:12px; bottom:12px; }
+    .exp-gallery-counter{ left:12px; bottom:12px; }
+
+    .split-title{ font-size:clamp(2.1rem,11vw,3.2rem); }
+    .split-list li{ font-size:1.05rem; padding:12px 0; }
+
+    .doc-link{ font-size:1.05rem; padding:22px 4px; }
+    .contact-title{ font-size:clamp(2.6rem,15vw,4.5rem); }
+    .contact-links a{ font-size:1.05rem; padding:14px 0; flex-wrap:wrap; gap:4px; }
+    .contact-links a .tag{ font-size:.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="mark">AKS</div>
+<div class="lang-switch" id="langSwitch">
+  <button data-lang="en" class="active">EN</button><span>·</span>
+  <button data-lang="it">IT</button><span>·</span>
+  <button data-lang="es">ES</button><span>·</span>
+  <button data-lang="pt">PT</button>
+</div>
+
+<!-- ================= 01 HERO ================= -->
+<section id="hero">
+  <div class="hero-media">
+    <img id="heroImg" src="assets/alexia-hero.jpg" alt="Alexia Karrys-Stahl" loading="eager" fetchpriority="high"
+         onerror="this.remove()">
+    <div class="media-fallback" style="display:none" data-fallback-for="heroImg">ALEXIA — HERO IMAGE<br>assets/alexia-hero.jpg</div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-kicker reveal is-visible"><span class="dot"></span><span data-i18n="hero_kicker">Football + Futsal</span></div>
+    <h1 class="hero-name reveal is-visible">ALEXIA<br>KARRYS-STAHL</h1>
+  </div>
+  <button class="scroll-cue" onclick="document.getElementById('highlights').scrollIntoView({behavior:'smooth'})">
+    <span data-i18n="watch_highlights">Watch Highlights</span> <span class="arrow">↓</span>
+  </button>
+</section>
+
+<!-- ================= 02 QUICK PROFILE ================= -->
+<section id="profile">
+  <div class="profile-grid">
+    <div class="stat reveal"><div class="num">26</div><div class="lab" data-i18n="lab_years">Years</div></div>
+    <div class="stat reveal delay-1"><div class="num">163cm</div><div class="lab" data-i18n="lab_height">Height</div></div>
+    <div class="stat reveal delay-2"><div class="num" data-i18n="val_right">Right</div><div class="lab" data-i18n="lab_foot">Foot</div></div>
+    <div class="stat reveal delay-3"><div class="num" data-i18n="val_australian">Australian</div><div class="lab" data-i18n="lab_nationality">Nationality</div></div>
+    <div class="stat reveal"><div class="num">Sydney</div><div class="lab">Australia</div></div>
+    <div class="stat reveal delay-1"><div class="num">UTS Northside</div><div class="lab" data-i18n="lab_futsal_club">Current Futsal Club</div></div>
+    <div class="stat reveal delay-2"><div class="num">UNSW FC</div><div class="lab" data-i18n="lab_football_club">Current Football Club</div></div>
+    <div class="stat reveal delay-3"><div class="num">Fixo / Ala</div><div class="lab" data-i18n="lab_pos_futsal">Position — Futsal</div></div>
+    <div class="stat reveal"><div class="num">Attacker / Forward</div><div class="lab" data-i18n="lab_pos_football">Position — Football</div></div>
+  </div>
+</section>
+
+<!-- ================= 04 PLAYER IDENTITY ================= -->
+<section id="identity">
+  <div class="identity-grid">
+    <div>
+      <div class="identity-statement reveal">
+        <span data-i18n="id_word1">STRONG.</span><span data-i18n="id_word2">VERSATILE.</span><span data-i18n="id_word3">COMPETITIVE.</span>
+      </div>
+      <p class="identity-intro reveal delay-1" data-i18n="id_intro">
+        Strong and versatile player with excellent leadership, grit and defensive understanding.
+        Participates actively in setups and contributes both defensively and offensively.
+      </p>
+      <div class="traits">
+        <div class="trait reveal">
+          <div class="t-label" data-i18n="trait_def_label">Defensive</div>
+          <div class="t-desc" data-i18n="trait_def_desc">Strong defensive and 1v1 positioning.</div>
+        </div>
+        <div class="trait reveal delay-1">
+          <div class="t-label" data-i18n="trait_phys_label">Physical</div>
+          <div class="t-desc" data-i18n="trait_phys_desc">Excellent running and physical condition.</div>
+        </div>
+        <div class="trait reveal delay-2">
+          <div class="t-label" data-i18n="trait_att_label">Attacking</div>
+          <div class="t-desc" data-i18n="trait_att_desc">Good perception in attack, powerful shot and participation in setups.</div>
+        </div>
+        <div class="trait reveal delay-3">
+          <div class="t-label" data-i18n="trait_lead_label">Leadership</div>
+          <div class="t-desc" data-i18n="trait_lead_desc">Excellent determination and willingness to compete until the end.</div>
+        </div>
+      </div>
+    </div>
+    <div class="identity-photo reveal-img">
+      <img src="assets/alexia-profile.jpg" alt="Alexia Karrys-Stahl portrait" loading="lazy"
+           onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;media-fallback&quot;>ALEXIA — PROFILE PHOTO<br>assets/alexia-profile.jpg</div>');">
+    </div>
+  </div>
+</section>
+
+<!-- ================= 05 AUSTRALIA ================= -->
+<section id="australia">
+  <div class="aus-media">
+    <img src="assets/alexia-australia.jpg" alt="Alexia Karrys-Stahl — Australia" loading="lazy"
+         onerror="this.remove(); document.getElementById('ausFallback').style.display='flex';">
+    <div class="media-fallback" id="ausFallback" style="display:none">AUSTRALIA — NATIONAL TEAM IMAGE<br>assets/alexia-australia.jpg</div>
+  </div>
+  <div class="aus-inner">
+    <div class="aus-title reveal" data-i18n="aus_title">AUSTRALIA</div>
+    <div class="aus-caps">
+      <div class="aus-cap reveal">
+        <div class="comp" data-i18n="aus_comp1">ASEAN Futsal Championship</div>
+        <div class="loc"><span data-i18n="loc_thailand">Thailand</span> — 2026</div>
+      </div>
+      <div class="aus-cap reveal delay-1">
+        <div class="comp" data-i18n="aus_comp2">AFC Asian Cup</div>
+        <div class="loc"><span data-i18n="loc_china">China</span> — 2025</div>
+      </div>
+      <div class="aus-cap reveal delay-2">
+        <div class="comp" data-i18n="aus_comp3">AFC Asian Cup Qualifiers</div>
+        <div class="loc"><span data-i18n="loc_uzbekistan">Uzbekistan</span> — 2025</div>
+      </div>
+      <div class="aus-cap reveal delay-3">
+        <div class="comp gt-inline">31:28</div>
+        <div class="loc" data-i18n="aus_avg_label">Average minutes per match</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HIGHLIGHTS 1 ================= -->
+<section id="highlights">
+  <div class="section-head">
+    <div class="section-title reveal" data-i18n="hl_title">Highlights</div>
+    <div class="eyebrow reveal" data-i18n="aus_title_lc">Australia</div>
+  </div>
+  <div class="video-frame reveal-img" id="videoFrame">
+    <img class="poster-img" src="assets/alexia-clip-01-poster.jpg" alt="" loading="lazy">
+    <div class="veil"></div>
+    <video id="highlightVideo" muted playsinline preload="metadata" poster="assets/alexia-clip-01-poster.jpg">
+      <source src="assets/alexia-clip-01.mp4" type="video/mp4">
+    </video>
+    <button class="play-btn" id="playBtn" aria-label="Play highlights">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ================= HIGHLIGHTS 2 ================= -->
+<section id="highlights-2" class="hl-more">
+  <div class="section-head">
+    <div class="eyebrow reveal" data-i18n="aus_title_lc">Australia</div>
+  </div>
+  <div class="video-frame reveal-img hl-frame">
+    <img class="poster-img" src="assets/alexia-clip-04-poster.jpg" alt="" loading="lazy">
+    <div class="veil"></div>
+    <video muted playsinline preload="metadata" poster="assets/alexia-clip-04-poster.jpg">
+      <source src="assets/alexia-clip-04.mp4" type="video/mp4">
+    </video>
+    <button class="play-btn hl-play" aria-label="Play highlights">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ================= HIGHLIGHTS 3 — MSP FC ================= -->
+<section id="highlights-3" class="hl-more">
+  <div class="section-head">
+    <div class="eyebrow reveal">MSP FC — <span data-i18n="msp_league">Indonesia Women’s Pro Futsal League</span></div>
+  </div>
+  <div class="video-frame reveal-img hl-frame">
+    <img class="poster-img" src="assets/alexia-clip-02-poster.jpg" alt="" loading="lazy">
+    <div class="veil"></div>
+    <video muted playsinline preload="metadata" poster="assets/alexia-clip-02-poster.jpg">
+      <source src="assets/alexia-clip-02.mp4" type="video/mp4">
+    </video>
+    <button class="play-btn hl-play" aria-label="Play highlights">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ================= HIGHLIGHTS 4 — FOOTBALL ================= -->
+<section id="highlights-4" class="hl-more">
+  <div class="section-head">
+    <div class="eyebrow reveal" data-i18n="word_football">Football</div>
+  </div>
+  <div class="video-frame reveal-img hl-frame">
+    <img class="poster-img" src="assets/alexia-clip-03-poster.jpg" alt="" loading="lazy">
+    <div class="veil"></div>
+    <video muted playsinline preload="metadata" poster="assets/alexia-clip-03-poster.jpg">
+      <source src="assets/alexia-clip-03.mov" type="video/quicktime">
+      <source src="assets/alexia-clip-03.mov" type="video/mp4">
+    </video>
+    <button class="play-btn hl-play" aria-label="Play highlights">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- ================= 07 EXPERIENCE ================= -->
+<section id="experience">
+  <div class="section-head">
+    <div class="section-title reveal" data-i18n="exp_title">Experience</div>
+  </div>
+  <div class="exp-layout">
+    <div class="exp-img reveal-img">
+      <div class="exp-gallery-track" id="expGalleryTrack">
+        <img src="assets/alexia-gallery-01.jpg" alt="Alexia Karrys-Stahl — photo 1" loading="eager">
+        <img src="assets/alexia-gallery-02.jpg" alt="Alexia Karrys-Stahl — photo 2" loading="lazy">
+        <img src="assets/alexia-gallery-03.jpg" alt="Alexia Karrys-Stahl — photo 3" loading="lazy">
+        <img src="assets/alexia-gallery-04.jpg" alt="Alexia Karrys-Stahl — photo 4" loading="lazy">
+        <img src="assets/alexia-gallery-05.jpg" alt="Alexia Karrys-Stahl — photo 5" loading="lazy">
+        <img src="assets/alexia-gallery-06.jpg" alt="Alexia Karrys-Stahl — photo 6" loading="lazy">
+        <img src="assets/alexia-gallery-07.jpg" alt="Alexia Karrys-Stahl — photo 7" loading="lazy">
+        <img src="assets/alexia-gallery-08.jpg" alt="Alexia Karrys-Stahl — photo 8" loading="lazy">
+        <img src="assets/alexia-gallery-09.jpg" alt="Alexia Karrys-Stahl — photo 9" loading="lazy">
+        <img src="assets/alexia-gallery-10.jpg" alt="Alexia Karrys-Stahl — photo 10" loading="lazy">
+        <img src="assets/alexia-gallery-11.jpg" alt="Alexia Karrys-Stahl — photo 11" loading="lazy">
+        <img src="assets/alexia-gallery-12.jpg" alt="Alexia Karrys-Stahl — photo 12" loading="lazy">
+        <img src="assets/alexia-gallery-13.jpg" alt="Alexia Karrys-Stahl — photo 13" loading="lazy">
+        <img src="assets/alexia-gallery-16.jpg" alt="Alexia Karrys-Stahl — photo 14" loading="lazy">
+      </div>
+      <div class="exp-gallery-counter" id="expGalleryCounter">1 / 14</div>
+      <button class="exp-gallery-arrow" id="expGalleryArrow" aria-label="Next photo">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#0c0d0c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="exp-list">
+      <div class="exp-item reveal">
+        <div class="exp-year">2026</div>
+        <div><div class="exp-org">MSP FC</div><div class="exp-comp" data-i18n="msp_league">Indonesia Women's Pro Futsal League</div></div>
+      </div>
+      <div class="exp-item reveal delay-1">
+        <div class="exp-year">2025–26</div>
+        <div><div class="exp-org" data-i18n="aus_nt">Australian National Team</div><div class="exp-comp" data-i18n="afc_asean">AFC Asian Cup + ASEAN Championship</div></div>
+      </div>
+      <div class="exp-item reveal delay-2">
+        <div class="exp-year">2024–<span data-i18n="present">Present</span></div>
+        <div><div class="exp-org">UTS Northside Futsal Club</div><div class="exp-comp" data-i18n="npl1_full">NPL1 New South Wales</div></div>
+      </div>
+      <div class="exp-item reveal delay-3">
+        <div class="exp-year">2023 &amp; 2026</div>
+        <div><div class="exp-org">NSW Thunder</div><div class="exp-comp" data-i18n="nat_futsal_champs_sing">National Futsal Champions</div></div>
+      </div>
+      <div class="exp-item reveal delay-4">
+        <div class="exp-year">2023/24</div>
+        <div><div class="exp-org">Central Coast Mariners</div><div class="exp-comp" data-i18n="aleague_women">A-League Women</div></div>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-year">2021/22</div>
+        <div><div class="exp-org">Canberra United</div><div class="exp-comp" data-i18n="aleague_women">A-League Women</div></div>
+      </div>
+
+      <div class="exp-more" id="expMore">
+        <div class="exp-item">
+          <div class="exp-year">2019–23</div>
+          <div><div class="exp-org">Eastern Suburbs Hakoah Futsal Club</div><div class="exp-comp" data-i18n="npl1_full">NPL1 New South Wales</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2015–17</div>
+          <div><div class="exp-org">Canberra United TA</div><div class="exp-comp" data-i18n="aleague_pathway">A-League Women pathway</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2025</div>
+          <div><div class="exp-org">Illawarra United Stingrays FC</div><div class="exp-comp" data-i18n="npl1_first_grade">NPL1 NSW — Women's First Grade</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2024</div>
+          <div><div class="exp-org">Manly United FC</div><div class="exp-comp" data-i18n="npl1_first_grade">NPL1 NSW — Women's First Grade</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2022–23</div>
+          <div><div class="exp-org">Bankstown City Lions FC</div><div class="exp-comp" data-i18n="npl1_first_grade">NPL1 NSW — Women's First Grade</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2020–21</div>
+          <div><div class="exp-org">Sydney Olympic FC</div><div class="exp-comp" data-i18n="npl1_first_grade">NPL1 NSW — Women's First Grade</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2017–18</div>
+          <div><div class="exp-org">North Shore Mariners FC</div><div class="exp-comp" data-i18n="npl1_first_grade">NPL1 NSW — Women's First Grade</div></div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-year">2016</div>
+          <div><div class="exp-org">U20 Young Matildas</div><div class="exp-comp" data-i18n="training_camp">National training camp</div></div>
+        </div>
+        <div class="exp-item" style="border-bottom:none;">
+          <div class="exp-year">2014</div>
+          <div><div class="exp-org">U17 Junior Matildas</div><div class="exp-comp" data-i18n="u17_qualifiers">AFC U17 Qualifiers — Melaka, Malaysia</div></div>
+        </div>
+      </div>
+
+      <button class="view-more-btn reveal" id="viewMoreBtn" onclick="toggleCareer()"><span data-i18n="view_full_career">View Full Career +</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 08 FOOTBALL x FUTSAL ================= -->
+<section id="split">
+  <div class="split-half left">
+    <div class="split-media reveal-img">
+      <img src="assets/alexia-split-football.jpg" alt="Alexia Karrys-Stahl — football" loading="lazy"
+           onerror="this.style.display='none'; this.parentElement.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;media-fallback&quot;>ALEXIA — FOOTBALL PHOTO<br>assets/alexia-split-football.jpg</div>');">
+    </div>
+    <div class="split-title reveal" data-i18n="word_football">Football</div>
+    <ul class="split-list">
+      <li class="reveal" data-i18n="aleague_women">A-League Women</li>
+      <li class="reveal delay-1">NPL1 NSW</li>
+      <li class="reveal delay-2">Junior Matildas</li>
+      <li class="reveal delay-3">Young Matildas</li>
+    </ul>
+  </div>
+  <div class="split-half right">
+    <div class="split-media reveal-img">
+      <img src="assets/alexia-split-futsal.jpg" alt="Alexia Karrys-Stahl — futsal" loading="lazy"
+           onerror="this.style.display='none'; this.parentElement.parentElement.insertAdjacentHTML('beforeend','<div class=&quot;media-fallback&quot;>ALEXIA — FUTSAL PHOTO<br>assets/alexia-split-futsal.jpg</div>');">
+    </div>
+    <div class="split-title reveal" data-i18n="word_futsal">Futsal</div>
+    <ul class="split-list">
+      <li class="reveal" data-i18n="aus_nt">Australian National Team</li>
+      <li class="reveal delay-1" data-i18n="aus_comp2">AFC Asian Cup</li>
+      <li class="reveal delay-2" data-i18n="asean_champ">ASEAN Championship</li>
+      <li class="reveal delay-3" data-i18n="msp_league">Indonesia Women's Pro Futsal League</li>
+      <li class="reveal delay-4" data-i18n="nat_futsal_champs_plur">National Futsal Championships</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 10 FULL DOCUMENTS ================= -->
+<section id="documents">
+  <div class="section-head">
+    <div class="section-title reveal" data-i18n="doc_title">Documents</div>
+  </div>
+  <div class="doc-links">
+    <a class="doc-link reveal" href="assets/alexia-full-dossier.pdf" target="_blank" rel="noopener">
+      <span data-i18n="doc_download">Download here</span><span class="arr">↓</span>
+    </a>
+  </div>
+</section>
+
+<!-- ================= 11 CONTACT ================= -->
+<section id="contact">
+  <div class="contact-title reveal" data-i18n="contact_title">LET'S TALK.</div>
+  <div class="contact-links">
+    <a class="reveal" href="mailto:alexia.ks@hotmail.com"><span>alexia.ks@hotmail.com</span><span class="tag" data-i18n="tag_email">Email</span></a>
+    <a class="reveal delay-1" href="https://instagram.com/alexiaks" target="_blank" rel="noopener"><span>@alexiaks</span><span class="tag" data-i18n="tag_instagram">Instagram</span></a>
+  </div>
+  <footer data-i18n="footer_copyright">© Alexia Karrys-Stahl — Australia.</footer>
+  <img class="contact-symbol reveal" src="assets/alexia-symbol.svg" alt="Alexia Karrys-Stahl symbol" loading="lazy">
+</section>
+
+<script>
+  // ---------- i18n ----------
+  const I18N = {
+    it: {
+      hero_kicker: 'Calcio + Calcio a 5', watch_highlights: 'Guarda i Video',
+      lab_years: 'Anni', lab_height: 'Altezza', lab_foot: 'Piede', lab_nationality: 'Nazionalità',
+      lab_futsal_club: 'Attuale Club di Calcio a 5', lab_football_club: 'Attuale Club di Calcio',
+      lab_pos_futsal: 'Posizione — Calcio a 5', lab_pos_football: 'Posizione — Calcio',
+      val_right: 'Destro', val_australian: 'Australiana',
+      id_word1: 'FORTE.', id_word2: 'VERSATILE.', id_word3: 'COMPETITIVA.',
+      id_intro: 'Giocatrice forte e versatile, con grande leadership, grinta e ottima lettura difensiva. Partecipa attivamente alle costruzioni di gioco e contribuisce sia in fase difensiva che offensiva.',
+      trait_def_label: 'Difesa', trait_def_desc: "Ottimo posizionamento difensivo e nell'1contro1.",
+      trait_phys_label: 'Fisico', trait_phys_desc: 'Eccellente condizione fisica e di corsa.',
+      trait_att_label: 'Attacco', trait_att_desc: 'Buona lettura offensiva, tiro potente e partecipazione alle azioni.',
+      trait_lead_label: 'Leadership', trait_lead_desc: 'Grande determinazione e voglia di lottare fino alla fine.',
+      aus_title: 'AUSTRALIA', aus_title_lc: 'Australia',
+      aus_comp1: 'Campionato ASEAN di Calcio a 5', aus_comp2: "Coppa d'Asia AFC", aus_comp3: "Qualificazioni Coppa d'Asia AFC",
+      aus_avg_label: 'Media minuti a partita',
+      loc_thailand: 'Tailandia', loc_china: 'Cina', loc_uzbekistan: 'Uzbekistan',
+      hl_title: 'Highlights', msp_league: 'Lega Professionistica Femminile di Calcio a 5 Indonesiana',
+      word_football: 'Calcio', word_futsal: 'Calcio a 5',
+      exp_title: 'Esperienza', aus_nt: 'Nazionale Australiana', afc_asean: "Coppa d'Asia AFC + Campionato ASEAN",
+      npl1_full: 'NPL1 Nuovo Galles del Sud', nat_futsal_champs_sing: 'Campionesse Nazionali di Calcio a 5',
+      aleague_women: 'A-League Femminile', aleague_pathway: 'Percorso A-League Femminile',
+      npl1_first_grade: 'NPL1 NSW — Prima Squadra Femminile', training_camp: 'Raduno della nazionale',
+      u17_qualifiers: 'Qualificazioni AFC U17 — Melaka, Malesia', present: 'Presente',
+      view_full_career: 'Vedi Carriera Completa +', show_less: 'Mostra Meno –',
+      asean_champ: 'Campionato ASEAN', nat_futsal_champs_plur: 'Campionati Nazionali di Calcio a 5',
+      doc_title: 'Documenti', doc_download: 'Scarica qui',
+      contact_title: 'PARLIAMO.', tag_email: 'Email', tag_instagram: 'Instagram',
+      footer_copyright: '© Alexia Karrys-Stahl — Australia.',
+    },
+    es: {
+      hero_kicker: 'Fútbol + Fútbol Sala', watch_highlights: 'Ver Highlights',
+      lab_years: 'Años', lab_height: 'Altura', lab_foot: 'Pie', lab_nationality: 'Nacionalidad',
+      lab_futsal_club: 'Club Actual de Fútbol Sala', lab_football_club: 'Club Actual de Fútbol',
+      lab_pos_futsal: 'Posición — Fútbol Sala', lab_pos_football: 'Posición — Fútbol',
+      val_right: 'Derecho', val_australian: 'Australiana',
+      id_word1: 'FUERTE.', id_word2: 'VERSÁTIL.', id_word3: 'COMPETITIVA.',
+      id_intro: 'Jugadora fuerte y versátil, con excelente liderazgo, garra y gran comprensión defensiva. Participa activamente en las jugadas y contribuye tanto en defensa como en ataque.',
+      trait_def_label: 'Defensa', trait_def_desc: 'Excelente posicionamiento defensivo y en el 1 contra 1.',
+      trait_phys_label: 'Físico', trait_phys_desc: 'Excelente condición física y de carrera.',
+      trait_att_label: 'Ataque', trait_att_desc: 'Buena lectura en ataque, disparo potente y participación en las jugadas.',
+      trait_lead_label: 'Liderazgo', trait_lead_desc: 'Gran determinación y voluntad de luchar hasta el final.',
+      aus_title: 'AUSTRALIA', aus_title_lc: 'Australia',
+      aus_comp1: 'Campeonato ASEAN de Fútbol Sala', aus_comp2: 'Copa Asiática AFC', aus_comp3: 'Clasificación Copa Asiática AFC',
+      aus_avg_label: 'Promedio de minutos por partido',
+      loc_thailand: 'Tailandia', loc_china: 'China', loc_uzbekistan: 'Uzbekistán',
+      hl_title: 'Highlights', msp_league: 'Liga Profesional Femenina de Fútbol Sala de Indonesia',
+      word_football: 'Fútbol', word_futsal: 'Fútbol Sala',
+      exp_title: 'Experiencia', aus_nt: 'Selección Nacional Australiana', afc_asean: 'Copa Asiática AFC + Campeonato ASEAN',
+      npl1_full: 'NPL1 Nueva Gales del Sur', nat_futsal_champs_sing: 'Campeonas Nacionales de Fútbol Sala',
+      aleague_women: 'A-League Femenina', aleague_pathway: 'Camino A-League Femenina',
+      npl1_first_grade: 'NPL1 NSW — Primer Equipo Femenino', training_camp: 'Concentración de la selección',
+      u17_qualifiers: 'Clasificación AFC U17 — Melaka, Malasia', present: 'Presente',
+      view_full_career: 'Ver Carrera Completa +', show_less: 'Mostrar Menos –',
+      asean_champ: 'Campeonato ASEAN', nat_futsal_champs_plur: 'Campeonatos Nacionales de Fútbol Sala',
+      doc_title: 'Documentos', doc_download: 'Descargar aquí',
+      contact_title: 'HABLEMOS.', tag_email: 'Email', tag_instagram: 'Instagram',
+      footer_copyright: '© Alexia Karrys-Stahl — Australia.',
+    },
+    pt: {
+      hero_kicker: 'Futebol + Futsal', watch_highlights: 'Ver Melhores Momentos',
+      lab_years: 'Anos', lab_height: 'Altura', lab_foot: 'Pé', lab_nationality: 'Nacionalidade',
+      lab_futsal_club: 'Clube Atual de Futsal', lab_football_club: 'Clube Atual de Futebol',
+      lab_pos_futsal: 'Posição — Futsal', lab_pos_football: 'Posição — Futebol',
+      val_right: 'Direito', val_australian: 'Australiana',
+      id_word1: 'FORTE.', id_word2: 'VERSÁTIL.', id_word3: 'COMPETITIVA.',
+      id_intro: 'Jogadora forte e versátil, com excelente liderança, raça e ótimo entendimento defensivo. Participa ativamente das jogadas e contribui tanto na defesa quanto no ataque.',
+      trait_def_label: 'Defesa', trait_def_desc: 'Ótimo posicionamento defensivo e no 1x1.',
+      trait_phys_label: 'Físico', trait_phys_desc: 'Excelente condicionamento físico e de corrida.',
+      trait_att_label: 'Ataque', trait_att_desc: 'Boa leitura de ataque, chute forte e participação nas jogadas.',
+      trait_lead_label: 'Liderança', trait_lead_desc: 'Grande determinação e vontade de lutar até o fim.',
+      aus_title: 'AUSTRÁLIA', aus_title_lc: 'Austrália',
+      aus_comp1: 'Campeonato ASEAN de Futsal', aus_comp2: 'Copa Asiática AFC', aus_comp3: 'Eliminatórias da Copa Asiática AFC',
+      aus_avg_label: 'Média de minutos por partida',
+      loc_thailand: 'Tailândia', loc_china: 'China', loc_uzbekistan: 'Uzbequistão',
+      hl_title: 'Melhores Momentos', msp_league: 'Liga Profissional Feminina de Futsal da Indonésia',
+      word_football: 'Futebol', word_futsal: 'Futsal',
+      exp_title: 'Experiência', aus_nt: 'Seleção Australiana', afc_asean: 'Copa Asiática AFC + Campeonato ASEAN',
+      npl1_full: 'NPL1 Nova Gales do Sul', nat_futsal_champs_sing: 'Campeãs Nacionais de Futsal',
+      aleague_women: 'A-League Feminina', aleague_pathway: 'Categoria de base da A-League Feminina',
+      npl1_first_grade: 'NPL1 NSW — Time Principal Feminino', training_camp: 'Convocação da seleção',
+      u17_qualifiers: 'Eliminatórias AFC Sub-17 — Melaka, Malásia', present: 'Atual',
+      view_full_career: 'Ver Carreira Completa +', show_less: 'Ver Menos –',
+      asean_champ: 'Campeonato ASEAN', nat_futsal_champs_plur: 'Campeonatos Nacionais de Futsal',
+      doc_title: 'Documentos', doc_download: 'Baixar aqui',
+      contact_title: 'VAMOS CONVERSAR.', tag_email: 'E-mail', tag_instagram: 'Instagram',
+      footer_copyright: '© Alexia Karrys-Stahl — Austrália.',
+    },
+  };
+  let currentLang = 'en';
+  const ENGLISH_SNAPSHOT = {};
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(!(key in ENGLISH_SNAPSHOT)) ENGLISH_SNAPSHOT[key] = el.textContent;
+  });
+  function t(key){
+    if(currentLang === 'en') return ENGLISH_SNAPSHOT[key] || key;
+    return (I18N[currentLang] && I18N[currentLang][key]) || ENGLISH_SNAPSHOT[key] || key;
+  }
+  function applyLang(lang){
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      el.textContent = t(key);
+    });
+    document.querySelectorAll('#langSwitch button').forEach(b=>{
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
+    try{ localStorage.setItem('aks_lang', lang); }catch(e){}
+  }
+  document.querySelectorAll('#langSwitch button').forEach(b=>{
+    b.addEventListener('click', ()=>applyLang(b.getAttribute('data-lang')));
+  });
+  let savedLang = 'en';
+  try{ savedLang = localStorage.getItem('aks_lang') || 'en'; }catch(e){}
+  if(savedLang !== 'en') applyLang(savedLang);
+
+  // ---------- scroll progress ----------
+  const progress = document.getElementById('progress');
+  function onScroll(){
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progress.style.width = scrolled + '%';
+  }
+  document.addEventListener('scroll', onScroll, { passive:true });
+
+  // ---------- subtle hero parallax ----------
+  const heroImg = document.getElementById('heroImg');
+  function parallax(){
+    if(!heroImg || !heroImg.isConnected) return;
+    const y = window.scrollY;
+    if(y < window.innerHeight){
+      heroImg.style.transform = 'translateY(' + Math.min(y * 0.18, 140) + 'px)';
+    }
+  }
+  document.addEventListener('scroll', parallax, { passive:true });
+
+  // ---------- reveal on scroll ----------
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold:.18, rootMargin:'0px 0px -8% 0px' });
+  document.querySelectorAll('.reveal, .reveal-img').forEach(el=>io.observe(el));
+
+  // ---------- video play ----------
+  const frame = document.getElementById('videoFrame');
+  const video = document.getElementById('highlightVideo');
+  const playBtn = document.getElementById('playBtn');
+  function playHighlight(){
+    frame.classList.add('playing');
+    video.controls = true;
+    video.play().catch(()=>{});
+  }
+  playBtn.addEventListener('click', playHighlight);
+  frame.addEventListener('click', (e)=>{ if(e.target === frame) playHighlight(); });
+
+  // ---------- highlights 2-4: click to play ----------
+  document.querySelectorAll('.hl-frame').forEach(hlFrame=>{
+    const hlVideo = hlFrame.querySelector('video');
+    const hlBtn = hlFrame.querySelector('.hl-play');
+    function playHl(){
+      hlFrame.classList.add('playing');
+      hlVideo.controls = true;
+      hlVideo.play().catch(()=>{});
+    }
+    hlBtn.addEventListener('click', playHl);
+    hlFrame.addEventListener('click', (e)=>{ if(e.target === hlFrame) playHl(); });
+  });
+
+  // ---------- autoplay highlight videos when scrolled into view ----------
+  const autoplayIO = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const holder = entry.target;
+      const vid = holder.querySelector('video');
+      if(!vid) return;
+      if(entry.isIntersecting){
+        holder.classList.add('playing');
+        vid.muted = true;               // required for autoplay to be allowed
+        vid.controls = true;            // keep it pausable once the poster is gone
+        vid.play().catch(()=>{});
+      } else {
+        vid.pause();
+      }
+    });
+  }, { threshold:.5 });
+  const mainVideoFrame = document.getElementById('videoFrame');
+  if(mainVideoFrame) autoplayIO.observe(mainVideoFrame);
+
+  // ---------- career accordion ----------
+  function toggleCareer(){
+    const box = document.getElementById('expMore');
+    const btn = document.getElementById('viewMoreBtn');
+    const btnSpan = btn.querySelector('span');
+    const photo = document.querySelector('#experience .exp-img');
+    const open = box.style.maxHeight && box.style.maxHeight !== '0px';
+    if(open){
+      box.style.maxHeight = '0px';
+      btnSpan.setAttribute('data-i18n', 'view_full_career');
+      btnSpan.textContent = t('view_full_career');
+      if(photo) photo.classList.remove('dimmed');
+    } else {
+      box.style.maxHeight = box.scrollHeight + 'px';
+      btnSpan.setAttribute('data-i18n', 'show_less');
+      btnSpan.textContent = t('show_less');
+      if(photo) photo.classList.add('dimmed');
+    }
+  }
+
+  // ---------- experience photo gallery ----------
+  const expTrack = document.getElementById('expGalleryTrack');
+  const expArrow = document.getElementById('expGalleryArrow');
+  const expCounter = document.getElementById('expGalleryCounter');
+  if(expTrack){
+    const expSlides = expTrack.children.length;
+    function updateExpCounter(){
+      const idx = Math.round(expTrack.scrollLeft / expTrack.clientWidth) + 1;
+      expCounter.textContent = Math.min(idx, expSlides) + ' / ' + expSlides;
+    }
+    expArrow.addEventListener('click', ()=>{
+      const w = expTrack.clientWidth;
+      const atEnd = expTrack.scrollLeft + w >= expTrack.scrollWidth - 4;
+      expTrack.scrollTo({ left: atEnd ? 0 : expTrack.scrollLeft + w, behavior:'smooth' });
+    });
+    expTrack.addEventListener('scroll', updateExpCounter, { passive:true });
+    updateExpCounter();
+  }
+</script>
+</body>
+</html>
