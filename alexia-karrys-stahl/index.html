@@ -198,7 +198,7 @@
   #identity{ background:var(--paper-dim); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); border-top:1px solid var(--line-light); }
   .identity-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px,6vw,90px); align-items:center; }
   .identity-photo{ position:relative; aspect-ratio:4/5; overflow:hidden; background:var(--paper-dim); }
-  .identity-photo img{ width:100%; height:100%; object-fit:cover; }
+  .identity-photo img{ width:100%; height:100%; object-fit:cover; object-position:center 15%; }
   .identity-statement{ font-size:clamp(2.4rem,5.2vw,4.6rem); font-weight:900; text-transform:uppercase; line-height:1.02; letter-spacing:-.01em; }
   .identity-statement span{ display:block; }
   .identity-statement span:nth-child(2){ color:var(--gold); }
@@ -213,9 +213,9 @@
   .aus-media{ position:absolute; inset:0; overflow:hidden; }
   .aus-media img{ width:100%; height:100%; object-fit:cover; }
   .aus-media::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,32,25,.25) 0%, rgba(10,32,25,.55) 55%, rgba(8,18,14,.94) 100%); }
-  .aus-inner{ position:relative; z-index:2; width:100%; padding:clamp(56px,9vh,110px) clamp(20px,5vw,64px); }
+  .aus-inner{ position:relative; z-index:2; width:100%; padding:clamp(56px,9vh,110px) clamp(20px,5vw,64px); text-align:center; }
   .aus-title{ font-size:clamp(4rem,15vw,13rem); font-weight:900; letter-spacing:-.02em; line-height:.82; text-transform:uppercase; }
-  .aus-caps{ margin-top:clamp(28px,5vh,54px); display:grid; grid-template-columns:repeat(4,1fr); gap:28px; border-top:1px solid var(--line-dark); padding-top:26px; }
+  .aus-caps{ margin-top:clamp(28px,5vh,54px); display:grid; grid-template-columns:repeat(4,1fr); gap:28px; border-top:1px solid var(--line-dark); padding-top:26px; justify-items:center; }
   .aus-cap .comp.gt-inline{ color:var(--gold-soft); }
   .aus-cap .comp{ font-size:clamp(1rem,1.6vw,1.3rem); font-weight:800; text-transform:uppercase; letter-spacing:.01em; }
   .aus-cap .loc{ margin-top:8px; font-size:.85rem; opacity:.7; letter-spacing:.04em; }
@@ -241,7 +241,7 @@
   .exp-img img{ width:100%; height:100%; object-fit:cover; }
   .exp-gallery-track{ display:flex; height:100%; width:100%; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   .exp-gallery-track::-webkit-scrollbar{ display:none; }
-  .exp-gallery-track img{ flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; transition:filter .6s var(--ease); }
+  .exp-gallery-track img{ flex:0 0 100%; width:100%; height:100%; object-fit:cover; object-position:center 15%; scroll-snap-align:start; transition:filter .6s var(--ease); }
   .exp-img.dimmed .exp-gallery-track img{ filter:brightness(.35) saturate(.85); }
   .exp-list{
     position:relative; z-index:1;
@@ -324,10 +324,10 @@
     .stat:nth-child(3n){ border-right:1px solid var(--line-light); }
     .stat:nth-child(2n){ border-right:none; }
     .identity-grid{ grid-template-columns:1fr; }
-    .identity-photo{ order:-1; aspect-ratio:16/10; }
+    .identity-photo{ order:-1; aspect-ratio:4/5; }
     .aus-caps{ grid-template-columns:1fr; gap:18px; }
     .exp-layout{ grid-template-columns:1fr; }
-    .exp-img{ aspect-ratio:16/9; }
+    .exp-img{ aspect-ratio:4/5; }
     #split{ grid-template-columns:1fr; }
   }
 
@@ -695,7 +695,6 @@
     <button class="play-btn" aria-label="Play highlights">
       <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
     </button>
-    <div class="hl-full-caption reveal" data-i18n="full_summary_caption">Full Summary ↓</div>
   </div>
 </section>
 
