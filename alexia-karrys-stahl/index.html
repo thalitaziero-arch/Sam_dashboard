@@ -234,7 +234,7 @@
   }
 
   /* ================= HIGHLIGHTS 5 (full-screen) ================= */
-  .hl-full{ background:var(--ink); border-top:3px solid var(--gold); }
+  .hl-full{ background:var(--ink); border-top:1px solid var(--line-dark); margin-top:18px; }
   .hl-full .video-frame{ min-height:100svh; aspect-ratio:auto; border:none; }
   .hl-full-caption{
     position:absolute; left:0; right:0; bottom:clamp(28px,6vh,64px); z-index:2;
@@ -499,7 +499,7 @@
     <div class="section-title reveal" data-i18n="hl_title">Highlights</div>
     <div class="eyebrow reveal" data-i18n="aus_title_lc">Australia</div>
   </div>
-  <div class="video-frame reveal-img" id="videoFrame">
+  <div class="video-frame" id="videoFrame">
     <img class="poster-img" src="assets/alexia-clip-01-poster.jpg" alt="" loading="lazy">
     <div class="veil"></div>
     <video id="highlightVideo" muted playsinline preload="metadata" poster="assets/alexia-clip-01-poster.jpg">
