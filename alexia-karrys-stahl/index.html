@@ -193,6 +193,14 @@
     background:linear-gradient(135deg, var(--green) 0%, var(--green-2) 60%, var(--ink) 100%);
     color:var(--gold-soft); font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600; text-align:center; padding:20px;
   }
+  .mute-btn{
+    position:absolute; right:clamp(18px,4vw,36px); bottom:clamp(18px,4vw,36px); z-index:3;
+    width:44px; height:44px; border-radius:50%; border:1.5px solid rgba(245,243,238,.55);
+    background:rgba(12,13,12,.35); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .3s, transform .3s;
+  }
+  .mute-btn:hover{ background:rgba(12,13,12,.55); transform:scale(1.06); }
+  .mute-btn svg{ width:20px; height:20px; }
 
   /* ================= PLAYER IDENTITY ================= */
   #identity{ background:var(--paper-dim); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); border-top:1px solid var(--line-light); }
@@ -689,11 +697,12 @@
   <div class="video-frame reveal-img" id="videoFrame5">
     <img class="poster-img" src="assets/alexia-clip-05-poster.jpg" alt="" loading="lazy">
     <div class="veil"></div>
-    <video muted playsinline preload="metadata" poster="assets/alexia-clip-05-poster.jpg">
+    <video id="finalVideo" muted loop playsinline preload="metadata" poster="assets/alexia-clip-05-poster.jpg">
       <source src="assets/alexia-clip-05.mp4" type="video/mp4">
     </video>
-    <button class="play-btn" aria-label="Play highlights">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
+    <button class="mute-btn" id="finalMuteBtn" aria-label="Toggle music">
+      <svg class="icon-muted" viewBox="0 0 24 24" fill="none"><path d="M4 9v6h4l5 5V4L8 9H4Z" fill="#f5f3ee"/><path d="M16 9l5 6M21 9l-5 6" stroke="#f5f3ee" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" style="display:none"><path d="M4 9v6h4l5 5V4L8 9H4Z" fill="#f5f3ee"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a9 9 0 0 1 0 12" stroke="#f5f3ee" stroke-width="1.8" stroke-linecap="round"/></svg>
     </button>
   </div>
 </section>
@@ -906,7 +915,7 @@
       if(entry.isIntersecting){
         holder.classList.add('playing');
         vid.muted = true;               // required for autoplay to be allowed
-        vid.controls = true;            // keep it pausable once the poster is gone
+        if(holder.id !== 'videoFrame5') vid.controls = true;  // the closing video has no controls, just a mute toggle
         vid.play().catch(()=>{});
       } else {
         vid.pause();
@@ -917,6 +926,17 @@
   if(mainVideoFrame) autoplayIO.observe(mainVideoFrame);
   const finalVideoFrame = document.getElementById('videoFrame5');
   if(finalVideoFrame) autoplayIO.observe(finalVideoFrame);
+
+  // ---------- closing video: mute toggle only, no play/pause controls ----------
+  const finalVideo = document.getElementById('finalVideo');
+  const finalMuteBtn = document.getElementById('finalMuteBtn');
+  if(finalVideo && finalMuteBtn){
+    finalMuteBtn.addEventListener('click', ()=>{
+      finalVideo.muted = !finalVideo.muted;
+      finalMuteBtn.querySelector('.icon-muted').style.display = finalVideo.muted ? '' : 'none';
+      finalMuteBtn.querySelector('.icon-unmuted').style.display = finalVideo.muted ? 'none' : '';
+    });
+  }
 
   // ---------- career accordion ----------
   function toggleCareer(){
