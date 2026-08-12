@@ -225,6 +225,15 @@
   .hl-frame{ aspect-ratio:16/9;
   }
 
+  /* ================= HIGHLIGHTS 5 (full-screen) ================= */
+  .hl-full{ background:var(--ink); border-top:1px solid var(--line-dark); }
+  .hl-full .video-frame{ min-height:100svh; aspect-ratio:auto; border:none; }
+  .hl-full-caption{
+    position:absolute; left:0; right:0; bottom:clamp(28px,6vh,64px); z-index:2;
+    text-align:center; color:var(--paper); font-size:.85rem; font-weight:700;
+    letter-spacing:.18em; text-transform:uppercase; opacity:.85;
+  }
+
   /* ================= EXPERIENCE ================= */
   #experience{ background:var(--ink); color:var(--paper); padding:clamp(72px,11vh,140px) clamp(20px,5vw,64px); }
   .exp-layout{ display:grid; grid-template-columns:.9fr 1.1fr; gap:clamp(28px,5vw,70px); align-items:start; }
@@ -546,20 +555,6 @@
   </div>
 </section>
 
-<!-- ================= HIGHLIGHTS 5 ================= -->
-<section id="highlights-5" class="hl-more">
-  <div class="video-frame reveal-img hl-frame">
-    <img class="poster-img" src="assets/alexia-clip-05-poster.jpg" alt="" loading="lazy">
-    <div class="veil"></div>
-    <video muted playsinline preload="metadata" poster="assets/alexia-clip-05-poster.jpg">
-      <source src="assets/alexia-clip-05.mp4" type="video/mp4">
-    </video>
-    <button class="play-btn hl-play" aria-label="Play highlights">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
-    </button>
-  </div>
-</section>
-
 <!-- ================= 07 EXPERIENCE ================= -->
 <section id="experience">
   <div class="section-head">
@@ -689,6 +684,21 @@
   </div>
 </section>
 
+<!-- ================= HIGHLIGHTS 5 (full-screen, autoplay) ================= -->
+<section id="highlights-5" class="hl-full">
+  <div class="video-frame reveal-img" id="videoFrame5">
+    <img class="poster-img" src="assets/alexia-clip-05-poster.jpg" alt="" loading="lazy">
+    <div class="veil"></div>
+    <video muted playsinline preload="metadata" poster="assets/alexia-clip-05-poster.jpg">
+      <source src="assets/alexia-clip-05.mp4" type="video/mp4">
+    </video>
+    <button class="play-btn" aria-label="Play highlights">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M6 4L20 12L6 20V4Z" fill="#0c0d0c"/></svg>
+    </button>
+    <div class="hl-full-caption reveal" data-i18n="full_summary_caption">Full Summary ↓</div>
+  </div>
+</section>
+
 <!-- ================= 10 FULL DOCUMENTS ================= -->
 <section id="documents">
   <div class="section-head">
@@ -740,7 +750,7 @@
       u17_qualifiers: 'Qualificazioni AFC U17 — Melaka, Malesia', present: 'Presente',
       view_full_career: 'Vedi Carriera Completa +', show_less: 'Mostra Meno –',
       asean_champ: 'Campionato ASEAN', nat_futsal_champs_plur: 'Campionati Nazionali di Calcio a 5',
-      doc_title: 'Documenti', doc_download: 'Scarica qui',
+      doc_title: 'Documenti', doc_download: 'Scarica qui', full_summary_caption: 'Riepilogo Completo ↓',
       contact_title: 'PARLIAMO.', tag_email: 'Email', tag_instagram: 'Instagram',
       footer_copyright: '© Alexia Karrys-Stahl — Australia.',
     },
@@ -769,7 +779,7 @@
       u17_qualifiers: 'Clasificación AFC U17 — Melaka, Malasia', present: 'Presente',
       view_full_career: 'Ver Carrera Completa +', show_less: 'Mostrar Menos –',
       asean_champ: 'Campeonato ASEAN', nat_futsal_champs_plur: 'Campeonatos Nacionales de Fútbol Sala',
-      doc_title: 'Documentos', doc_download: 'Descargar aquí',
+      doc_title: 'Documentos', doc_download: 'Descargar aquí', full_summary_caption: 'Resumen Completo ↓',
       contact_title: 'HABLEMOS.', tag_email: 'Email', tag_instagram: 'Instagram',
       footer_copyright: '© Alexia Karrys-Stahl — Australia.',
     },
@@ -798,7 +808,7 @@
       u17_qualifiers: 'Eliminatórias AFC Sub-17 — Melaka, Malásia', present: 'Atual',
       view_full_career: 'Ver Carreira Completa +', show_less: 'Ver Menos –',
       asean_champ: 'Campeonato ASEAN', nat_futsal_champs_plur: 'Campeonatos Nacionais de Futsal',
-      doc_title: 'Documentos', doc_download: 'Baixar aqui',
+      doc_title: 'Documentos', doc_download: 'Baixar aqui', full_summary_caption: 'Resumo Completo ↓',
       contact_title: 'VAMOS CONVERSAR.', tag_email: 'E-mail', tag_instagram: 'Instagram',
       footer_copyright: '© Alexia Karrys-Stahl — Austrália.',
     },
@@ -906,6 +916,8 @@
   }, { threshold:.5 });
   const mainVideoFrame = document.getElementById('videoFrame');
   if(mainVideoFrame) autoplayIO.observe(mainVideoFrame);
+  const finalVideoFrame = document.getElementById('videoFrame5');
+  if(finalVideoFrame) autoplayIO.observe(finalVideoFrame);
 
   // ---------- career accordion ----------
   function toggleCareer(){
