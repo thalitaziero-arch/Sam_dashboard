@@ -234,7 +234,7 @@
   }
 
   /* ================= HIGHLIGHTS 5 (full-screen) ================= */
-  .hl-full{ background:var(--ink); border-top:1px solid var(--line-dark); }
+  .hl-full{ background:var(--ink); border-top:3px solid var(--gold); }
   .hl-full .video-frame{ min-height:100svh; aspect-ratio:auto; border:none; }
   .hl-full-caption{
     position:absolute; left:0; right:0; bottom:clamp(28px,6vh,64px); z-index:2;
@@ -694,7 +694,7 @@
 
 <!-- ================= HIGHLIGHTS 5 (full-screen, autoplay) ================= -->
 <section id="highlights-5" class="hl-full">
-  <div class="video-frame reveal-img" id="videoFrame5">
+  <div class="video-frame" id="videoFrame5">
     <img class="poster-img" src="assets/alexia-clip-05-poster.jpg" alt="" loading="lazy">
     <div class="veil"></div>
     <video id="finalVideo" muted loop playsinline preload="metadata" poster="assets/alexia-clip-05-poster.jpg">
