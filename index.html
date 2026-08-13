@@ -16,7 +16,8 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--ice);color:var(--black);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{overflow-x:hidden;overflow-x:clip}
+body{margin:0;background:var(--ice);color:var(--black);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;max-width:100%}
 img,video{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{font:inherit}
@@ -564,7 +565,7 @@ section{position:relative}
   </div>
 </footer>
 
-<script>(function(){function s(){document.documentElement.style.setProperty("--sbw",(window.innerWidth-document.documentElement.clientWidth)+"px")}s();addEventListener("resize",s)})();</script>
+<script>(function(){function s(){document.documentElement.style.setProperty("--sbw",(window.innerWidth-document.documentElement.clientWidth)+"px")}s();addEventListener("resize",s);addEventListener("load",s);requestAnimationFrame(s)})();</script>
 <script>/*!
  * GSAP 3.12.5
  * https://gsap.com
