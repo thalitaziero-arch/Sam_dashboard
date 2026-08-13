@@ -222,7 +222,7 @@
   .aus-media img{ width:100%; height:100%; object-fit:cover; }
   .aus-media::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,32,25,.25) 0%, rgba(10,32,25,.55) 55%, rgba(8,18,14,.94) 100%); }
   .aus-inner{ position:relative; z-index:2; width:100%; padding:clamp(56px,9vh,110px) clamp(20px,5vw,64px); text-align:center; }
-  .aus-title{ font-size:clamp(4rem,15vw,13rem); font-weight:900; letter-spacing:-.02em; line-height:.82; text-transform:uppercase; }
+  .aus-title{ font-size:clamp(4rem,15vw,13rem); font-weight:900; letter-spacing:-.02em; line-height:.82; text-transform:uppercase; max-width:100%; overflow-wrap:break-word; }
   .aus-caps{ margin-top:clamp(28px,5vh,54px); display:grid; grid-template-columns:repeat(4,1fr); gap:28px; border-top:1px solid var(--line-dark); padding-top:26px; justify-items:center; }
   .aus-cap .comp.gt-inline{ color:var(--gold-soft); }
   .aus-cap .comp{ font-size:clamp(1rem,1.6vw,1.3rem); font-weight:800; text-transform:uppercase; letter-spacing:.01em; }
@@ -363,7 +363,7 @@
     .trait{ grid-template-columns:1fr; gap:6px; }
     .trait .t-label{ font-size:.72rem; }
 
-    .aus-title{ font-size:clamp(3rem,17vw,5.5rem); }
+    .aus-title{ font-size:clamp(2.2rem,12vw,3.6rem); text-align:center; }
     .aus-caps{ gap:16px; padding-top:20px; }
     .aus-cap .comp{ font-size:1.05rem; }
 
