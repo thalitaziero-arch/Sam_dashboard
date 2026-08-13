@@ -63,11 +63,9 @@ def hl(k, big, sub, rows):
 # live in the summary cards instead.
 # (season, code, club, competition, position, apps, goals)
 CAREER = [
-    ("2026",    "Soccer", "Fremantle City",  "WA NPL Women",            "LAMF · LAMR", 13, 1),
+    ("2026",    "Soccer", "Fremantle City",  "WA NPL Women",            "LAMF · LAMR", 16, 1),
     ("2026",    "Futsal", "Cockburn Wolves", "Supa-Liga · Winter",      "Fixo · Ala",   3, 7),
     ("2025/26", "Futsal", "Cockburn Wolves", "Supa-Liga · Summer",      "Fixo · Ala",   8, 2),
-    ("2025",    "Soccer", "West NTC",        "WA NPL Women",            "—",           18, 1),
-    ("2024",    "Soccer", "West NTC",        "WA NPL Women",            "—",            2, 0),
 ]
 
 
@@ -147,7 +145,7 @@ def split_block(soccer_rows, futsal_rows):
                 f'<span class="c-code {cls}">{code}</span>'
                 f'<span class="sp-games">{games}</span></div>{body}</div>')
     return ('<div class="split">'
-            + card("Soccer", "33 games", soccer_rows)
+            + card("Soccer", "16 games", soccer_rows)
             + card("Futsal", "11 games", futsal_rows)
             + '</div>')
 
@@ -342,13 +340,13 @@ SLIDES = [
     ('dark', WAVES, """<div class="wrap">
       <div class="eyebrow">Career at a Glance</div>
       <h2 class="display">Combined Output</h2>
-      <p class="lede">11 futsal games and 33 soccer games tracked across 2024–2026.</p>
+      <p class="lede">11 futsal games and 16 soccer games tracked in the 2026 season.</p>
       <div class="scoreboard">
-        <div class="cell"><span class="num">44</span><span class="k">Total Games</span><span class="lbl">11 futsal<br>33 soccer</span></div>
-        <div class="cell"><span class="num">11</span><span class="k">Goals</span><span class="lbl">9 futsal<br>2 soccer</span></div>
+        <div class="cell"><span class="num">27</span><span class="k">Total Games</span><span class="lbl">11 futsal<br>16 soccer</span></div>
+        <div class="cell"><span class="num">10</span><span class="k">Goals</span><span class="lbl">9 futsal<br>1 soccer</span></div>
         <div class="cell"><span class="num">8</span><span class="k">Assists</span><span class="lbl">8 futsal<br>0 soccer</span></div>
-        <div class="cell"><span class="num">113</span><span class="k">Interceptions</span><span class="lbl">35 futsal<br>78 soccer</span></div>
-        <div class="cell"><span class="num">200</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>133 soccer</span></div>
+        <div class="cell"><span class="num">96</span><span class="k">Interceptions</span><span class="lbl">35 futsal<br>61 soccer</span></div>
+        <div class="cell"><span class="num">154</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>87 soccer</span></div>
       </div>
 
       <div class="badges">
@@ -373,10 +371,10 @@ SLIDES = [
       <h2 class="display">Clubs &amp; Seasons</h2>
       <p class="lede">Senior record across NPL Women soccer and futsal.</p>
       <div class="c-tot">
-        <div class="t"><span class="tk">Seasons</span><span class="tv">3</span></div>
-        <div class="t"><span class="tk">Clubs</span><span class="tv">4</span></div>
-        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">1673</span></div>
-        <div class="t"><span class="tk">Soccer apps</span><span class="tv">33</span></div>
+        <div class="t"><span class="tk">Seasons</span><span class="tv">2</span></div>
+        <div class="t"><span class="tk">Clubs</span><span class="tv">2</span></div>
+        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">1004</span></div>
+        <div class="t"><span class="tk">Soccer apps</span><span class="tv">16</span></div>
       </div>
       <div class="sec-rule"><span>Clubs by season</span></div>
       <div class="c-table">{CAREER_HEAD}{career_rows(CAREER)}</div>
@@ -392,10 +390,10 @@ SLIDES = [
       <p class="lede">Ball-winning is the strongest part of her game — she is involved in defensive actions constantly in both codes.</p>
 
       {split_block(
-        [("78","Interceptions · 2.4 per game"),
-         ("133","Recoveries · 4.0 per game"),
-         ("167","Duels won of 342 contested"),
-         ("1765","Minutes played")],
+        [("61","Interceptions · 3.8 per game"),
+         ("87","Recoveries · 5.4 per game"),
+         ("94","Duels won of 210 contested"),
+         ("1004","Minutes played")],
         [("35","Interceptions · 3.2 per game"),
          ("67","Recoveries · 6.1 per game"),
          ("36","Balls lost"),
@@ -403,11 +401,11 @@ SLIDES = [
 
       <div style="margin-top:34px;border-top:2px solid var(--orange)">
         <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
-          <p>167 duels won from 342 contested in soccer — a 49% success rate across 33 games. She competes for everything.</p></div>
+          <p>94 duels won from 210 contested in soccer — a 45% success rate across 16 games this season. She competes for everything.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
-          <p>133 in soccer and 67 in futsal, 200 in total. Peaks of 10 in a single soccer match. Works both halves of the pitch, not just behind the ball.</p></div>
+          <p>87 in soccer and 67 in futsal, 154 in total. Works both halves of the pitch, not just behind the ball.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
-          <p>78 in soccer and 35 in futsal. Best game: 11 interceptions against West NTC. Reads passing lanes early rather than reacting late.</p></div>
+          <p>61 in soccer and 35 in futsal. Reads passing lanes early rather than reacting late.</p></div>
       </div>
     </div>"""),
 
@@ -419,8 +417,8 @@ SLIDES = [
 
       <div class="rank-note"><span class="c-code futsal">Futsal</span>Where the attacking output comes from</div>
       <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">11</span><span class="prof-k">Goals</span>
-          <span class="prof-v">9+2</span><span class="prof-u">futsal + soccer</span></div>
+        <div class="prof"><span class="prof-rank">10</span><span class="prof-k">Goals</span>
+          <span class="prof-v">9+1</span><span class="prof-u">futsal + soccer</span></div>
         <div class="prof"><span class="prof-rank">8</span><span class="prof-k">Assists</span>
           <span class="prof-v">6+2</span><span class="prof-u">summer + winter futsal</span></div>
         <div class="prof"><span class="prof-rank">1.1</span><span class="prof-k">Shot Efficiency</span>
@@ -428,10 +426,10 @@ SLIDES = [
       </div>
 
       {split_block(
-        [("2","Goals"),
-         ("0","Assists"),
-         ("22","Shots · 7 on target"),
-         ("3.57","Expected goals (xG)")],
+        [("1","Goals"),
+         ("1","Assists"),
+         ("18","Shots · 6 on target"),
+         ("1004","Minutes played")],
         [("9","Goals"),
          ("8","Assists"),
          ("69","Shots · 28 on target"),
@@ -441,7 +439,7 @@ SLIDES = [
         <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
           <p>Winter 2026 futsal: <strong>7 goals from 8 shots on target</strong> — 1.1 shots on target per goal. Ruthless once the chance is created.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
-          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists. In soccer the role is deeper: 22 shots and 3.57 xG across 33 games.</p></div>
+          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists. In soccer the role is deeper: 18 shots across 16 games this season.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
           <p>312 accurate futsal passes, 28 per game. Consistently involved in build-up rather than only at the end of moves.</p></div>
       </div>
