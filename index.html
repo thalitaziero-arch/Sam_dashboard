@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title data-i="title">Performance Analyst</title>
 <style>
-@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;src:url(assets/a00_683bd5f536.woff2) format('woff2');font-display:swap}
-@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;src:url(assets/a01_9a47d84fda.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Bebas Neue';font-style:normal;font-weight:400;src:url(assets/a00_a298c7e822.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;src:url(assets/a01_8f7d3b0944.woff2) format('woff2');font-display:swap}
 
 :root{
   --ice:#ECF1F3; --ice-2:#DFE7EB; --black:#050608; --black-2:#0D1519;
@@ -136,7 +136,7 @@ section{position:relative}
 .work{background:var(--ice-2)}
 .work-lead{margin:16px 0 0;font-size:clamp(15.5px,1.3vw,18px);color:var(--body);max-width:54ch;line-height:1.6}
 /* featured block — one big blurred clip behind items 01–04 */
-.feat{position:relative;overflow:hidden;border-radius:4px 4px 0 0;background:var(--black);margin-top:clamp(36px,4.5vw,64px)}
+.feat{position:relative;overflow:hidden;border-radius:4px;background:var(--black);margin-top:clamp(36px,4.5vw,64px)}
 .feat-bg{position:absolute;inset:0;z-index:0}
 .feat-bg video{width:100%;height:100%;object-fit:cover;opacity:.22;filter:blur(15px) grayscale(.5) contrast(1.05);transform:scale(1.14)}
 .feat-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,8,.94) 0%,rgba(5,6,8,.84) 45%,rgba(5,6,8,.95) 100%)}
@@ -206,7 +206,7 @@ section{position:relative}
 .tagwall-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
 .tagwall-grid video{width:100%;aspect-ratio:9/13;object-fit:cover;display:block;background:var(--black)}
 .tagwall::after{display:none}
-.c05-line{margin:clamp(18px,2.2vw,30px) 0 0;font-family:'Bebas Neue',sans-serif;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(15px,1.5vw,21px);color:var(--or);line-height:1.15}
+.case-t p.c05-line{margin:clamp(18px,2.2vw,30px) 0 0;font-family:'Bebas Neue',sans-serif;text-transform:uppercase;letter-spacing:.02em;font-size:clamp(20px,2.6vw,38px);color:var(--or);line-height:1.08}
 .tagwall-over{display:none;position:absolute;top:0;left:0;right:0;z-index:2;padding:clamp(22px,3.6vw,56px) 0 0}
 .tagwall-over h4{font-family:'Bebas Neue',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(26px,4.6vw,66px);line-height:.98;
   margin:0 auto;max-width:var(--max);padding:0 clamp(20px,5vw,72px);box-sizing:content-box;color:var(--on-black);text-shadow:0 2px 24px rgba(5,6,8,.7)}
@@ -316,6 +316,54 @@ section{position:relative}
   *{animation:none!important;transition:none!important}
   .ln>span,.wd>i{transform:none!important;opacity:1!important}
 }
+
+/* ===== ported from v2 ===== */
+.svcs{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(18px,2.4vw,26px);margin-top:clamp(28px,3.4vw,46px)}
+.svc{background:var(--ice-2);border-radius:16px;padding:clamp(26px,3vw,36px);display:flex;flex-direction:column;transition:transform .35s ease,box-shadow .35s ease}
+.svc:hover{transform:translateY(-6px);box-shadow:0 28px 54px -28px rgba(5,6,8,.4)}
+.svc-n{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--or);line-height:1;margin-bottom:14px}
+.svc h3{font-family:'Bebas Neue',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(23px,2.7vw,31px);line-height:1.02;margin:0 0 14px;color:var(--or);letter-spacing:.01em}
+.svc>p{margin:0 0 20px;font-size:16px;color:var(--body);line-height:1.55}
+.svc>p.svc-lbl{font-size:14.5px;font-weight:800;color:var(--black);margin:0 0 14px}
+.svc ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px}
+.svc li{display:flex;gap:12px;font-size:15.5px;color:var(--body);line-height:1.5}
+.svc li::before{content:"\2192";color:var(--black);font-weight:700;flex:none}
+.svc-tag{margin-top:22px;align-self:flex-start;font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;border:1px solid var(--or);border-radius:100px;padding:6px 13px;color:var(--or)}
+
+.rows{display:flex;flex-direction:column;gap:0;margin-top:clamp(20px,2.6vw,34px)}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.15fr);gap:clamp(18px,3.5vw,44px);align-items:center;padding:clamp(30px,5vw,56px) 0;border-top:1px solid var(--line)}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row .row-media{grid-column:1/-1;margin-top:clamp(20px,2.6vw,34px)}
+.row-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,74px);color:var(--line);line-height:1}
+.row-txt h4{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(22px,3vw,36px);text-transform:uppercase;margin:0 0 10px;color:var(--black);line-height:1.06;letter-spacing:.01em}
+.row-txt p{margin:0;font-size:16.5px;color:var(--body);line-height:1.6;max-width:46ch}
+.row-media{border-radius:12px;overflow:hidden;background:#000;box-shadow:0 24px 50px -26px rgba(5,6,8,.55)}
+.row-media video{width:100%;display:block}
+
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:clamp(26px,3.4vw,44px)}
+.tile{background:rgba(234,244,248,.06);border:1px solid var(--line-d);border-radius:14px;padding:26px 24px 28px;display:flex;flex-direction:column;min-height:200px;transition:transform .3s ease,background .3s ease,border-color .3s ease}
+.tile:hover{transform:translateY(-4px);background:var(--or);border-color:var(--or)}
+.tile:hover h3,.tile:hover p{color:var(--black)}
+.tile h3{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(23px,2.4vw,29px);text-transform:uppercase;margin:0 0 10px;color:var(--on-black);letter-spacing:.01em;line-height:1.05}
+.tile p{margin:0;font-size:15.5px;color:rgba(234,244,248,.7);flex:1;line-height:1.55}
+
+.final .contact-head{font-size:clamp(34px,5.6vw,78px);margin:0 0 clamp(30px,4vw,50px);max-width:16ch}
+.final .contact-head em{font-style:italic;color:var(--or)}
+.contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,64px);align-items:end;border-top:1px solid var(--line-d);padding-top:clamp(26px,3.4vw,42px)}
+.links{display:flex;flex-direction:column;gap:2px}
+.link{display:flex;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid var(--line-d);text-decoration:none;color:var(--on-black);font-weight:600;font-size:clamp(16px,1.35vw,19px);transition:.2s}
+.link:hover{color:var(--or);padding-left:8px}
+.link svg{width:20px;height:20px;flex:none}
+.link .arrow{margin-left:auto;color:rgba(234,244,248,.5);font-size:15px}
+.link:hover .arrow{color:var(--or)}
+.end{display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+.end-logo{width:min(300px,72vw)}
+@media(max-width:860px){
+  .svcs,.tiles{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr;align-items:start}
+  .row{grid-template-columns:auto minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){.svc,.tile,.row{transition:none}}
 </style>
 </head>
 <body>
@@ -324,7 +372,7 @@ section{position:relative}
 
 <nav class="nav">
   <div class="nav-in">
-    <a class="nav-logo" href="#top"><img src="assets/a02_eec3506674.png" alt="TZR Futsal Coaching"></a>
+    <a class="nav-logo" href="#top"><img src="assets/a02_8c9c75840d.png" alt="TZR Futsal Coaching"></a>
     <div class="nav-r">
       <div class="nav-links">
         <a href="#about" data-i="nav1">About</a>
@@ -343,7 +391,7 @@ section{position:relative}
 
 <!-- 01 HERO -->
 <header class="hero" id="top">
-  <div class="hero-media"><video autoplay loop muted playsinline preload="auto"><source src="assets/a03_e2495fdcd2.mp4" type="video/mp4"></video></div>
+  <div class="hero-media"><video autoplay loop muted playsinline><source src="assets/a03_d415e93843.mp4" type="video/mp4"></video></div>
   <div class="hero-grain"></div>
   <div class="w hero-body">
     <h1 class="mega" id="heroH">
@@ -367,7 +415,7 @@ section{position:relative}
 
 <!-- 02 ABOUT -->
 <section class="philo pad" id="about">
-  <div class="philo-bg"><img src="assets/a04_df04e37857.jpg" alt=""></div>
+  <div class="philo-bg"><img src="assets/a04_edeef8a9b4.jpg" alt=""></div>
   <div class="w philo-in">
     <p class="kick" data-i="k.philo">Who I am</p>
     <h2 class="mega rev" data-i="philoH" data-html>Beyond the <span class="or">numbers</span></h2>
@@ -399,12 +447,35 @@ section{position:relative}
     <p class="kick" data-i="k.prog">What I do</p>
     <h2 class="mega rev" data-i="progH" style="font-size:clamp(34px,5.6vw,80px);max-width:16ch">Built around what you need to know</h2>
     <p class="svc-lead" data-i="progLead">Every club, coach and athlete arrives with a different question. The work is assembled from these pieces — at the depth and the rhythm you actually need.</p>
-    <div class="svc-grid">
-      <div class="svc-i fade"><b>01</b><h3 data-i="sv1h">Video analysis</h3><p data-i="sv1p">Match and training footage broken down action by action.</p></div>
-      <div class="svc-i fade"><b>02</b><h3 data-i="sv2h">Opposition scouting</h3><p data-i="sv2p">The patterns, strengths and weak points of the next opponent.</p></div>
-      <div class="svc-i fade"><b>03</b><h3 data-i="sv3h">Performance dashboards</h3><p data-i="sv3p">Team and individual performance tracked across the season.</p></div>
-      <div class="svc-i fade"><b>04</b><h3 data-i="sv4h">Player analysis</h3><p data-i="sv4p">Individual development and side-by-side comparison.</p></div>
-      <div class="svc-i fade"><b>05</b><h3 data-i="sv5h">Live &amp; remote analysis</h3><p data-i="sv5p">Tagged live at the venue, or remotely from the footage you send.</p></div>
+    <div class="svcs">
+      <div class="svc fade"><span class="svc-n">1/</span>
+        <h3 data-i="t1h">Team analysis</h3>
+        <p data-i="t1p">Turning a league's raw match data into a picture the staff can act on before the next fixture.</p>
+        <p class="svc-lbl" data-i="offer">What do we offer?</p>
+        <ul><li data-i="t1o1">Wyscout/Instat extraction and live tagging &mdash; xG, PPDA, possession, duels and formations.</li>
+            <li data-i="t1o2">Comparison dashboards across every team in the same league, refreshed each round.</li></ul>
+        <span class="svc-tag" data-i="t1t">Match data</span></div>
+      <div class="svc fade"><span class="svc-n">2/</span>
+        <h3 data-i="t2h">Athlete performance</h3>
+        <p data-i="t2p">An individual picture of how an athlete is loading, recovering and contributing over a season.</p>
+        <p class="svc-lbl" data-i="offer">What do we offer?</p>
+        <ul><li data-i="t2o1">Training load and recovery zones tracked match by match in a personal dashboard.</li>
+            <li data-i="t2o2">Per-athlete interceptions and heat maps, with progress compared across seasons.</li></ul>
+        <span class="svc-tag" data-i="t2t">Physical &amp; GPS</span></div>
+      <div class="svc fade"><span class="svc-n">3/</span>
+        <h3 data-i="t3h">Scouting for athletes and clubs</h3>
+        <p data-i="t3p">An effective path to elevate performance and help your team achieve greater results on court.</p>
+        <p class="svc-lbl" data-i="offer">What do we offer?</p>
+        <ul><li data-i="t3o1">Video analysis, performance breakdown, tactical insights and personalised feedback.</li>
+            <li data-i="t3o2">Scouting reports and progress tracking so athletes and clubs make informed decisions.</li></ul>
+        <span class="svc-tag" data-i="t3t">Video &amp; tactics</span></div>
+      <div class="svc fade"><span class="svc-n">4/</span>
+        <h3 data-i="t4h">Intelligence &amp; brand</h3>
+        <p data-i="t4p">Making the analysis travel &mdash; from an internal report to content that builds your name.</p>
+        <p class="svc-lbl" data-i="offer">What do we offer?</p>
+        <ul><li data-i="t4o1">Comparative studies between international competitions, built from official technical reports.</li>
+            <li data-i="t4o2">LinkedIn carousels and branded graphics under the TZR Futsal Coaching identity.</li></ul>
+        <span class="svc-tag" data-i="t4t">Competition</span></div>
     </div>
     <p class="svc-note rev" data-i="progNote">It all depends on what the club, the coach or the athlete wants to know — and needs.</p>
   </div>
@@ -418,7 +489,7 @@ section{position:relative}
     <p class="work-lead" data-i="galNote">Each example shows a different part of the job — from the raw footage to what lands on the coach's desk.</p>
 
     <div class="feat">
-      <div class="feat-bg"><video autoplay loop muted playsinline preload="none"><source src="assets/a05_6fd3f5023e.mp4" type="video/mp4"></video></div>
+      <div class="feat-bg"><video autoplay loop muted playsinline><source src="assets/a05_f6c651f5a1.mp4" type="video/mp4"></video></div>
       <div class="feat-in">
 
         <article class="ci fade">
@@ -427,10 +498,6 @@ section{position:relative}
             <span class="cat" data-i="pj1c">Video + tagging</span>
             <h3 data-i="pj1h">Match analysis</h3>
             <p data-i="cs1s">Turning a league's match data into tactical insight the staff can act on before the next fixture.</p>
-            <div class="ci-meta">
-              <div><b data-i="m2">Analysed</b><span data-i="cs1b">Match data extracted from the league's own reports and combined with live tagging: xG, PPDA, possession, duels, formations, average positions.</span></div>
-              <div><b data-i="m3">Output</b><span data-i="cs1cO">A pre-match deck — season snapshot, head-to-head, formations and a set-piece plan.</span></div>
-            </div>
           </div>
         </article>
 
@@ -440,10 +507,6 @@ section{position:relative}
             <span class="cat" data-i="pj2c">Video + data</span>
             <h3 data-i="pj2h">Opposition analysis</h3>
             <p data-i="cs3s">Combining data and video to surface the patterns, strengths and vulnerabilities that only show on tape.</p>
-            <div class="ci-meta">
-              <div><b data-i="m2">Analysed</b><span data-i="cs3b">Live tagging during the match, with distances and passing lanes drawn straight over the broadcast feed.</span></div>
-              <div><b data-i="m3">Output</b><span data-i="cs3cO">Clips exported per action, plus a straight-to-the-point report for the staff.</span></div>
-            </div>
           </div>
         </article>
 
@@ -453,10 +516,6 @@ section{position:relative}
             <span class="cat" data-i="pj3c">Physical &amp; GPS</span>
             <h3 data-i="pj3h">Player performance</h3>
             <p data-i="cs2s">Turning one player's data into a clear picture of load, recovery and contribution across a season.</p>
-            <div class="ci-meta">
-              <div><b data-i="m2">Analysed</b><span data-i="cs2b">GPS exports and per-match tagging mapped onto the court: recovery zones and interceptions, match by match.</span></div>
-              <div><b data-i="m3">Output</b><span data-i="cs2cO">A personal performance dashboard, refreshed as each match is played.</span></div>
-            </div>
           </div>
         </article>
 
@@ -466,49 +525,32 @@ section{position:relative}
             <span class="cat" data-i="pj4c">Season data</span>
             <h3 data-i="pj4h">Team performance</h3>
             <p data-i="p1p">Turning a league's raw match data into a picture the staff can act on before the next fixture.</p>
-            <div class="ci-meta">
-              <div><b data-i="m2">Analysed</b><span data-i="p1a">Match data extraction and live tagging — xG, PPDA, possession, duels, formations.</span></div>
-              <div><b data-i="m3">Output</b><span data-i="p1b">Comparison across every team in the league, refreshed each round.</span></div>
-            </div>
           </div>
         </article>
 
       </div>
     </div>
 
-    <div class="cases">
-
-      <article class="case">
-        <div class="case-head">
-          <span class="case-n">05</span>
-          <div class="case-t">
-            <div class="c05-intro">
-              <span class="cat" data-i="pj5c">Method</span>
-              <h3 data-i="pj5h">Live tagging &amp; telestration</h3>
-              <p data-i="pj5s">The game broken into actions and moments while it is still being played.</p>
-            </div>
-            <div class="case-meta case-meta--05">
-              <div class="meta-row"><b data-i="m2">Analysed</b><span data-i="twP">Show the team and the athlete exactly where the problem is — then talk it through, so they learn from it and keep developing.</span></div>
-              <div class="meta-row"><b data-i="m3">Output</b><span data-i="vb3">Clips exportable per action for the video room</span></div>
-            </div>
-            <p class="c05-line"><span data-i="twH">Live tagging, action by action, during the match</span></p>
-          </div>
-        </div>
-        <div class="tagwall fade">
-          <div class="tagwall-grid">
-            <video autoplay loop muted playsinline preload="none"><source src="assets/a06_409e06512e.mp4" type="video/mp4"></video>
-            <video autoplay loop muted playsinline preload="none"><source src="assets/a07_026b083fcc.mp4" type="video/mp4"></video>
-            <video autoplay loop muted playsinline preload="none"><source src="assets/a08_cbf5ffb224.mp4" type="video/mp4"></video>
-          </div>
-        </div>
-      </article>
-
+    <p class="kick" style="margin-top:clamp(34px,4.6vw,64px)" data-i="k.video">What the video shows</p>
+    <div class="rows">
+      <div class="row fade"><span class="row-num">01</span>
+        <div class="row-txt"><h4 data-i="r1h">Live tagging, action by action</h4><p data-i="r1p">Every shot, duel and set piece tagged in real time during the match &mdash; this is the raw feed LiveTag Pro works from.</p></div>
+        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a06_4720336c55.mp4" type="video/mp4"></video></div>
+      </div>
+      <div class="row fade"><span class="row-num">02</span>
+        <div class="row-txt"><h4 data-i="r2h">Distance and passing lanes, drawn live</h4><p data-i="r2p">Over a Libertadores Futsal broadcast &mdash; the yellow line and circles mark exactly the run and distance that mattered.</p></div>
+        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a07_10e84dc580.mp4" type="video/mp4"></video></div>
+      </div>
+      <div class="row fade"><span class="row-num">03</span>
+        <div class="row-txt"><h4 data-i="r3h">Dynamic drawing, shaded in real time</h4><p data-i="r3p">A passing lane shaded live on a national-team match &mdash; the same tool used to walk a staff through a play.</p></div>
+        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a08_ded6205c7f.mp4" type="video/mp4"></video></div>
+      </div>
     </div>
 
     <div class="more-head">
       <p class="kick" data-i="k.more">Reporting &amp; delivery</p>
       <div class="reel fade">
-        <video autoplay loop muted playsinline preload="none"><source src="assets/a09_d39b121908.mp4" type="video/mp4"></video>
+        <video autoplay loop muted playsinline><source src="assets/a09_e4ea3bbb25.mp4" type="video/mp4"></video>
         <div class="reel-over">
           <h3 data-i="rvH">Delivered the way each client needs it</h3>
           <p data-i="rvP">Dashboards, pre-match decks, PDF reports, clips per action and social cards — the format and the cadence are set by the client, not by a fixed package.</p>
@@ -538,12 +580,13 @@ section{position:relative}
 <!-- 07 WHO I WORK WITH -->
 <section class="help pad on-dark">
   <div class="w">
-    <p class="kick" data-i="k.help">Who I work with</p>
+    <p class="kick" data-i="k.who">Who I help</p>
     <h2 class="mega rev" data-i="helpH">Different environments. Different questions.</h2>
-    <div class="help-grid">
-      <div class="help-item fade"><h4 data-i="hp1h">Clubs &amp; coaching staff</h4><p data-i="hp1p">Team performance, opposition and tactical analysis.</p></div>
-      <div class="help-item fade"><h4 data-i="hp2h">Individual athletes</h4><p data-i="hp2p">Individual performance and development analysis.</p></div>
-      <div class="help-item fade"><h4 data-i="hp3h">Federations &amp; high-performance programs</h4><p data-i="hp3p">Analysis and reporting across teams and competitions.</p></div>
+    <div class="tiles">
+      <div class="tile fade"><h3 data-i="c1h">Clubs &amp; coaching staff</h3><p data-i="c1p">Weekly dashboard with the team's own performance and the league's, ready before the review session.</p></div>
+      <div class="tile fade"><h3 data-i="c2h">Individual athletes</h3><p data-i="c2p">Physical performance dashboard, with a history of load and recovery to track progress over time.</p></div>
+      <div class="tile fade"><h3 data-i="c3h">Federations &amp; new projects</h3><p data-i="c3p">Research and strategic proposal for anyone structuring a competition &mdash; calendar, format, sponsorship.</p></div>
+      <div class="tile fade"><h3 data-i="c4h">Dashboards, on request</h3><p data-i="c4p">Live club dashboards and the player-portfolio site are kept off this public page &mdash; happy to walk through them on a call.</p></div>
     </div>
   </div>
 </section>
@@ -553,7 +596,17 @@ section{position:relative}
   <div class="hero-grain"></div>
   <div class="w" style="position:relative;z-index:2">
     <p class="kick" style="color:rgba(234,244,248,.55)" data-i="k.cta">Get in touch</p>
-    <h2 class="mega" id="finalH" data-i="finalH" data-html>Ready to see your season <span class="or">in focus?</span></h2>
+    <h2 class="mega contact-head" id="finalH" data-i="contacth" data-html>Let&rsquo;s build your next <em>dashboard</em></h2>
+    <div class="contact-grid">
+      <div class="links">
+        <a class="link" href="mailto:thalitaziero@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="M3 6l9 6 9-6"/></svg>thalitaziero@gmail.com<span class="arrow">&#8599;</span></a>
+        <a class="link" href="https://www.linkedin.com/in/thalita-ziero/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9.5 9H13v1.8h.06c.5-.9 1.7-1.86 3.5-1.86 3.74 0 4.44 2.46 4.44 5.66V21h-4v-5.6c0-1.34-.02-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96V21h-4z"/></svg>linkedin.com/in/thalita-ziero<span class="arrow">&#8599;</span></a>
+        <a class="link" href="https://www.instagram.com/thaliziero_/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>@thaliziero_<span class="arrow">&#8599;</span></a>
+      </div>
+      <div class="end">
+        <img class="end-logo" src="assets/a02_8c9c75840d.png" alt="TZR Futsal Coaching">
+      </div>
+    </div>
       </div>
 </section>
 
@@ -562,7 +615,7 @@ section{position:relative}
   <div class="w">
     <div class="foot-top">
       <div>
-        <img class="foot-logo" src="assets/a02_eec3506674.png" alt="TZR Futsal Coaching">
+        <img class="foot-logo" src="assets/a02_8c9c75840d.png" alt="TZR Futsal Coaching">
       </div>
       <div class="foot-col">
         <h5 data-i="f1">Navigate</h5>
@@ -583,7 +636,7 @@ section{position:relative}
   </div>
 </footer>
 
-<script>(function(){function s(){document.documentElement.style.setProperty("--sbw",(window.innerWidth-document.documentElement.clientWidth)+"px")}s();addEventListener("resize",s);addEventListener("load",s);requestAnimationFrame(s)})();</script>
+<script>(function(){function s(){document.documentElement.style.setProperty("--sbw",(window.innerWidth-document.documentElement.clientWidth)+"px")}s();addEventListener("resize",s)})();</script>
 <script>/*!
  * GSAP 3.12.5
  * https://gsap.com
@@ -611,7 +664,8 @@ section{position:relative}
 <script>
 /* ---------------- i18n ---------------- */
 var T={
-en:{title:"Performance Analyst",
+en:{"offer":"What do we offer?","t1h":"Team analysis","t1p":"Turning a league's raw match data into a picture the staff can act on before the next fixture.","t1o1":"Wyscout/Instat extraction and live tagging — xG, PPDA, possession, duels and formations.","t1o2":"Comparison dashboards across every team in the same league, refreshed each round.","t1t":"Match data","t2h":"Athlete performance","t2p":"An individual picture of how an athlete is loading, recovering and contributing over a season.","t2o1":"Training load and recovery zones tracked match by match in a personal dashboard.","t2o2":"Per-athlete interceptions and heat maps, with progress compared across seasons.","t2t":"Physical & GPS","t3h":"Scouting for athletes and clubs","t3p":"An effective path to elevate performance and help your team achieve greater results on court.","t3o1":"Video analysis, performance breakdown, tactical insights and personalised feedback.","t3o2":"Scouting reports and progress tracking so athletes and clubs make informed decisions.","t3t":"Video & tactics","t4h":"Intelligence & brand","t4p":"Making the analysis travel — from an internal report to content that builds your name.","t4o1":"Comparative studies between international competitions, built from official technical reports.","t4o2":"LinkedIn carousels and branded graphics under the TZR Futsal Coaching identity.","t4t":"Competition","k.who":"Who I help","c1h":"Clubs & coaching staff","c1p":"Weekly dashboard with the team's own performance and the league's, ready before the review session.","c2h":"Individual athletes","c2p":"Physical performance dashboard, with a history of load and recovery to track progress over time.","c3h":"Federations & new projects","c3p":"Research and strategic proposal for anyone structuring a competition — calendar, format, sponsorship.","c4h":"Dashboards, on request","c4p":"Live club dashboards and the player-portfolio site are kept off this public page — happy to walk through them on a call.","k.video":"What the video shows","r1h":"Live tagging, action by action","r1p":"Every shot, duel and set piece tagged in real time during the match — this is the raw feed LiveTag Pro works from.","r2h":"Distance and passing lanes, drawn live","r2p":"Over a Libertadores Futsal broadcast — the yellow line and circles mark exactly the run and distance that mattered.","r3h":"Dynamic drawing, shaded in real time","r3p":"A passing lane shaded live on a national-team match — the same tool used to walk a staff through a play.","contacth":"Let’s build your next <em>dashboard</em>",
+title:"Performance Analyst",
 nav1:"About",nav2:"What I do",nav3:"Work",nav4:"How I work",nav5:"Contact",
 h1a:"Performance",h1b:"Analyst",
 herosub:"Football and futsal. Video, data and tactical reading turned into information coaches and players can use.",
@@ -665,7 +719,8 @@ hp3h:"Federations & high-performance programs",hp3p:"Analysis and reporting acro
 f1:"Navigate",f2:"Contact",f3:"Perth, Australia",f4:"Football & futsal analysis · remote",
 mq:["Analyse","Measure","Decide","Futsal","Performance","Development"]},
 
-pt:{title:"Analista de Performance",
+pt:{"offer":"O que oferecemos?","t1h":"Análise de equipe","t1p":"Transformar o dado bruto de uma liga numa leitura que a comissão usa antes do próximo jogo.","t1o1":"Extração Wyscout/Instat e tagging ao vivo — xG, PPDA, posse, duelos e formações.","t1o2":"Painéis comparativos entre todos os times da mesma liga, atualizados a cada rodada.","t1t":"Dados de jogo","t2h":"Performance do atleta","t2p":"Um retrato individual de como o atleta carrega, recupera e contribui ao longo da temporada.","t2o1":"Carga de treino e zonas de recuperação acompanhadas jogo a jogo num painel pessoal.","t2o2":"Interceptações e mapas de calor por atleta, com evolução comparada entre temporadas.","t2t":"Físico & GPS","t3h":"Scouting para atletas e clubes","t3p":"Um caminho eficaz para elevar a performance e ajudar seu time a alcançar mais resultados em quadra.","t3o1":"Análise de vídeo, quebra de performance, leitura tática e feedback personalizado.","t3o2":"Relatórios de scouting e acompanhamento de evolução para decisões bem informadas.","t3t":"Vídeo & tática","t4h":"Inteligência & marca","t4p":"Fazer a análise circular — do relatório interno ao conteúdo que constrói seu nome.","t4o1":"Estudos comparativos entre competições internacionais, a partir de relatórios técnicos oficiais.","t4o2":"Carrosséis de LinkedIn e peças gráficas sob a identidade TZR Futsal Coaching.","t4t":"Competição","k.who":"Quem eu ajudo","c1h":"Clubes & comissão técnica","c1p":"Painel semanal com o desempenho do próprio time e da liga, pronto antes do treino de análise.","c2h":"Atletas individuais","c2p":"Painel de performance físico, com histórico de carga e recuperação para acompanhar evolução no tempo.","c3h":"Federações & novos projetos","c3p":"Estudo e proposta estratégica para quem está estruturando uma competição — calendário, formato, patrocínio.","c4h":"Painéis, sob demanda","c4p":"Os painéis dos clubes e o site de portfólio de atleta ficam fora desta página pública — posso mostrar numa chamada.","k.video":"O que o vídeo mostra","r1h":"Tagging ao vivo, ação por ação","r1p":"Cada chute, duelo e bola parada marcados em tempo real durante a partida — este é o feed bruto com que o LiveTag Pro trabalha.","r2h":"Distância e linhas de passe, desenhadas ao vivo","r2p":"Sobre uma transmissão da Libertadores de Futsal — a linha amarela e os círculos marcam exatamente a corrida e a distância que importaram.","r3h":"Desenho dinâmico, sombreado em tempo real","r3p":"Uma linha de passe sombreada ao vivo numa partida de seleção — a mesma ferramenta usada pra explicar uma jogada pra comissão.","contacth":"Vamos montar seu próximo <em>painel</em>",
+title:"Analista de Performance",
 nav1:"Sobre",nav2:"O que eu faço",nav3:"Trabalhos",nav4:"Como trabalho",nav5:"Contato",
 h1a:"Analista de",h1b:"Performance",
 herosub:"Futebol e futsal. Vídeo, dados e leitura tática transformados em informação que técnicos e jogadores conseguem usar.",
@@ -719,7 +774,8 @@ hp3h:"Federações & programas de alto rendimento",hp3p:"Análise e relatórios 
 f1:"Navegar",f2:"Contato",f3:"Perth, Austrália",f4:"Análise de futebol & futsal · remoto",
 mq:["Analisar","Medir","Decidir","Futsal","Performance","Desenvolvimento"]},
 
-it:{title:"Analista di Performance",
+it:{"offer":"Cosa offriamo?","t1h":"Analisi di squadra","t1p":"Trasformare i dati grezzi di un campionato in una lettura utile allo staff prima della prossima gara.","t1o1":"Estrazione Wyscout/Instat e tagging live — xG, PPDA, possesso, duelli e moduli.","t1o2":"Dashboard comparative tra tutte le squadre dello stesso campionato, aggiornate ogni giornata.","t1t":"Dati di gara","t2h":"Performance dell'atleta","t2p":"Un quadro individuale di come l'atleta carica, recupera e contribuisce nell'arco della stagione.","t2o1":"Carico di allenamento e zone di recupero monitorati partita dopo partita in una dashboard personale.","t2o2":"Intercetti e heatmap per atleta, con l'evoluzione confrontata tra le stagioni.","t2t":"Fisico & GPS","t3h":"Scouting per atlete/i e club","t3p":"Un percorso efficace per elevare la performance e aiutare la squadra a ottenere più risultati sul campo.","t3o1":"Analisi video, scomposizione della performance, letture tattiche e feedback personalizzato.","t3o2":"Report di scouting e monitoraggio dei progressi per decisioni informate.","t3t":"Video & tattica","t4h":"Intelligence & brand","t4p":"Far viaggiare l'analisi — dal report interno al contenuto che costruisce il tuo nome.","t4o1":"Studi comparativi tra competizioni internazionali, costruiti su report tecnici ufficiali.","t4o2":"Carousel LinkedIn e grafiche brandizzate con l'identità TZR Futsal Coaching.","t4t":"Competizione","k.who":"Chi aiuto","c1h":"Club & staff tecnico","c1p":"Dashboard settimanale con le prestazioni della squadra e del campionato, pronta prima della sessione di analisi.","c2h":"Atlete/i individuali","c2p":"Dashboard di performance fisica, con storico di carico e recupero per seguire l'evoluzione nel tempo.","c3h":"Federazioni & nuovi progetti","c3p":"Studio e proposta strategica per chi struttura una competizione — calendario, formato, sponsorizzazioni.","c4h":"Dashboard, su richiesta","c4p":"Le dashboard dei club e il sito portfolio atleta restano fuori da questa pagina pubblica — felice di mostrarli in una chiamata.","k.video":"Cosa mostra il video","r1h":"Tagging live, azione per azione","r1p":"Ogni tiro, duello e palla inattiva taggati in tempo reale durante la partita — questo è il feed grezzo con cui lavora LiveTag Pro.","r2h":"Distanza e corridoi di passaggio, disegnati live","r2p":"Su una trasmissione della Libertadores Futsal — la linea gialla e i cerchi segnano esattamente la corsa e la distanza decisive.","r3h":"Disegno dinamico, ombreggiato in tempo reale","r3p":"Un corridoio di passaggio ombreggiato live su una partita di una nazionale — lo stesso strumento per spiegare un'azione allo staff.","contacth":"Costruiamo la tua prossima <em>dashboard</em>",
+title:"Analista di Performance",
 nav1:"Chi sono",nav2:"Cosa faccio",nav3:"Lavori",nav4:"Come lavoro",nav5:"Contatti",
 h1a:"Analista di",h1b:"Performance",
 herosub:"Calcio e calcio a 5. Video, dati e lettura tattica trasformati in informazioni che allenatori e giocatori possono usare.",
@@ -773,7 +829,8 @@ hp3h:"Federazioni & programmi di alto livello",hp3p:"Analisi e report tra squadr
 f1:"Naviga",f2:"Contatti",f3:"Perth, Australia",f4:"Analisi di calcio & calcio a 5 · da remoto",
 mq:["Analizzare","Misurare","Decidere","Futsal","Performance","Sviluppo"]},
 
-es:{title:"Analista de Rendimiento",
+es:{"offer":"¿Qué ofrecemos?","t1h":"Análisis de equipo","t1p":"Convertir el dato bruto de una liga en una lectura que el cuerpo técnico use antes del próximo partido.","t1o1":"Extracción Wyscout/Instat y etiquetado en vivo — xG, PPDA, posesión, duelos y formaciones.","t1o2":"Paneles comparativos entre todos los equipos de la misma liga, actualizados cada jornada.","t1t":"Datos de partido","t2h":"Rendimiento del atleta","t2p":"Un retrato individual de cómo el atleta carga, recupera y aporta a lo largo de la temporada.","t2o1":"Carga de entrenamiento y zonas de recuperación seguidas partido a partido en un panel personal.","t2o2":"Intercepciones y mapas de calor por atleta, con la evolución comparada entre temporadas.","t2t":"Físico y GPS","t3h":"Scouting para atletas y clubes","t3p":"Un camino eficaz para elevar el rendimiento y ayudar a tu equipo a lograr más resultados en cancha.","t3o1":"Análisis de video, desglose de rendimiento, lectura táctica y feedback personalizado.","t3o2":"Informes de scouting y seguimiento del progreso para decisiones bien informadas.","t3t":"Video y táctica","t4h":"Inteligencia y marca","t4p":"Hacer que el análisis circule — del informe interno al contenido que construye tu nombre.","t4o1":"Estudios comparativos entre competiciones internacionales, a partir de informes técnicos oficiales.","t4o2":"Carruseles de LinkedIn y piezas gráficas bajo la identidad TZR Futsal Coaching.","t4t":"Competición","k.who":"A quién ayudo","c1h":"Clubes y cuerpo técnico","c1p":"Panel semanal con el rendimiento del propio equipo y de la liga, listo antes de la sesión de análisis.","c2h":"Atletas individuales","c2p":"Panel de rendimiento físico, con historial de carga y recuperación para seguir la evolución en el tiempo.","c3h":"Federaciones y nuevos proyectos","c3p":"Estudio y propuesta estratégica para quien estructura una competición — calendario, formato, patrocinio.","c4h":"Paneles, bajo demanda","c4p":"Los paneles de los clubes y el sitio de portafolio de atleta quedan fuera de esta página pública — encantada de mostrarlos en una llamada.","k.video":"Lo que muestra el video","r1h":"Etiquetado en vivo, acción por acción","r1p":"Cada remate, duelo y balón parado etiquetado en tiempo real durante el partido — este es el feed bruto con el que trabaja LiveTag Pro.","r2h":"Distancia y carriles de pase, dibujados en vivo","r2p":"Sobre una transmisión de la Libertadores de Futsal — la línea amarilla y los círculos marcan exactamente la carrera y la distancia que importaron.","r3h":"Dibujo dinámico, sombreado en tiempo real","r3p":"Un carril de pase sombreado en vivo en un partido de selección — la misma herramienta para explicarle una jugada al cuerpo técnico.","contacth":"Construyamos tu próximo <em>panel</em>",
+title:"Analista de Rendimiento",
 nav1:"Sobre mí",nav2:"Lo que hago",nav3:"Trabajos",nav4:"Cómo trabajo",nav5:"Contacto",
 h1a:"Analista de",h1b:"Rendimiento",
 herosub:"Fútbol y futsal. Video, datos y lectura táctica convertidos en información que entrenadores y jugadores pueden usar.",
@@ -1003,15 +1060,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     document.querySelector(id).scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'});
   });
 });
-</script>
-
-<script>
-(function(){var v=[].slice.call(document.querySelectorAll('video'));
-if(!('IntersectionObserver' in window)){v.forEach(function(x){x.play&&x.play().catch(function(){})});return;}
-var io=new IntersectionObserver(function(es){es.forEach(function(e){var x=e.target;
- if(e.isIntersecting){if(x.preload==='none'){x.preload='auto';x.load();}var p=x.play();if(p&&p.catch)p.catch(function(){});}
- else if(!x.paused){x.pause();}});},{rootMargin:'250px 0px',threshold:0.01});
-v.forEach(function(x){io.observe(x)});})();
 </script>
 </body>
 </html>
