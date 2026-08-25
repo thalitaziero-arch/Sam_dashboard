@@ -1064,8 +1064,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     var id=a.getAttribute('href');if(id==='#'||!document.querySelector(id))return;
     e.preventDefault();
     if(id==='#pricing'){openPricing();}
-    else if(id==='#contact'){window.scrollTo(0,document.documentElement.scrollHeight);}
-    else{document.querySelector(id).scrollIntoView({behavior:'auto',block:'start'});}
+    else if(id==='#contact'){closePricing();window.scrollTo(0,document.documentElement.scrollHeight);}
+    else{closePricing();document.querySelector(id).scrollIntoView({behavior:'auto',block:'start'});}
   });
 });
 
