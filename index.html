@@ -18,6 +18,8 @@
 html{-webkit-text-size-adjust:100%}
 html{overflow-x:hidden;overflow-x:clip}
 body{margin:0;background:var(--ice);color:var(--black);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;max-width:100%}
+html{scrollbar-width:none}
+::-webkit-scrollbar{width:0;height:0;display:none}
 img,video{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{font:inherit}
@@ -75,8 +77,8 @@ section{position:relative}
 /* ---------- HERO ---------- */
 .hero{min-height:100svh;background:var(--black);color:var(--on-black);display:flex;flex-direction:column;justify-content:center;overflow:hidden;position:relative}
 .hero-media{position:absolute;inset:0;z-index:0}
-.hero-media video{width:100%;height:100%;object-fit:cover;opacity:.30;filter:grayscale(.5) contrast(1.05)}
-.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,8,.92) 0%,rgba(5,6,8,.55) 42%,rgba(5,6,8,.95) 100%)}
+.hero-media video{width:100%;height:100%;object-fit:cover;opacity:.62;filter:grayscale(.35) contrast(1.05)}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,6,8,.80) 0%,rgba(5,6,8,.38) 42%,rgba(5,6,8,.88) 100%)}
 .hero-grain{position:absolute;inset:-25%;z-index:1;background-image:repeating-linear-gradient(-28deg,rgba(234,244,248,.045) 0 1px,transparent 1px 74px);pointer-events:none}
 .hero-body{position:relative;z-index:2;width:100%;margin-top:auto;text-align:left;padding-top:clamp(70px,8vh,96px);padding-bottom:clamp(24px,3vh,40px)}
 .hero h1{font-size:clamp(52px,10.5vw,180px);color:var(--on-black)}
@@ -319,7 +321,7 @@ section{position:relative}
 body.price-lock{overflow:hidden}
 
 /* ---------- FINAL CTA ---------- */
-.final{min-height:54svh;padding:clamp(20px,3vw,40px) 0;background:var(--black);color:var(--on-black);display:flex;align-items:center;overflow-x:hidden;overflow-y:visible;position:relative}
+.final{min-height:100svh;min-height:var(--vh-final,100svh);padding:clamp(20px,3vw,40px) 0;background:var(--black);color:var(--on-black);display:flex;align-items:center;overflow-x:hidden;overflow-y:visible;position:relative}
 .final>.w{width:100%}
 
 .final h2{font-size:clamp(34px,6.4vw,96px);max-width:14ch;color:var(--on-black)}
@@ -403,6 +405,19 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
   .rows{grid-template-columns:1fr;gap:16px}
 }
 @media(prefers-reduced-motion:reduce){.svc,.tile,.row{transition:none}}
+
+/* ---------- SERVICE CARDS -> PRICE SHEET ---------- */
+.svc[data-price]{cursor:pointer}
+.svc[data-price]:focus-visible{outline:2px solid var(--or);outline-offset:4px}
+.svc>p.svc-why{margin:0 0 22px;font-size:14.5px;color:var(--body);line-height:1.5}
+.svc-why b{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--black);margin-bottom:4px}
+.svc[data-price] .svc-tag{margin-top:auto;transition:background .25s ease,color .25s ease}
+.svc[data-price]:hover .svc-tag,.svc[data-price]:focus-visible .svc-tag{background:var(--or);color:var(--black)}
+.svc-close{position:fixed;top:clamp(16px,2.4vw,26px);right:clamp(16px,4vw,64px);z-index:201;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--ice);color:var(--black);font-size:24px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.svc-close:hover{background:var(--or);border-color:var(--or);color:#12100E}
+.svc-sheet-h{font-family:'Bebas Neue',sans-serif;font-weight:400;text-transform:uppercase;font-size:clamp(34px,5vw,64px);line-height:.95;margin:8px 0 0;color:var(--black)}
+.svc-sheet .price-portfolio{margin-top:clamp(22px,3vw,34px);padding-top:0;border-top:0}
+.svc-sheet-cta{display:inline-block;margin-top:clamp(22px,3vw,32px)}
 </style>
 </head>
 <body>
@@ -480,48 +495,37 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
     <h2 class="mega rev" data-i="progH" style="font-size:clamp(34px,5.6vw,80px);max-width:16ch">Built around what you need to know</h2>
     <p class="svc-lead" data-i="progLead">Every club, coach and athlete arrives with a different question. The work is assembled from these pieces — at the depth and the rhythm you actually need.</p>
     <div class="svcs">
-      <div class="svc fade"><span class="svc-n">1/</span>
-        <p class="svc-for" data-i="t1f">For clubs &amp; coaching staff</p>
-        <h3 data-i="t1h">Team analysis</h3>
-        <p data-i="t1p">Turning a league's raw match data into a picture the staff can act on before the next fixture.</p>
-        <p class="svc-lbl" data-i="offer">What do we offer?</p>
-        <ul><li data-i="t1o1">Wyscout/Instat extraction and live tagging &mdash; xG, PPDA, possession, duels and formations.</li>
-            <li data-i="t1o2">Comparison dashboards across every team in the same league, refreshed each round.</li></ul>
-        <span class="svc-tag" data-i="t1t">Match data</span></div>
-      <div class="svc fade"><span class="svc-n">2/</span>
-        <p class="svc-for" data-i="t2f">For individual athletes</p>
-        <h3 data-i="t2h">Athlete performance</h3>
-        <p data-i="t2p">An individual picture of how an athlete is loading, recovering and contributing over a season.</p>
-        <p class="svc-lbl" data-i="offer">What do we offer?</p>
-        <ul><li data-i="t2o1">Training load and recovery zones tracked match by match in a personal dashboard.</li>
-            <li data-i="t2o2">Per-athlete interceptions and heat maps, with progress compared across seasons.</li></ul>
-        <span class="svc-tag" data-i="t2t">Physical &amp; GPS</span></div>
-      <div class="svc fade"><span class="svc-n">3/</span>
-        <p class="svc-for" data-i="t3f">For athletes, goalkeepers &amp; clubs</p>
-        <h3 data-i="t3h">Scouting for athletes and clubs</h3>
-        <p data-i="t3p">An effective path to elevate performance and help your team achieve greater results on court.</p>
-        <p class="svc-lbl" data-i="offer">What do we offer?</p>
-        <ul><li data-i="t3o1">Video analysis, performance breakdown, tactical insights and personalised feedback.</li>
-            <li data-i="t3o2">Scouting reports and progress tracking so athletes and clubs make informed decisions.</li></ul>
-        <span class="svc-tag" data-i="t3t">Video &amp; tactics</span></div>
-      <div class="svc fade"><span class="svc-n">4/</span>
-        <p class="svc-for" data-i="t4f">For federations &amp; competition organisers</p>
-        <h3 data-i="t4h">Intelligence &amp; brand</h3>
-        <p data-i="t4p">Making the analysis travel &mdash; from an internal report to content that builds your name.</p>
-        <p class="svc-lbl" data-i="offer">What do we offer?</p>
-        <ul><li data-i="t4o1">Comparative studies between international competitions, built from official technical reports.</li>
-            <li data-i="t4o2">LinkedIn carousels and branded graphics under the TZR Futsal Coaching identity.</li></ul>
-        <span class="svc-tag" data-i="t4t">Competition</span></div>
-      <div class="svc fade"><span class="svc-n">5/</span>
-        <p class="svc-for" data-i="t5f">For athletes ready to get noticed</p>
-        <h3 data-i="t5h">Athlete digital portfolio</h3>
-        <p data-i="t5p">Your career on one link — a profile ready to share with clubs, coaches and scouts.</p>
-        <p class="svc-lbl" data-i="offer">What do we offer?</p>
-        <ul><li data-i="t5o1">A personal profile with bio, playing history, achievements, photos and highlight videos — always up to date, one link to share.</li>
-            <li data-i="t5o2">A Pro version with full stats, a personal domain and a mobile-optimised profile for a complete professional presence.</li></ul>
-        <a class="svc-tag" href="#contact" data-i="t5t">Get in touch to learn more</a></div>
+      <div class="svc fade" data-price="individual" role="button" tabindex="0"><span class="svc-n">1/</span>
+        <p class="svc-for" data-i="w1f">For athletes &amp; goalkeepers</p>
+        <h3 data-i="w1h">Individual analysis</h3>
+        <p data-i="w1p">Your games broken down on video — performance, tactical choices and personalised feedback.</p>
+        <p class="svc-why"><b data-i="svwhy">Why it helps</b><span data-i="w1y">You see exactly where you're strong and what to work on next.</span></p>
+        <span class="svc-tag" data-i="svprice">See price →</span></div>
+      <div class="svc fade" data-price="clubs" role="button" tabindex="0"><span class="svc-n">2/</span>
+        <p class="svc-for" data-i="w2f">For clubs &amp; coaching staff</p>
+        <h3 data-i="w2h">Club analysis</h3>
+        <p data-i="w2p">Wyscout/Instat data and live tagging — xG, PPDA, possession, duels and formations — compared with every team in your league.</p>
+        <p class="svc-why"><b data-i="svwhy">Why it helps</b><span data-i="w2y">The staff gets a clear picture to act on before the next fixture.</span></p>
+        <span class="svc-tag" data-i="svprice">See price →</span></div>
+      <div class="svc fade" data-price="reports" role="button" tabindex="0"><span class="svc-n">3/</span>
+        <p class="svc-for" data-i="w3f">For clubs, coaches &amp; athletes</p>
+        <h3 data-i="w3h">Reports</h3>
+        <p data-i="w3p">Pre-match decks and PDF reports — season snapshot, head-to-head, formations and a set-piece plan.</p>
+        <p class="svc-why"><b data-i="svwhy">Why it helps</b><span data-i="w3y">Everything that matters in one document, ready before your review session.</span></p>
+        <span class="svc-tag" data-i="svprice">See price →</span></div>
+      <div class="svc fade" data-price="training" role="button" tabindex="0"><span class="svc-n">4/</span>
+        <p class="svc-for" data-i="w4f">For athletes, groups &amp; goalkeepers</p>
+        <h3 data-i="w4h">Training sessions</h3>
+        <p data-i="w4p">1-on-1, group and goalkeeper sessions — technical and tactical work built around real-game scenarios.</p>
+        <p class="svc-why"><b data-i="svwhy">Why it helps</b><span data-i="w4y">We develop people through sport, with every session tailored to the player.</span></p>
+        <span class="svc-tag" data-i="svprice">See price →</span></div>
+      <div class="svc fade" data-price="portfolio" role="button" tabindex="0"><span class="svc-n">5/</span>
+        <p class="svc-for" data-i="w6f">For athletes ready to get noticed</p>
+        <h3 data-i="w6h">Athlete digital portfolio</h3>
+        <p data-i="w6p">Profile, playing history, achievements, photos and highlight videos — plus stats and a personal domain in the Pro version.</p>
+        <p class="svc-why"><b data-i="svwhy">Why it helps</b><span data-i="w6y">Your career on one link, ready to share with clubs, coaches and scouts.</span></p>
+        <span class="svc-tag" data-i="svprice">See price →</span></div>
     </div>
-    <p class="svc-note rev" data-i="progNote">It all depends on what the club, the coach or the athlete wants to know — and needs.</p>
   </div>
 </section>
 
@@ -530,75 +534,19 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
   <div class="w">
     <p class="kick" data-i="k.gal">Selected work</p>
     <h2 class="mega rev" data-i="galH" style="font-size:clamp(34px,6.4vw,96px);max-width:14ch">Selected work. From footage to decisions.</h2>
-    <p class="work-lead" data-i="galNote">We take match and training footage, work out what's really happening, and spot the patterns, strengths and problems that matter. Then we turn it into simple visuals coaches and players can actually use. Here's how we can support your team.</p>
+    <p class="work-lead" data-i="galNote">Examples of analysis, reports and projects developed for teams, athletes and competitions.</p>
 
-    <div class="feat">
-      <div class="feat-bg"><video autoplay loop muted playsinline><source src="assets/a05_f6c651f5a1.mp4" type="video/mp4"></video></div>
-      <div class="feat-in">
-
-        <article class="ci fade">
-          <span class="ci-n">01</span>
-          <div class="ci-t">
-            <span class="cat" data-i="pj1c">Video + tagging</span>
-            <h3 data-i="pj1h">Match analysis</h3>
-            <p data-i="cs1s">Turning a league's match data into tactical insight the staff can act on before the next fixture.</p>
-            <p class="ci-out"><b data-i="m3">Output</b><span data-i="cs1cO">A pre-match deck — season snapshot, head-to-head, formations and a set-piece plan.</span></p>
-          </div>
-        </article>
-
-        <article class="ci fade">
-          <span class="ci-n">02</span>
-          <div class="ci-t">
-            <span class="cat" data-i="pj2c">Video + data</span>
-            <h3 data-i="pj2h">Opposition analysis</h3>
-            <p data-i="cs3s">Combining data and video to surface the patterns, strengths and vulnerabilities that only show on tape.</p>
-            <p class="ci-out"><b data-i="m3">Output</b><span data-i="cs3cO">Clips exported per action, plus a straight-to-the-point report for the staff.</span></p>
-          </div>
-        </article>
-
-        <article class="ci fade">
-          <span class="ci-n">03</span>
-          <div class="ci-t">
-            <span class="cat" data-i="pj3c">Physical &amp; GPS</span>
-            <h3 data-i="pj3h">Player performance</h3>
-            <p data-i="cs2s">Turning one player's data into a clear picture of load, recovery and contribution across a season.</p>
-            <p class="ci-out"><b data-i="m3">Output</b><span data-i="cs2cO">A personal performance dashboard, refreshed as each match is played.</span></p>
-          </div>
-        </article>
-
-        <article class="ci fade">
-          <span class="ci-n">04</span>
-          <div class="ci-t">
-            <span class="cat" data-i="pj4c">Season data</span>
-            <h3 data-i="pj4h">Team performance</h3>
-            <p data-i="p1p">Turning a league's raw match data into a picture the staff can act on before the next fixture.</p>
-            <p class="ci-out"><b data-i="m3">Output</b><span data-i="p1b">Comparison across every team in the league, refreshed each round.</span></p>
-          </div>
-        </article>
-
-        <article class="ci fade">
-          <span class="ci-n">05</span>
-          <div class="ci-t">
-            <span class="cat" data-i="pj5c">Video analysis</span>
-            <h3 data-i="pj5h">Live tagging &amp; telestration</h3>
-            <p data-i="pj5s">The game broken into actions and moments while it is still being played.</p>
-            <p class="ci-out"><b data-i="m3">Output</b><span data-i="vb3">Clips exportable per action for the video room</span></p>
-          </div>
-        </article>
-
-      </div>
-    </div>
 
     <p class="kick" style="margin-top:clamp(34px,4.6vw,64px)" data-i="k.video">What the video shows</p>
     <div class="rows">
       <div class="row fade">
-        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a06_4720336c55.mp4" type="video/mp4"></video></div>
+        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a05_4720336c55.mp4" type="video/mp4"></video></div>
       </div>
       <div class="row fade">
-        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a07_10e84dc580.mp4" type="video/mp4"></video></div>
+        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a06_10e84dc580.mp4" type="video/mp4"></video></div>
       </div>
       <div class="row fade">
-        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a08_ded6205c7f.mp4" type="video/mp4"></video></div>
+        <div class="row-media"><video autoplay loop muted playsinline><source src="assets/a07_ded6205c7f.mp4" type="video/mp4"></video></div>
       </div>
     </div>
 
@@ -614,7 +562,7 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
           </ul>
         </div>
         <div class="reel">
-        <video autoplay loop muted playsinline><source src="assets/a09_febe0ad680.mp4" type="video/mp4"></video>
+        <video autoplay loop muted playsinline><source src="assets/a08_eb48a87e8e.mp4" type="video/mp4"></video>
         </div>
       </div>
     </div>
@@ -636,20 +584,6 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
   </div>
 </section>
 
-<!-- 07 WHO I WORK WITH -->
-<section class="help pad on-dark">
-  <div class="w">
-    <p class="kick" data-i="k.who">Who we help</p>
-    <h2 class="mega rev" data-i="helpH">Different environments. Different questions.</h2>
-    <div class="tiles">
-      <div class="tile fade"><span class="tile-n">01</span><div class="tile-body"><h3 data-i="c1h">Clubs &amp; coaching staff</h3><p data-i="c1p">Team and opposition analysis, ready before the week's session.</p></div></div>
-      <div class="tile fade"><span class="tile-n">02</span><div class="tile-body"><h3 data-i="c2h">Individual athletes</h3><p data-i="c2p">Personal performance tracked and explained, match by match.</p></div></div>
-      <div class="tile fade"><span class="tile-n">03</span><div class="tile-body"><h3 data-i="c3h">Federations &amp; organisers</h3><p data-i="c3p">Research and strategic input for new competitions and formats.</p></div></div>
-      <div class="tile fade"><span class="tile-n">04</span><div class="tile-body"><h3 data-i="c4h">On request</h3><p data-i="c4p">Live dashboards and the player-portfolio site &mdash; happy to show them on a call.</p></div></div>
-    </div>
-  </div>
-</section>
-
 <!-- 08 PRICING -->
 <section class="pad price-modal" id="pricing">
   <button class="price-close" type="button" aria-label="Close">&times;</button>
@@ -659,7 +593,7 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
     <div class="price-list fade">
       <div class="price-row price-row--desc">
         <div class="price-row-main"><span class="price-label" data-i="pr1a">Analysis</span><span class="price-val" data-i="pr1b">$40</span></div>
-        <p class="price-desc" data-i="pr1c">Video analysis, performance breakdown, skill assessment, tactical insights, personalised feedback and player comparison — with tailored recommendations, scouting reports and progress tracking to help you make informed decisions.</p>
+        <p class="price-desc" data-i="pr1c">Per match. Includes the written report and clips.</p>
       </div>
       <div class="price-row"><span class="price-label" data-i="pr2a">Analysis + video call</span><span class="price-val" data-i="pr2b">$50</span></div>
       <div class="price-row"><span class="price-label" data-i="pr3a">Clubs</span><span class="price-val" data-i="pr3b">Starting at $70</span></div>
@@ -705,6 +639,83 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
     </div>
   </div>
 </section>
+<!-- SERVICE PRICE SHEETS: opened from a What we do card, one service at a time -->
+<section class="pad price-modal" id="svc-price">
+  <button class="svc-close" type="button" aria-label="Close">&times;</button>
+  <div class="w">
+    <p class="kick" data-i="k.price">Pricing</p>
+      <div class="svc-sheet" data-sheet="individual" hidden>
+        <h2 class="svc-sheet-h" data-i="w1h">Individual analysis</h2>
+        <div class="price-list">
+          <div class="price-row price-row--desc">
+            <div class="price-row-main"><span class="price-label" data-i="pr1a">Analysis</span><span class="price-val" data-i="pr1b">$40</span></div>
+            <p class="price-desc" data-i="pr1c">Per match. Includes the written report and clips.</p>
+          </div>
+          <div class="price-row"><span class="price-label" data-i="pr2a">Analysis + video call</span><span class="price-val" data-i="pr2b">$50</span></div>
+        </div>
+        <a class="pf-cta svc-sheet-cta" href="#contact" data-i="cta1">Get in touch</a>
+      </div>
+      <div class="svc-sheet" data-sheet="clubs" hidden>
+        <h2 class="svc-sheet-h" data-i="w2h">Club analysis</h2>
+        <div class="price-list">
+          <div class="price-row"><span class="price-label" data-i="pr3a">Clubs</span><span class="price-val" data-i="pr3b">Starting at $70</span></div>
+        </div>
+        <a class="pf-cta svc-sheet-cta" href="#contact" data-i="cta1">Get in touch</a>
+      </div>
+      <div class="svc-sheet" data-sheet="reports" hidden>
+        <h2 class="svc-sheet-h" data-i="w3h">Reports</h2>
+        <div class="price-list">
+          <div class="price-row"><span class="price-label" data-i="pr4a">Reports</span><span class="price-val" data-i="pr4b">$40</span></div>
+          <div class="price-row"><span class="price-label" data-i="pr5a">Reports + video analysis</span><span class="price-val" data-i="pr5b">Get in touch</span></div>
+        </div>
+        <a class="pf-cta svc-sheet-cta" href="#contact" data-i="cta1">Get in touch</a>
+      </div>
+      <div class="svc-sheet" data-sheet="training" hidden>
+        <h2 class="svc-sheet-h" data-i="w4h">Training sessions</h2>
+        <div class="price-list">
+          <div class="price-row"><span class="price-label" data-i="pr6a">Training sessions</span><span class="price-val" data-i="pr6b">Get in touch</span></div>
+        </div>
+        <a class="pf-cta svc-sheet-cta" href="#contact" data-i="cta1">Get in touch</a>
+      </div>
+      <div class="svc-sheet" data-sheet="portfolio" hidden>
+        <h2 class="svc-sheet-h" data-i="w6h">Athlete digital portfolio</h2>
+        <div class="price-portfolio">
+      <p class="price-desc" data-i="pf.lead">Your career, one link — ready to share with clubs, coaches and scouts.</p>
+      <div class="pf-cards">
+        <div class="pf-card">
+          <p class="pf-tier" data-i="pf.d.tier">Digital</p>
+          <p class="pf-price">A$200</p>
+          <p class="pf-note" data-i="pf.d.note">One-off</p>
+          <ul class="pf-list">
+            <li data-i="pf.d.l1">Profile, bio, playing history &amp; achievements</li>
+            <li data-i="pf.d.l2">Photos &amp; highlight videos</li>
+            <li data-i="pf.d.l3">Social media, contact &amp; portfolio link</li>
+          </ul>
+          <a class="pf-cta" href="#contact" data-i="pf.d.cta">Get started</a>
+        </div>
+        <div class="pf-card pf-card--pro">
+          <p class="pf-tier" data-i="pf.p.tier">Pro</p>
+          <p class="pf-price">A$400</p>
+          <p class="pf-note" data-i="pf.p.note">One-off &middot; personal domain included for year one</p>
+          <ul class="pf-list">
+            <li data-i="pf.p.l0">Everything in Digital, plus:</li>
+            <li data-i="pf.p.l1">Player stats &amp; performance data</li>
+            <li data-i="pf.p.l2">Personal domain, mobile-optimised, full professional profile</li>
+          </ul>
+          <a class="pf-cta" href="#contact" data-i="pf.p.cta">Go Pro</a>
+        </div>
+      </div>
+      <div class="price-list pf-keep">
+        <div class="price-row"><span class="price-label" data-i="pf.keep.1a">Keep online — hosting &amp; minor updates</span><span class="price-val" data-i="pf.keep.1b">A$80/yr</span></div>
+        <div class="price-row"><span class="price-label" data-i="pf.keep.2a">Season update — up to 4 updates, photos &amp; highlights</span><span class="price-val" data-i="pf.keep.2b">A$150/yr</span></div>
+        <div class="price-row"><span class="price-label" data-i="pf.keep.3a">Pro performance — regular updates, stats included</span><span class="price-val" data-i="pf.keep.3b">A$300/yr</span></div>
+      </div>
+      <p class="price-desc" data-i="pf.match">Need individual match analysis? Available separately, from A$50/match.</p>
+    </div>
+      </div>
+  </div>
+</section>
+
 
 <!-- 09 CONTACT -->
 <section class="final" id="contact">
@@ -725,12 +736,6 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
       </div>
 </section>
 
-<!-- 10 FOOTER -->
-<footer class="foot on-dark">
-  <div class="w">
-    <div class="foot-bot"><span>Thalita Ziero · TZR Futsal Coaching</span><span data-i="f4">Football &amp; futsal analysis · remote</span></div>
-  </div>
-</footer>
 
 <script>(function(){function s(){document.documentElement.style.setProperty("--sbw",(window.innerWidth-document.documentElement.clientWidth)+"px")}s();addEventListener("resize",s)})();</script>
 <script>/*!
@@ -760,7 +765,7 @@ a.svc-tag:hover{background:var(--or);color:var(--black)}
 <script>
 /* ---------------- i18n ---------------- */
 var T={
-en:{"offer":"What do we offer?","t1h":"Team analysis","t1p":"Turning a league's raw match data into a picture the staff can act on before the next fixture.","t1o1":"Wyscout/Instat extraction and live tagging — xG, PPDA, possession, duels and formations.","t1o2":"Comparison dashboards across every team in the same league, refreshed each round.","t1t":"Match data","t2h":"Athlete performance","t2p":"An individual picture of how an athlete is loading, recovering and contributing over a season.","t2o1":"Training load and recovery zones tracked match by match in a personal dashboard.","t2o2":"Per-athlete interceptions and heat maps, with progress compared across seasons.","t2t":"Physical & GPS","t3h":"Scouting for athletes and clubs","t3p":"An effective path to elevate performance and help your team achieve greater results on court.","t3o1":"Video analysis, performance breakdown, tactical insights and personalised feedback.","t3o2":"Scouting reports and progress tracking so athletes and clubs make informed decisions.","t3t":"Video & tactics","t4h":"Intelligence & brand","t4p":"Making the analysis travel — from an internal report to content that builds your name.","t4o1":"Comparative studies between international competitions, built from official technical reports.","t4o2":"LinkedIn carousels and branded graphics under the TZR Futsal Coaching identity.","t4t":"Competition","t1f":"For clubs & coaching staff","t2f":"For individual athletes","t3f":"For athletes, goalkeepers & clubs","t4f":"For federations & competition organisers","t5f":"For athletes ready to get noticed","t5h":"Athlete digital portfolio","t5p":"Your career on one link — a profile ready to share with clubs, coaches and scouts.","t5o1":"A personal profile with bio, playing history, achievements, photos and highlight videos — always up to date, one link to share.","t5o2":"A Pro version with full stats, a personal domain and a mobile-optimised profile for a complete professional presence.","t5t":"Get in touch to learn more","k.who":"Who we help","c1h":"Clubs & coaching staff","c1p":"Team and opposition analysis, ready before the week's session.","c2h":"Individual athletes","c2p":"Personal performance tracked and explained, match by match.","c3h":"Federations & organisers","c3p":"Research and strategic input for new competitions and formats.","c4h":"On request","c4p":"Live dashboards and the player-portfolio site — happy to show them on a call.","nav6":"Pricing","k.price":"Pricing","priceH":"Pricing table","k.notes":"Notes","pt.h1":"Session Type","pt.h2":"Group Size","pt.h3":"Base Price per Session","pt.h4":"South Perth Discount (25%)","pt.h5":"Notes","pt.r1a":"Individual Training","pt.r1b":"1 Player/goalkeeper","pt.n1":"Tailored technical, tactical, and physical improvement. Game Video Analysis included.","pt.r2a":"Small Group Training","pt.r2b":"2–5 Players/goalkeeper","pt.n2":"Focused on both technical and tactical aspects of the game with real-game simulation scenarios.","pt.r3a":"Large Group Training","pt.r3b":"6–10 Players","pt.r4a":"Video Analysis","pt.r4b":"Individual or Team","pt.r4c":"Starting at $35 (individual) and $60 Team","pt.n4":"Post-game performance review with detailed tactical insights and points for improvement.","pt.r5a":"5 Sessions Package","pt.r5b":"1 player/goalKeeper","pt.r5c":"5 Sessions $315","pt.n5":"Packages with more sessions can be arranged according to the athlete's or group's requirements.","pt.r6b":"2–5 players","pt.r6c":"5 Sessions $155","pt.r7b":"6–10 players","pt.r7c":"5 Sessions $110","pt.each":"(each player)","pt.ind":"(individual)","pt.pct":"(10% off)","pt.note1b":"Court Fee:","pt.note1":"Each session includes a $40–50 court rental fee.","pt.note2b":"Session duration:","pt.note2":"The session may vary depending on the available court time and the player's physical condition on the training day — the ideal session is 1 hour.","pt.note3b":"Video Analysis Details:","pt.note3":"Starting at $35 for individual reviews, team analysis costs are adjusted based on team size and complexity. Reports are delivered within 2–3 business days.","pt.note4b":"South Perth Discount:","pt.note4":"All athletes from South Perth receive a 25% discount on all sessions.","pr1a":"Analysis","pr1b":"$40","pr1c":"Video analysis, performance breakdown, skill assessment, tactical insights, personalised feedback and player comparison — with tailored recommendations, scouting reports and progress tracking to help you make informed decisions.","pr2a":"Analysis + video call","pr2b":"$50","pr3a":"Clubs","pr3b":"Starting at $70","pr4a":"Reports","pr4b":"$40","pr5a":"Reports + video analysis","pr5b":"Get in touch","pr6a":"Training sessions","pr6b":"Get in touch","pr7a":"Full competition coverage","pr7b":"Get in touch","k.portfolio":"Athlete digital portfolio","pf.lead":"Your career, one link — ready to share with clubs, coaches and scouts.","pf.d.tier":"Digital","pf.d.note":"One-off","pf.d.l1":"Profile, bio, playing history & achievements","pf.d.l2":"Photos & highlight videos","pf.d.l3":"Social media, contact & portfolio link","pf.d.cta":"Get started","pf.p.tier":"Pro","pf.p.note":"One-off · personal domain included for year one","pf.p.l0":"Everything in Digital, plus:","pf.p.l1":"Player stats & performance data","pf.p.l2":"Personal domain, mobile-optimised, full professional profile","pf.p.cta":"Go Pro","pf.keep.1a":"Keep online — hosting & minor updates","pf.keep.1b":"A$80/yr","pf.keep.2a":"Season update — up to 4 updates, photos & highlights","pf.keep.2b":"A$150/yr","pf.keep.3a":"Pro performance — regular updates, stats included","pf.keep.3b":"A$300/yr","pf.match":"Need individual match analysis? Available separately, from A$50/match.","k.video":"What the video shows","r1h":"Live tagging, action by action","r1p":"Every shot, duel and set piece tagged in real time during the match — this is the raw feed LiveTag Pro works from.","r2h":"Distance and passing lanes, drawn live","r2p":"Over a Libertadores Futsal broadcast — the yellow line and circles mark exactly the run and distance that mattered.","r3h":"Dynamic drawing, shaded in real time","r3p":"A passing lane shaded live on a national-team match — the same tool used to walk a staff through a play.","contacth":"Let’s build your next <em>dashboard</em>",
+en:{"svwhy":"Why it helps","svprice":"See price →","w1f":"For athletes & goalkeepers","w1h":"Individual analysis","w1p":"Your games broken down on video — performance, tactical choices and personalised feedback.","w1y":"You see exactly where you're strong and what to work on next.","w2f":"For clubs & coaching staff","w2h":"Club analysis","w2p":"Wyscout/Instat data and live tagging — xG, PPDA, possession, duels and formations — compared with every team in your league.","w2y":"The staff gets a clear picture to act on before the next fixture.","w3f":"For clubs, coaches & athletes","w3h":"Reports","w3p":"Pre-match decks and PDF reports — season snapshot, head-to-head, formations and a set-piece plan.","w3y":"Everything that matters in one document, ready before your review session.","w4f":"For athletes, groups & goalkeepers","w4h":"Training sessions","w4p":"1-on-1, group and goalkeeper sessions — technical and tactical work built around real-game scenarios.","w4y":"We develop people through sport, with every session tailored to the player.","w6f":"For athletes ready to get noticed","w6h":"Athlete digital portfolio","w6p":"Profile, playing history, achievements, photos and highlight videos — plus stats and a personal domain in the Pro version.","w6y":"Your career on one link, ready to share with clubs, coaches and scouts.","nav6":"Pricing","k.price":"Pricing","priceH":"Pricing table","k.notes":"Notes","pt.h1":"Session Type","pt.h2":"Group Size","pt.h3":"Base Price per Session","pt.h4":"South Perth Discount (25%)","pt.h5":"Notes","pt.r1a":"Individual Training","pt.r1b":"1 Player/goalkeeper","pt.n1":"Tailored technical, tactical, and physical improvement. Game Video Analysis included.","pt.r2a":"Small Group Training","pt.r2b":"2–5 Players/goalkeeper","pt.n2":"Focused on both technical and tactical aspects of the game with real-game simulation scenarios.","pt.r3a":"Large Group Training","pt.r3b":"6–10 Players","pt.r4a":"Video Analysis","pt.r4b":"Individual or Team","pt.r4c":"Starting at $35 (individual) and $60 Team","pt.n4":"Post-game performance review with detailed tactical insights and points for improvement.","pt.r5a":"5 Sessions Package","pt.r5b":"1 player/goalKeeper","pt.r5c":"5 Sessions $315","pt.n5":"Packages with more sessions can be arranged according to the athlete's or group's requirements.","pt.r6b":"2–5 players","pt.r6c":"5 Sessions $155","pt.r7b":"6–10 players","pt.r7c":"5 Sessions $110","pt.each":"(each player)","pt.ind":"(individual)","pt.pct":"(10% off)","pt.note1b":"Court Fee:","pt.note1":"Each session includes a $40–50 court rental fee.","pt.note2b":"Session duration:","pt.note2":"The session may vary depending on the available court time and the player's physical condition on the training day — the ideal session is 1 hour.","pt.note3b":"Video Analysis Details:","pt.note3":"Starting at $35 for individual reviews, team analysis costs are adjusted based on team size and complexity. Reports are delivered within 2–3 business days.","pt.note4b":"South Perth Discount:","pt.note4":"All athletes from South Perth receive a 25% discount on all sessions.","pr1a":"Analysis","pr1b":"$40","pr1c":"Per match. Includes the written report and clips.","pr2a":"Analysis + video call","pr2b":"$50","pr3a":"Clubs","pr3b":"Starting at $70","pr4a":"Reports","pr4b":"$40","pr5a":"Reports + video analysis","pr5b":"Get in touch","pr6a":"Training sessions","pr6b":"Get in touch","pr7a":"Full competition coverage","pr7b":"Get in touch","k.portfolio":"Athlete digital portfolio","pf.lead":"Your career, one link — ready to share with clubs, coaches and scouts.","pf.d.tier":"Digital","pf.d.note":"One-off","pf.d.l1":"Profile, bio, playing history & achievements","pf.d.l2":"Photos & highlight videos","pf.d.l3":"Social media, contact & portfolio link","pf.d.cta":"Get started","pf.p.tier":"Pro","pf.p.note":"One-off · personal domain included for year one","pf.p.l0":"Everything in Digital, plus:","pf.p.l1":"Player stats & performance data","pf.p.l2":"Personal domain, mobile-optimised, full professional profile","pf.p.cta":"Go Pro","pf.keep.1a":"Keep online — hosting & minor updates","pf.keep.1b":"A$80/yr","pf.keep.2a":"Season update — up to 4 updates, photos & highlights","pf.keep.2b":"A$150/yr","pf.keep.3a":"Pro performance — regular updates, stats included","pf.keep.3b":"A$300/yr","pf.match":"Need individual match analysis? Available separately, from A$50/match.","k.video":"What the video shows","r1h":"Live tagging, action by action","r1p":"Every shot, duel and set piece tagged in real time during the match — this is the raw feed LiveTag Pro works from.","r2h":"Distance and passing lanes, drawn live","r2p":"Over a Libertadores Futsal broadcast — the yellow line and circles mark exactly the run and distance that mattered.","r3h":"Dynamic drawing, shaded in real time","r3p":"A passing lane shaded live on a national-team match — the same tool used to walk a staff through a play.","contacth":"Let’s build your next <em>dashboard</em>",
 title:"Performance Analyst",
 nav1:"About",nav2:"What we do",nav3:"Work",nav4:"How we work",nav5:"Contact",
 h1a:"Performance",h1b:"Analyst",
@@ -773,48 +778,35 @@ ab3:"Fourteen seasons playing at professional level in Italy, up to 2024, sit be
 ab4:"Every project starts with footage and raw data and ends with something usable: we combine video, numbers and tactical reading, and explain the result without jargon.",
 bio4:"In January 2025 she founded TZR Futsal Coaching, to share everything she has learned over a decade in futsal and train the next generation of futsal players in Australia.",
 nm1:"Seasons played in Italy's premiere leagues",nm2:"Debut in Italy's first pro futsal championship",nm3:"Working languages",nm4:"Remote delivery, weekly cycle",
-"k.prog":"What we do",progH:"Built around what you need to know",progLead:"Every club, coach and athlete arrives with a different question. The work is assembled from these pieces — at the depth and the rhythm you actually need.",progNote:"It all depends on what the club, the coach or the athlete wants to know — and needs.",
+"k.prog":"What we do",progH:"Built around what you need to know",progLead:"Every club, coach and athlete arrives with a different question. The work is assembled from these pieces — at the depth and the rhythm you actually need.",
 sv1h:"Video analysis",sv1p:"Match and training footage broken down action by action.",
 sv2h:"Opposition scouting",sv2p:"The patterns, strengths and weak points of the next opponent.",
 sv3h:"Performance dashboards",sv3p:"Team and individual performance tracked across the season.",
 sv4h:"Player analysis",sv4p:"Individual development and side-by-side comparison.",
 sv5h:"Live & remote analysis",sv5p:"Tagged live at the venue, or remotely from the footage you send.",
-"k.gal":"Selected work",galH:"Selected work. From footage to decisions.",galNote:"We take match and training footage, work out what's really happening, and spot the patterns, strengths and problems that matter. Then we turn it into simple visuals coaches and players can actually use. Here's how we can support your team.","k.more":"Reporting & delivery",cta5:"Instagram",twH:"Live tagging, action by action, during the match",twP:"Show the team and the athlete exactly where the problem is — then talk it through, so they learn from it and keep developing.",rvH:"Delivered the way each client needs it",rvP:"Dashboards, pre-match decks, PDF reports, clips per action and social cards — the format and the cadence are set by the client, not by a fixed package.",rv1:"Dashboards",rv2:"Pre-match decks",rv3:"PDF reports",rv4:"Clips per action",rv5:"Social cards",gc5:"Work reel — clubs blurred",reel:"Reel",
-m2:"Analysed",m3:"Output",
-pj1c:"Video + tagging",pj1h:"Match analysis",
-pj2c:"Video + data",pj2h:"Opposition analysis",
-pj3c:"Physical & GPS",pj3h:"Player performance",
-pj4c:"Season data",pj4h:"Team performance",
-pj5c:"Video analysis",pj5h:"Live tagging & telestration",pj5s:"The game broken into actions and moments while it is still being played.",
-cs1s:"Turning a league's match data into tactical insight the staff can act on before the next fixture.",
+"k.gal":"Selected work",galH:"Selected work. From footage to decisions.",galNote:"Examples of analysis, reports and projects developed for teams, athletes and competitions.","k.more":"Reporting & delivery",cta5:"Instagram",twH:"Live tagging, action by action, during the match",twP:"Show the team and the athlete exactly where the problem is — then talk it through, so they learn from it and keep developing.",rvH:"Delivered the way each client needs it",rvP:"Dashboards, pre-match decks, PDF reports, clips per action and social cards — the format and the cadence are set by the client, not by a fixed package.",rv1:"Dashboards",rv2:"Pre-match decks",rv3:"PDF reports",rv4:"Clips per action",rv5:"Social cards",gc5:"Work reel — clubs blurred",reel:"Reel",
+m2:"Analysed",
 cs1b:"Match data extracted from the league's own reports and combined with live tagging: xG, PPDA, possession, duels, formations, average positions.",
-cs1cO:"A pre-match deck — season snapshot, head-to-head, formations and a set-piece plan.",
-cs2s:"Turning one player's data into a clear picture of load, recovery and contribution across a season.",
 cs2b:"GPS exports and per-match tagging mapped onto the court: recovery zones and interceptions, match by match.",
-cs2cO:"A personal performance dashboard, refreshed as each match is played.",
-cs3s:"Combining data and video to surface the patterns, strengths and vulnerabilities that only show on tape.",
 cs3c2:"Passing lane shaded in real time",
 cs3c1:"Distance and passing lanes drawn live",cs3b:"Live tagging during the match, with distances and passing lanes drawn straight over the broadcast feed.",
-cs3cO:"Clips exported per action, plus a straight-to-the-point report for the staff.",
-p1p:"Turning a league's raw match data into a picture the staff can act on before the next fixture.",
 p1a:"Match data extraction and live tagging — xG, PPDA, possession, duels, formations.",
-p1b:"Comparison across every team in the league, refreshed each round.",
-vb1:"Live tagging, action by action, during the match",vb3:"Clips exportable per action for the video room",
+vb1:"Live tagging, action by action, during the match",
 gc2:"Report cover — TZR template",gc3:"Season review carousel",gc4:"Team performance card",social:"Social",
 "k.path":"How we work",pathH:"100% remote, on a weekly cycle",pathLead:"Once we know what you need, this is the rhythm that delivers it — the same five steps, every week, wherever you are.",
 st1h:"Video",st1p:"Match footage, tagged live at the venue or sent to us.",
 st2h:"Data",st2p:"Match reports, GPS exports and tagging, organised and checked.",
 st3h:"Analysis",st3p:"The numbers read against what actually happened on court.",
 st4h:"Insight",st4p:"Ready before your review session — and refreshed each round.",st5h:"Review call",st5p:"A video call with the player or staff to walk through it together — a valid option too.",
-"k.help":"Who we work with",helpH:"Different environments. Different questions.",
+"k.help":"Who we work with",
 hp1h:"Clubs & coaching staff",hp1p:"Team performance, opposition and tactical analysis.",
 hp2h:"Individual athletes",hp2p:"Individual performance and development analysis.",
 hp3h:"Federations & high-performance programs",hp3p:"Analysis and reporting across teams and competitions.",
 "k.cta":"Get in touch",finalH:"Ready to see your season <span class='or'>in focus?</span>",
-f1:"Navigate",f2:"Contact",f3:"Perth, Australia",f4:"Football & futsal analysis · remote",
+f1:"Navigate",f2:"Contact",f3:"Perth, Australia",
 mq:["Analyse","Measure","Decide","Futsal","Performance","Development"]},
 
-pt:{"offer":"O que oferecemos?","t1h":"Análise de equipe","t1p":"Transformar o dado bruto de uma liga numa leitura que a comissão usa antes do próximo jogo.","t1o1":"Extração Wyscout/Instat e tagging ao vivo — xG, PPDA, posse, duelos e formações.","t1o2":"Painéis comparativos entre todos os times da mesma liga, atualizados a cada rodada.","t1t":"Dados de jogo","t2h":"Performance do atleta","t2p":"Um retrato individual de como o atleta carrega, recupera e contribui ao longo da temporada.","t2o1":"Carga de treino e zonas de recuperação acompanhadas jogo a jogo num painel pessoal.","t2o2":"Interceptações e mapas de calor por atleta, com evolução comparada entre temporadas.","t2t":"Físico & GPS","t3h":"Scouting para atletas e clubes","t3p":"Um caminho eficaz para elevar a performance e ajudar seu time a alcançar mais resultados em quadra.","t3o1":"Análise de vídeo, quebra de performance, leitura tática e feedback personalizado.","t3o2":"Relatórios de scouting e acompanhamento de evolução para decisões bem informadas.","t3t":"Vídeo & tática","t4h":"Inteligência & marca","t4p":"Fazer a análise circular — do relatório interno ao conteúdo que constrói seu nome.","t4o1":"Estudos comparativos entre competições internacionais, a partir de relatórios técnicos oficiais.","t4o2":"Carrosséis de LinkedIn e peças gráficas sob a identidade TZR Futsal Coaching.","t4t":"Competição","t1f":"Para clubes & comissão técnica","t2f":"Para atletas individuais","t3f":"Para atletas, goleiros & clubes","t4f":"Para federações & organizadores de competição","t5f":"Para atletas prontos pra aparecer","t5h":"Portfólio digital de atleta","t5p":"Sua carreira num único link — um perfil pronto pra compartilhar com clubes, técnicos e olheiros.","t5o1":"Um perfil pessoal com bio, histórico, conquistas, fotos e vídeos de destaque — sempre atualizado, um único link pra compartilhar.","t5o2":"Uma versão Pro com estatísticas completas, domínio próprio e perfil otimizado pra celular, pra uma presença profissional completa.","t5t":"Fale conosco pra saber mais","k.who":"Quem ajudamos","c1h":"Clubes & comissão técnica","c1p":"Análise do time e do adversário, pronta antes do treino da semana.","c2h":"Atletas individuais","c2p":"Performance pessoal acompanhada e explicada, jogo a jogo.","c3h":"Federações & organizadores","c3p":"Pesquisa e apoio estratégico para novas competições e formatos.","c4h":"Sob demanda","c4p":"Painéis ao vivo e o site de portfólio de atleta — podemos mostrar numa chamada.","nav6":"Preços","k.price":"Preços","priceH":"Tabela de preços","k.notes":"Notas","pt.h1":"Tipo de sessão","pt.h2":"Tamanho do grupo","pt.h3":"Preço base por sessão","pt.h4":"Desconto South Perth (25%)","pt.h5":"Notas","pt.r1a":"Treino individual","pt.r1b":"1 jogador/goleiro","pt.n1":"Melhoria técnica, tática e física personalizada. Inclui análise de vídeo do jogo.","pt.r2a":"Treino em grupo pequeno","pt.r2b":"2–5 jogadores/goleiro","pt.n2":"Focado nos aspectos técnicos e táticos do jogo, com cenários de simulação real.","pt.r3a":"Treino em grupo grande","pt.r3b":"6–10 jogadores","pt.r4a":"Análise de vídeo","pt.r4b":"Individual ou equipe","pt.r4c":"A partir de $35 (individual) e $60 (equipe)","pt.n4":"Revisão de performance pós-jogo com insights táticos detalhados e pontos de melhoria.","pt.r5a":"Pacote de 5 sessões","pt.r5b":"1 jogador/goleiro","pt.r5c":"5 sessões $315","pt.n5":"Pacotes com mais sessões podem ser combinados conforme a necessidade do atleta ou grupo.","pt.r6b":"2–5 jogadores","pt.r6c":"5 sessões $155","pt.r7b":"6–10 jogadores","pt.r7c":"5 sessões $110","pt.each":"(por jogador)","pt.ind":"(individual)","pt.pct":"(10% off)","pt.note1b":"Taxa de quadra:","pt.note1":"Cada sessão inclui uma taxa de aluguel de quadra de $40–50.","pt.note2b":"Duração da sessão:","pt.note2":"A sessão pode variar conforme o horário disponível na quadra e a condição física do jogador no dia — o ideal é 1 hora.","pt.note3b":"Detalhes da análise de vídeo:","pt.note3":"A partir de $35 para análises individuais; o custo para equipes é ajustado conforme o tamanho e a complexidade. Relatórios entregues em 2–3 dias úteis.","pt.note4b":"Desconto South Perth:","pt.note4":"Todos os atletas do South Perth recebem 25% de desconto em todas as sessões.","pr1a":"Análise","pr1b":"$40","pr1c":"Análise de vídeo, quebra de performance, avaliação de habilidades, insights táticos, feedback personalizado e comparação de jogadores — com recomendações sob medida, relatórios de scouting e acompanhamento da evolução para ajudar em decisões informadas.","pr2a":"Análise + videochamada","pr2b":"$50","pr3a":"Clubes","pr3b":"A partir de $70","pr4a":"Relatórios","pr4b":"$40","pr5a":"Relatórios + análise de vídeo","pr5b":"Fale conosco","pr6a":"Sessões de treino","pr6b":"Fale conosco","pr7a":"Cobertura de competição completa","pr7b":"Fale conosco","k.portfolio":"Portfólio digital de atleta","pf.lead":"Sua carreira num único link — pronto pra compartilhar com clubes, técnicos e olheiros.","pf.d.tier":"Digital","pf.d.note":"Pagamento único","pf.d.l1":"Perfil, bio, histórico e conquistas","pf.d.l2":"Fotos e vídeos de destaque","pf.d.l3":"Redes sociais, contato e link do portfólio","pf.d.cta":"Começar","pf.p.tier":"Pro","pf.p.note":"Pagamento único · domínio próprio incluso no primeiro ano","pf.p.l0":"Tudo do Digital, mais:","pf.p.l1":"Estatísticas e dados de performance","pf.p.l2":"Domínio próprio, otimizado pra celular, perfil profissional completo","pf.p.cta":"Ir de Pro","pf.keep.1a":"Manter online — hospedagem e atualizações mínimas","pf.keep.1b":"A$80/ano","pf.keep.2a":"Atualização de temporada — até 4 atualizações, fotos e destaques","pf.keep.2b":"A$150/ano","pf.keep.3a":"Pro performance — atualizações regulares, com estatísticas","pf.keep.3b":"A$300/ano","pf.match":"Precisa de análise de uma partida específica? Disponível à parte, a partir de A$50/partida.","k.video":"O que o vídeo mostra","r1h":"Tagging ao vivo, ação por ação","r1p":"Cada chute, duelo e bola parada marcados em tempo real durante a partida — este é o feed bruto com que o LiveTag Pro trabalha.","r2h":"Distância e linhas de passe, desenhadas ao vivo","r2p":"Sobre uma transmissão da Libertadores de Futsal — a linha amarela e os círculos marcam exatamente a corrida e a distância que importaram.","r3h":"Desenho dinâmico, sombreado em tempo real","r3p":"Uma linha de passe sombreada ao vivo numa partida de seleção — a mesma ferramenta usada pra explicar uma jogada pra comissão.","contacth":"Vamos montar seu próximo <em>painel</em>",
+pt:{"svwhy":"Por que ajuda","svprice":"Ver preço →","w1f":"Para atletas & goleiros","w1h":"Análise individual","w1p":"Seus jogos destrinchados em vídeo — performance, decisões táticas e feedback personalizado.","w1y":"Você vê exatamente onde é forte e no que trabalhar a seguir.","w2f":"Para clubes & comissão técnica","w2h":"Análise de clube","w2p":"Dados Wyscout/Instat e tagging ao vivo — xG, PPDA, posse, duelos e formações — comparados com todos os times da liga.","w2y":"A comissão tem uma leitura clara pra agir antes do próximo jogo.","w3f":"Para clubes, técnicos & atletas","w3h":"Relatórios","w3p":"Decks de pré-jogo e relatórios em PDF — panorama da temporada, confronto direto, formações e plano de bola parada.","w3y":"Tudo o que importa num só documento, pronto antes da sua sessão de análise.","w4f":"Para atletas, grupos & goleiros","w4h":"Sessões de treino","w4p":"Sessões 1 a 1, em grupo e de goleiro — trabalho técnico e tático montado em cenários reais de jogo.","w4y":"Desenvolvemos pessoas através do esporte, com cada sessão sob medida pro jogador.","w6f":"Para atletas prontos pra aparecer","w6h":"Portfólio digital de atleta","w6p":"Perfil, histórico, conquistas, fotos e vídeos de destaque — e, na versão Pro, estatísticas e domínio próprio.","w6y":"Sua carreira num único link, pronta pra compartilhar com clubes, técnicos e olheiros.","nav6":"Preços","k.price":"Preços","priceH":"Tabela de preços","k.notes":"Notas","pt.h1":"Tipo de sessão","pt.h2":"Tamanho do grupo","pt.h3":"Preço base por sessão","pt.h4":"Desconto South Perth (25%)","pt.h5":"Notas","pt.r1a":"Treino individual","pt.r1b":"1 jogador/goleiro","pt.n1":"Melhoria técnica, tática e física personalizada. Inclui análise de vídeo do jogo.","pt.r2a":"Treino em grupo pequeno","pt.r2b":"2–5 jogadores/goleiro","pt.n2":"Focado nos aspectos técnicos e táticos do jogo, com cenários de simulação real.","pt.r3a":"Treino em grupo grande","pt.r3b":"6–10 jogadores","pt.r4a":"Análise de vídeo","pt.r4b":"Individual ou equipe","pt.r4c":"A partir de $35 (individual) e $60 (equipe)","pt.n4":"Revisão de performance pós-jogo com insights táticos detalhados e pontos de melhoria.","pt.r5a":"Pacote de 5 sessões","pt.r5b":"1 jogador/goleiro","pt.r5c":"5 sessões $315","pt.n5":"Pacotes com mais sessões podem ser combinados conforme a necessidade do atleta ou grupo.","pt.r6b":"2–5 jogadores","pt.r6c":"5 sessões $155","pt.r7b":"6–10 jogadores","pt.r7c":"5 sessões $110","pt.each":"(por jogador)","pt.ind":"(individual)","pt.pct":"(10% off)","pt.note1b":"Taxa de quadra:","pt.note1":"Cada sessão inclui uma taxa de aluguel de quadra de $40–50.","pt.note2b":"Duração da sessão:","pt.note2":"A sessão pode variar conforme o horário disponível na quadra e a condição física do jogador no dia — o ideal é 1 hora.","pt.note3b":"Detalhes da análise de vídeo:","pt.note3":"A partir de $35 para análises individuais; o custo para equipes é ajustado conforme o tamanho e a complexidade. Relatórios entregues em 2–3 dias úteis.","pt.note4b":"Desconto South Perth:","pt.note4":"Todos os atletas do South Perth recebem 25% de desconto em todas as sessões.","pr1a":"Análise","pr1b":"$40","pr1c":"Por partida. Inclui o relatório escrito e os clipes.","pr2a":"Análise + videochamada","pr2b":"$50","pr3a":"Clubes","pr3b":"A partir de $70","pr4a":"Relatórios","pr4b":"$40","pr5a":"Relatórios + análise de vídeo","pr5b":"Fale conosco","pr6a":"Sessões de treino","pr6b":"Fale conosco","pr7a":"Cobertura de competição completa","pr7b":"Fale conosco","k.portfolio":"Portfólio digital de atleta","pf.lead":"Sua carreira num único link — pronto pra compartilhar com clubes, técnicos e olheiros.","pf.d.tier":"Digital","pf.d.note":"Pagamento único","pf.d.l1":"Perfil, bio, histórico e conquistas","pf.d.l2":"Fotos e vídeos de destaque","pf.d.l3":"Redes sociais, contato e link do portfólio","pf.d.cta":"Começar","pf.p.tier":"Pro","pf.p.note":"Pagamento único · domínio próprio incluso no primeiro ano","pf.p.l0":"Tudo do Digital, mais:","pf.p.l1":"Estatísticas e dados de performance","pf.p.l2":"Domínio próprio, otimizado pra celular, perfil profissional completo","pf.p.cta":"Ir de Pro","pf.keep.1a":"Manter online — hospedagem e atualizações mínimas","pf.keep.1b":"A$80/ano","pf.keep.2a":"Atualização de temporada — até 4 atualizações, fotos e destaques","pf.keep.2b":"A$150/ano","pf.keep.3a":"Pro performance — atualizações regulares, com estatísticas","pf.keep.3b":"A$300/ano","pf.match":"Precisa de análise de uma partida específica? Disponível à parte, a partir de A$50/partida.","k.video":"O que o vídeo mostra","r1h":"Tagging ao vivo, ação por ação","r1p":"Cada chute, duelo e bola parada marcados em tempo real durante a partida — este é o feed bruto com que o LiveTag Pro trabalha.","r2h":"Distância e linhas de passe, desenhadas ao vivo","r2p":"Sobre uma transmissão da Libertadores de Futsal — a linha amarela e os círculos marcam exatamente a corrida e a distância que importaram.","r3h":"Desenho dinâmico, sombreado em tempo real","r3p":"Uma linha de passe sombreada ao vivo numa partida de seleção — a mesma ferramenta usada pra explicar uma jogada pra comissão.","contacth":"Vamos montar seu próximo <em>painel</em>",
 title:"Analista de Performance",
 nav1:"Sobre",nav2:"O que fazemos",nav3:"Trabalhos",nav4:"Como trabalhamos",nav5:"Contato",
 h1a:"Analista de",h1b:"Performance",
@@ -827,48 +819,35 @@ ab3:"Quatorze temporadas jogando em nível profissional na Itália, até 2024, e
 ab4:"Todo projeto começa na imagem e no dado bruto e termina em algo utilizável: combinamos vídeo, números e leitura tática, e explicamos o resultado sem jargão.",
 bio4:"Em janeiro de 2025 fundou a TZR Futsal Coaching, para compartilhar tudo o que aprendeu em mais de uma década de futsal e formar a próxima geração de jogadores na Austrália.",
 nm1:"Temporadas nas principais ligas da Itália",nm2:"Estreia no primeiro campeonato profissional da Itália",nm3:"Idiomas de trabalho",nm4:"Entrega remota, ciclo semanal",
-"k.prog":"O que fazemos",progH:"Montado a partir do que você precisa saber",progLead:"Cada clube, técnico e atleta chega com uma pergunta diferente. O trabalho é montado a partir dessas peças — na profundidade e no ritmo que você precisa.",progNote:"Tudo depende do que o clube, o técnico ou o atleta quer saber — e precisa.",
+"k.prog":"O que fazemos",progH:"Montado a partir do que você precisa saber",progLead:"Cada clube, técnico e atleta chega com uma pergunta diferente. O trabalho é montado a partir dessas peças — na profundidade e no ritmo que você precisa.",
 sv1h:"Análise de vídeo",sv1p:"Imagem de jogo e de treino destrinchada ação por ação.",
 sv2h:"Scouting de adversário",sv2p:"Os padrões, forças e pontos fracos do próximo adversário.",
 sv3h:"Painéis de performance",sv3p:"Desempenho de equipe e individual acompanhado ao longo da temporada.",
 sv4h:"Análise de jogador",sv4p:"Evolução individual e comparação lado a lado.",
 sv5h:"Análise ao vivo & remota",sv5p:"Marcado ao vivo na quadra, ou à distância a partir da imagem que você envia.",
-"k.gal":"Trabalhos selecionados",galH:"Trabalhos selecionados. Da imagem à decisão.",galNote:"Pegamos a imagem de jogo e de treino, entendemos o que está realmente acontecendo e identificamos os padrões, pontos fortes e problemas que importam. Depois transformamos tudo em informação visual simples que técnicos e jogadores conseguem usar de verdade. Veja abaixo as diferentes formas como podemos apoiar seu time.","k.more":"Relatórios & entrega",cta5:"Instagram",twH:"Tagging ao vivo, ação por ação, durante a partida",twP:"Mostre ao time e ao atleta exatamente onde está o problema — e converse sobre isso, para que aprendam e continuem evoluindo.",rvH:"Entregue do jeito que cada cliente precisa",rvP:"Painéis, decks de pré-jogo, relatórios em PDF, clipes por ação e cards para redes — o formato e a frequência são definidos pelo cliente, não por um pacote fechado.",rv1:"Painéis",rv2:"Decks de pré-jogo",rv3:"Relatórios em PDF",rv4:"Clipes por ação",rv5:"Cards sociais",gc5:"Reel de trabalhos — clubes borrados",reel:"Reel",
-m2:"Analisado",m3:"Entrega",
-pj1c:"Vídeo + tagging",pj1h:"Análise de jogo",
-pj2c:"Vídeo + dados",pj2h:"Análise de adversário",
-pj3c:"Físico & GPS",pj3h:"Performance do jogador",
-pj4c:"Dados de temporada",pj4h:"Performance de equipe",
-pj5c:"Análise de vídeo",pj5h:"Tagging ao vivo & telestração",pj5s:"O jogo dividido em ações e momentos enquanto ainda está sendo jogado.",
-cs1s:"Transformar o dado de jogo de uma liga em leitura tática que a comissão usa antes da próxima partida.",
+"k.gal":"Trabalhos selecionados",galH:"Trabalhos selecionados. Da imagem à decisão.",galNote:"Exemplos de análises, relatórios e projetos desenvolvidos para times, atletas e competições.","k.more":"Relatórios & entrega",cta5:"Instagram",twH:"Tagging ao vivo, ação por ação, durante a partida",twP:"Mostre ao time e ao atleta exatamente onde está o problema — e converse sobre isso, para que aprendam e continuem evoluindo.",rvH:"Entregue do jeito que cada cliente precisa",rvP:"Painéis, decks de pré-jogo, relatórios em PDF, clipes por ação e cards para redes — o formato e a frequência são definidos pelo cliente, não por um pacote fechado.",rv1:"Painéis",rv2:"Decks de pré-jogo",rv3:"Relatórios em PDF",rv4:"Clipes por ação",rv5:"Cards sociais",gc5:"Reel de trabalhos — clubes borrados",reel:"Reel",
+m2:"Analisado",
 cs1b:"Dados de jogo extraídos dos relatórios da própria liga e combinados com tagging ao vivo: xG, PPDA, posse, duelos, formações, posições médias.",
-cs1cO:"Um deck de pré-jogo — panorama da temporada, confronto direto, formações e plano de bola parada.",
-cs2s:"Transformar o dado de um jogador numa leitura clara de carga, recuperação e contribuição ao longo da temporada.",
 cs2b:"Exportações de GPS e tagging por partida mapeados na quadra: zonas de recuperação e interceptações, jogo a jogo.",
-cs2cO:"Um painel pessoal de performance, atualizado a cada partida disputada.",
-cs3s:"Combinar dado e vídeo para revelar os padrões, forças e vulnerabilidades que só aparecem na imagem.",
 cs3c2:"Linha de passe sombreada em tempo real",
 cs3c1:"Distância e linhas de passe desenhadas ao vivo",cs3b:"Tagging ao vivo durante a partida, com distâncias e linhas de passe desenhadas direto sobre a transmissão.",
-cs3cO:"Clipes exportados por ação, mais um relatório direto ao ponto para a comissão.",
-p1p:"Transformar o dado bruto de uma liga numa leitura que a comissão usa antes do próximo jogo.",
 p1a:"Extração de dados de jogo e tagging ao vivo — xG, PPDA, posse, duelos, formações.",
-p1b:"Comparação entre todos os times da liga, atualizada a cada rodada.",
-vb1:"Tagging ao vivo, ação por ação, durante a partida",vb3:"Clipes exportáveis por ação para a sala de vídeo",
+vb1:"Tagging ao vivo, ação por ação, durante a partida",
 gc2:"Capa de relatório — modelo TZR",gc3:"Carrossel de revisão de temporada",gc4:"Card de performance de equipe",social:"Social",
 "k.path":"Como trabalhamos",pathH:"100% remoto, em ciclo semanal",pathLead:"Depois de entender o que você precisa, esse é o ritmo que entrega — os mesmos cinco passos, toda semana, onde você estiver.",
 st1h:"Vídeo",st1p:"Imagem da partida, marcada ao vivo na quadra ou enviada pra nós.",
 st2h:"Dados",st2p:"Relatórios de jogo, exportações de GPS e tagging, organizados e conferidos.",
 st3h:"Análise",st3p:"Os números lidos contra o que de fato aconteceu em quadra.",
 st4h:"Leitura",st4p:"Pronta antes da sua sessão de análise — e atualizada a cada rodada.",st5h:"Chamada de análise",st5p:"Uma videochamada com o atleta ou a comissão para passar o conteúdo juntos — também é uma opção válida.",
-"k.help":"Com quem trabalhamos",helpH:"Ambientes diferentes. Perguntas diferentes.",
+"k.help":"Com quem trabalhamos",
 hp1h:"Clubes & comissão técnica",hp1p:"Performance de equipe, adversário e análise tática.",
 hp2h:"Atletas individuais",hp2p:"Análise de performance e desenvolvimento individual.",
 hp3h:"Federações & programas de alto rendimento",hp3p:"Análise e relatórios entre equipes e competições.",
 "k.cta":"Fale conosco",finalH:"Pronto pra ver sua temporada <span class='or'>em foco?</span>",
-f1:"Navegar",f2:"Contato",f3:"Perth, Austrália",f4:"Análise de futebol & futsal · remoto",
+f1:"Navegar",f2:"Contato",f3:"Perth, Austrália",
 mq:["Analisar","Medir","Decidir","Futsal","Performance","Desenvolvimento"]},
 
-it:{"offer":"Cosa offriamo?","t1h":"Analisi di squadra","t1p":"Trasformare i dati grezzi di un campionato in una lettura utile allo staff prima della prossima gara.","t1o1":"Estrazione Wyscout/Instat e tagging live — xG, PPDA, possesso, duelli e moduli.","t1o2":"Dashboard comparative tra tutte le squadre dello stesso campionato, aggiornate ogni giornata.","t1t":"Dati di gara","t2h":"Performance dell'atleta","t2p":"Un quadro individuale di come l'atleta carica, recupera e contribuisce nell'arco della stagione.","t2o1":"Carico di allenamento e zone di recupero monitorati partita dopo partita in una dashboard personale.","t2o2":"Intercetti e heatmap per atleta, con l'evoluzione confrontata tra le stagioni.","t2t":"Fisico & GPS","t3h":"Scouting per atlete/i e club","t3p":"Un percorso efficace per elevare la performance e aiutare la squadra a ottenere più risultati sul campo.","t3o1":"Analisi video, scomposizione della performance, letture tattiche e feedback personalizzato.","t3o2":"Report di scouting e monitoraggio dei progressi per decisioni informate.","t3t":"Video & tattica","t4h":"Intelligence & brand","t4p":"Far viaggiare l'analisi — dal report interno al contenuto che costruisce il tuo nome.","t4o1":"Studi comparativi tra competizioni internazionali, costruiti su report tecnici ufficiali.","t4o2":"Carousel LinkedIn e grafiche brandizzate con l'identità TZR Futsal Coaching.","t4t":"Competizione","t1f":"Per club & staff tecnico","t2f":"Per atlete/i individuali","t3f":"Per atlete/i, portieri & club","t4f":"Per federazioni & organizzatori di competizioni","t5f":"Per chi vuole farsi notare","t5h":"Portfolio digitale atleta","t5p":"La tua carriera in un unico link — un profilo pronto da condividere con club, allenatori e osservatori.","t5o1":"Un profilo personale con bio, storico, traguardi, foto e video migliori — sempre aggiornato, un unico link da condividere.","t5o2":"Una versione Pro con statistiche complete, dominio personale e profilo ottimizzato per mobile, per una presenza professionale completa.","t5t":"Contattaci per saperne di più","k.who":"Chi aiutiamo","c1h":"Club & staff tecnico","c1p":"Analisi della squadra e dell'avversario, pronta prima della sessione settimanale.","c2h":"Atlete/i individuali","c2p":"Performance personale seguita e spiegata, partita dopo partita.","c3h":"Federazioni & organizzatori","c3p":"Ricerca e supporto strategico per nuove competizioni e formati.","c4h":"Su richiesta","c4p":"Dashboard live e il sito portfolio atleta — felici di mostrarli in una chiamata.","nav6":"Prezzi","k.price":"Prezzi","priceH":"Tabella prezzi","k.notes":"Note","pt.h1":"Tipo di sessione","pt.h2":"Dimensione del gruppo","pt.h3":"Prezzo base a sessione","pt.h4":"Sconto South Perth (25%)","pt.h5":"Note","pt.r1a":"Allenamento individuale","pt.r1b":"1 giocatore/portiere","pt.n1":"Miglioramento tecnico, tattico e fisico su misura. Analisi video della partita inclusa.","pt.r2a":"Allenamento in piccolo gruppo","pt.r2b":"2–5 giocatori/portiere","pt.n2":"Focalizzato sugli aspetti tecnici e tattici del gioco, con scenari di simulazione reale.","pt.r3a":"Allenamento in grande gruppo","pt.r3b":"6–10 giocatori","pt.r4a":"Analisi video","pt.r4b":"Individuale o di squadra","pt.r4c":"A partire da $35 (individuale) e $60 (squadra)","pt.n4":"Revisione della performance post-partita con approfondimenti tattici e punti di miglioramento.","pt.r5a":"Pacchetto 5 sessioni","pt.r5b":"1 giocatore/portiere","pt.r5c":"5 sessioni $315","pt.n5":"I pacchetti con più sessioni possono essere organizzati in base alle esigenze dell'atleta o del gruppo.","pt.r6b":"2–5 giocatori","pt.r6c":"5 sessioni $155","pt.r7b":"6–10 giocatori","pt.r7c":"5 sessioni $110","pt.each":"(a giocatore)","pt.ind":"(individuale)","pt.pct":"(10% sconto)","pt.note1b":"Costo campo:","pt.note1":"Ogni sessione include un costo di noleggio campo di $40–50.","pt.note2b":"Durata della sessione:","pt.note2":"La sessione può variare in base alla disponibilità del campo e alla condizione fisica del giocatore quel giorno — la durata ideale è di 1 ora.","pt.note3b":"Dettagli analisi video:","pt.note3":"A partire da $35 per le revisioni individuali; il costo per le squadre è calcolato in base a dimensione e complessità. Report consegnati entro 2–3 giorni lavorativi.","pt.note4b":"Sconto South Perth:","pt.note4":"Tutti gli atleti di South Perth ricevono uno sconto del 25% su tutte le sessioni.","pr1a":"Analisi","pr1b":"$40","pr1c":"Analisi video, scomposizione della performance, valutazione delle abilità, letture tattiche, feedback personalizzato e confronto tra giocatori — con raccomandazioni su misura, report di scouting e monitoraggio dei progressi per decisioni informate.","pr2a":"Analisi + videochiamata","pr2b":"$50","pr3a":"Club","pr3b":"A partire da $70","pr4a":"Report","pr4b":"$40","pr5a":"Report + analisi video","pr5b":"Contattaci","pr6a":"Sessioni di allenamento","pr6b":"Contattaci","pr7a":"Copertura completa della competizione","pr7b":"Contattaci","k.portfolio":"Portfolio digitale atleta","pf.lead":"La tua carriera in un unico link — pronto da condividere con club, allenatori e osservatori.","pf.d.tier":"Digital","pf.d.note":"Pagamento unico","pf.d.l1":"Profilo, bio, storico e traguardi","pf.d.l2":"Foto e video migliori","pf.d.l3":"Social, contatti e link del portfolio","pf.d.cta":"Inizia","pf.p.tier":"Pro","pf.p.note":"Pagamento unico · dominio personale incluso per il primo anno","pf.p.l0":"Tutto di Digital, più:","pf.p.l1":"Statistiche e dati di performance","pf.p.l2":"Dominio personale, ottimizzato per mobile, profilo professionale completo","pf.p.cta":"Passa a Pro","pf.keep.1a":"Mantieni online — hosting e aggiornamenti minimi","pf.keep.1b":"A$80/anno","pf.keep.2a":"Aggiornamento stagionale — fino a 4 aggiornamenti, foto e highlights","pf.keep.2b":"A$150/anno","pf.keep.3a":"Pro performance — aggiornamenti regolari, statistiche incluse","pf.keep.3b":"A$300/anno","pf.match":"Serve l'analisi di una partita specifica? Disponibile separatamente, a partire da A$50/partita.","k.video":"Cosa mostra il video","r1h":"Tagging live, azione per azione","r1p":"Ogni tiro, duello e palla inattiva taggati in tempo reale durante la partita — questo è il feed grezzo con cui lavora LiveTag Pro.","r2h":"Distanza e corridoi di passaggio, disegnati live","r2p":"Su una trasmissione della Libertadores Futsal — la linea gialla e i cerchi segnano esattamente la corsa e la distanza decisive.","r3h":"Disegno dinamico, ombreggiato in tempo reale","r3p":"Un corridoio di passaggio ombreggiato live su una partita di una nazionale — lo stesso strumento per spiegare un'azione allo staff.","contacth":"Costruiamo la tua prossima <em>dashboard</em>",
+it:{"svwhy":"Perché è utile","svprice":"Vedi prezzo →","w1f":"Per atlete/i & portieri","w1h":"Analisi individuale","w1p":"Le tue partite scomposte in video — performance, scelte tattiche e feedback personalizzato.","w1y":"Vedi esattamente dove sei forte e su cosa lavorare dopo.","w2f":"Per club & staff tecnico","w2h":"Analisi per club","w2p":"Dati Wyscout/Instat e tagging live — xG, PPDA, possesso, duelli e moduli — confrontati con tutte le squadre del campionato.","w2y":"Lo staff ha un quadro chiaro su cui agire prima della prossima gara.","w3f":"Per club, allenatori & atlete/i","w3h":"Report","w3p":"Deck pre-partita e report PDF — quadro di stagione, scontro diretto, moduli e piano sulle palle inattive.","w3y":"Tutto ciò che conta in un unico documento, pronto prima della tua sessione video.","w4f":"Per atlete/i, gruppi & portieri","w4h":"Sessioni di allenamento","w4p":"Sessioni individuali, di gruppo e per portieri — lavoro tecnico e tattico costruito su scenari di gioco reali.","w4y":"Sviluppiamo persone attraverso lo sport, con ogni sessione su misura per il giocatore.","w6f":"Per chi vuole farsi notare","w6h":"Portfolio digitale atleta","w6p":"Profilo, storico, traguardi, foto e video migliori — e, nella versione Pro, statistiche e dominio personale.","w6y":"La tua carriera in un unico link, pronta da condividere con club, allenatori e osservatori.","nav6":"Prezzi","k.price":"Prezzi","priceH":"Tabella prezzi","k.notes":"Note","pt.h1":"Tipo di sessione","pt.h2":"Dimensione del gruppo","pt.h3":"Prezzo base a sessione","pt.h4":"Sconto South Perth (25%)","pt.h5":"Note","pt.r1a":"Allenamento individuale","pt.r1b":"1 giocatore/portiere","pt.n1":"Miglioramento tecnico, tattico e fisico su misura. Analisi video della partita inclusa.","pt.r2a":"Allenamento in piccolo gruppo","pt.r2b":"2–5 giocatori/portiere","pt.n2":"Focalizzato sugli aspetti tecnici e tattici del gioco, con scenari di simulazione reale.","pt.r3a":"Allenamento in grande gruppo","pt.r3b":"6–10 giocatori","pt.r4a":"Analisi video","pt.r4b":"Individuale o di squadra","pt.r4c":"A partire da $35 (individuale) e $60 (squadra)","pt.n4":"Revisione della performance post-partita con approfondimenti tattici e punti di miglioramento.","pt.r5a":"Pacchetto 5 sessioni","pt.r5b":"1 giocatore/portiere","pt.r5c":"5 sessioni $315","pt.n5":"I pacchetti con più sessioni possono essere organizzati in base alle esigenze dell'atleta o del gruppo.","pt.r6b":"2–5 giocatori","pt.r6c":"5 sessioni $155","pt.r7b":"6–10 giocatori","pt.r7c":"5 sessioni $110","pt.each":"(a giocatore)","pt.ind":"(individuale)","pt.pct":"(10% sconto)","pt.note1b":"Costo campo:","pt.note1":"Ogni sessione include un costo di noleggio campo di $40–50.","pt.note2b":"Durata della sessione:","pt.note2":"La sessione può variare in base alla disponibilità del campo e alla condizione fisica del giocatore quel giorno — la durata ideale è di 1 ora.","pt.note3b":"Dettagli analisi video:","pt.note3":"A partire da $35 per le revisioni individuali; il costo per le squadre è calcolato in base a dimensione e complessità. Report consegnati entro 2–3 giorni lavorativi.","pt.note4b":"Sconto South Perth:","pt.note4":"Tutti gli atleti di South Perth ricevono uno sconto del 25% su tutte le sessioni.","pr1a":"Analisi","pr1b":"$40","pr1c":"A partita. Include il report scritto e le clip.","pr2a":"Analisi + videochiamata","pr2b":"$50","pr3a":"Club","pr3b":"A partire da $70","pr4a":"Report","pr4b":"$40","pr5a":"Report + analisi video","pr5b":"Contattaci","pr6a":"Sessioni di allenamento","pr6b":"Contattaci","pr7a":"Copertura completa della competizione","pr7b":"Contattaci","k.portfolio":"Portfolio digitale atleta","pf.lead":"La tua carriera in un unico link — pronto da condividere con club, allenatori e osservatori.","pf.d.tier":"Digital","pf.d.note":"Pagamento unico","pf.d.l1":"Profilo, bio, storico e traguardi","pf.d.l2":"Foto e video migliori","pf.d.l3":"Social, contatti e link del portfolio","pf.d.cta":"Inizia","pf.p.tier":"Pro","pf.p.note":"Pagamento unico · dominio personale incluso per il primo anno","pf.p.l0":"Tutto di Digital, più:","pf.p.l1":"Statistiche e dati di performance","pf.p.l2":"Dominio personale, ottimizzato per mobile, profilo professionale completo","pf.p.cta":"Passa a Pro","pf.keep.1a":"Mantieni online — hosting e aggiornamenti minimi","pf.keep.1b":"A$80/anno","pf.keep.2a":"Aggiornamento stagionale — fino a 4 aggiornamenti, foto e highlights","pf.keep.2b":"A$150/anno","pf.keep.3a":"Pro performance — aggiornamenti regolari, statistiche incluse","pf.keep.3b":"A$300/anno","pf.match":"Serve l'analisi di una partita specifica? Disponibile separatamente, a partire da A$50/partita.","k.video":"Cosa mostra il video","r1h":"Tagging live, azione per azione","r1p":"Ogni tiro, duello e palla inattiva taggati in tempo reale durante la partita — questo è il feed grezzo con cui lavora LiveTag Pro.","r2h":"Distanza e corridoi di passaggio, disegnati live","r2p":"Su una trasmissione della Libertadores Futsal — la linea gialla e i cerchi segnano esattamente la corsa e la distanza decisive.","r3h":"Disegno dinamico, ombreggiato in tempo reale","r3p":"Un corridoio di passaggio ombreggiato live su una partita di una nazionale — lo stesso strumento per spiegare un'azione allo staff.","contacth":"Costruiamo la tua prossima <em>dashboard</em>",
 title:"Analista di Performance",
 nav1:"Chi siamo",nav2:"Cosa facciamo",nav3:"Lavori",nav4:"Come lavoriamo",nav5:"Contatti",
 h1a:"Analista di",h1b:"Performance",
@@ -881,48 +860,35 @@ ab3:"Quattordici stagioni giocate a livello professionistico in Italia, fino al 
 ab4:"Ogni progetto parte dalle immagini e dai dati grezzi e finisce con qualcosa di utilizzabile: uniamo video, numeri e lettura tattica, e spieghiamo il risultato senza gergo.",
 bio4:"A gennaio 2025 ha fondato TZR Futsal Coaching, per condividere tutto ciò che ha imparato in oltre un decennio e formare la prossima generazione di giocatori in Australia.",
 nm1:"Stagioni nelle massime leghe italiane",nm2:"Esordio nel primo campionato pro italiano",nm3:"Lingue di lavoro",nm4:"Consegna da remoto, ciclo settimanale",
-"k.prog":"Cosa facciamo",progH:"Costruito su ciò che hai bisogno di sapere",progLead:"Ogni club, allenatore e atleta arriva con una domanda diversa. Il lavoro si compone di questi elementi — con la profondità e il ritmo che ti servono davvero.",progNote:"Tutto dipende da ciò che il club, l'allenatore o l'atleta vuole sapere — e di cui ha bisogno.",
+"k.prog":"Cosa facciamo",progH:"Costruito su ciò che hai bisogno di sapere",progLead:"Ogni club, allenatore e atleta arriva con una domanda diversa. Il lavoro si compone di questi elementi — con la profondità e il ritmo che ti servono davvero.",
 sv1h:"Analisi video",sv1p:"Immagini di gara e di allenamento scomposte azione per azione.",
 sv2h:"Scouting avversario",sv2p:"Schemi, punti di forza e punti deboli del prossimo avversario.",
 sv3h:"Dashboard di performance",sv3p:"Rendimento di squadra e individuale seguito lungo la stagione.",
 sv4h:"Analisi del giocatore",sv4p:"Crescita individuale e confronto diretto.",
 sv5h:"Analisi live & da remoto",sv5p:"Taggata dal vivo al palazzetto, o da remoto dalle immagini che ci mandi.",
-"k.gal":"Lavori selezionati",galH:"Lavori selezionati. Dalle immagini alla decisione.",galNote:"Prendiamo le immagini di gara e di allenamento, capiamo cosa sta succedendo davvero e individuiamo gli schemi, i punti di forza e i problemi che contano. Poi trasformiamo tutto in informazioni visive semplici che allenatori e giocatori possono davvero usare. Qui sotto trovi i diversi modi in cui possiamo supportare la tua squadra.","k.more":"Report & consegna",cta5:"Instagram",twH:"Tagging live, azione per azione, durante la partita",twP:"Mostra alla squadra e all'atleta esattamente dov'è il problema — poi parlane, così imparano e continuano a crescere.",rvH:"Consegnato come serve a ogni cliente",rvP:"Dashboard, deck pre-partita, report PDF, clip per azione e card social — il formato e la frequenza li decide il cliente, non un pacchetto fisso.",rv1:"Dashboard",rv2:"Deck pre-partita",rv3:"Report PDF",rv4:"Clip per azione",rv5:"Card social",gc5:"Reel di lavori — club sfocati",reel:"Reel",
-m2:"Analizzato",m3:"Consegna",
-pj1c:"Video + tagging",pj1h:"Analisi della gara",
-pj2c:"Video + dati",pj2h:"Analisi dell'avversario",
-pj3c:"Fisico & GPS",pj3h:"Performance del giocatore",
-pj4c:"Dati di stagione",pj4h:"Performance di squadra",
-pj5c:"Analisi video",pj5h:"Tagging live & telestrazione",pj5s:"La gara scomposta in azioni e momenti mentre si sta ancora giocando.",
-cs1s:"Trasformare i dati di gara di un campionato in letture tattiche utili allo staff prima della prossima partita.",
+"k.gal":"Lavori selezionati",galH:"Lavori selezionati. Dalle immagini alla decisione.",galNote:"Esempi di analisi, report e progetti sviluppati per squadre, atlete/i e competizioni.","k.more":"Report & consegna",cta5:"Instagram",twH:"Tagging live, azione per azione, durante la partita",twP:"Mostra alla squadra e all'atleta esattamente dov'è il problema — poi parlane, così imparano e continuano a crescere.",rvH:"Consegnato come serve a ogni cliente",rvP:"Dashboard, deck pre-partita, report PDF, clip per azione e card social — il formato e la frequenza li decide il cliente, non un pacchetto fisso.",rv1:"Dashboard",rv2:"Deck pre-partita",rv3:"Report PDF",rv4:"Clip per azione",rv5:"Card social",gc5:"Reel di lavori — club sfocati",reel:"Reel",
+m2:"Analizzato",
 cs1b:"Dati di gara estratti dai report ufficiali del campionato e uniti al tagging live: xG, PPDA, possesso, duelli, moduli, posizioni medie.",
-cs1cO:"Un deck pre-partita — quadro di stagione, scontro diretto, moduli e piano sulle palle inattive.",
-cs2s:"Trasformare i dati di un'atleta in un quadro chiaro di carico, recupero e contributo lungo la stagione.",
 cs2b:"Export GPS e tagging per ogni gara mappati sul campo: zone di recupero e intercetti, partita dopo partita.",
-cs2cO:"Una dashboard personale di performance, aggiornata a ogni gara giocata.",
-cs3s:"Unire dati e video per far emergere schemi, punti di forza e vulnerabilità che si vedono solo a video.",
 cs3c2:"Corridoio di passaggio ombreggiato in tempo reale",
 cs3c1:"Distanza e corridoi di passaggio disegnati live",cs3b:"Tagging live durante la partita, con distanze e corridoi di passaggio disegnati direttamente sul segnale TV.",
-cs3cO:"Clip esportate per azione, più un report diretto al punto per lo staff.",
-p1p:"Trasformare i dati grezzi di un campionato in una lettura utile allo staff prima della prossima gara.",
 p1a:"Estrazione dei dati di gara e tagging live — xG, PPDA, possesso, duelli, moduli.",
-p1b:"Confronto tra tutte le squadre del campionato, aggiornato ogni giornata.",
-vb1:"Tagging live, azione per azione, durante la partita",vb3:"Clip esportabili per azione per la sala video",
+vb1:"Tagging live, azione per azione, durante la partita",
 gc2:"Copertina report — modello TZR",gc3:"Carousel di fine stagione",gc4:"Card performance di squadra",social:"Social",
 "k.path":"Come lavoriamo",pathH:"100% da remoto, con ciclo settimanale",pathLead:"Una volta capito di cosa hai bisogno, questo è il ritmo che lo consegna — gli stessi cinque passaggi, ogni settimana, ovunque tu sia.",
 st1h:"Video",st1p:"Immagini della gara, taggate dal vivo al palazzetto o inviate a noi.",
 st2h:"Dati",st2p:"Report di gara, export GPS e tagging, organizzati e verificati.",
 st3h:"Analisi",st3p:"I numeri letti rispetto a ciò che è successo davvero in campo.",
 st4h:"Lettura",st4p:"Pronta prima della tua sessione video — e aggiornata ogni giornata.",st5h:"Videochiamata",st5p:"Una videochiamata con l'atleta o lo staff per rivedere insieme il contenuto — anche questa è un'opzione valida.",
-"k.help":"Con chi lavoriamo",helpH:"Ambienti diversi. Domande diverse.",
+"k.help":"Con chi lavoriamo",
 hp1h:"Club & staff tecnico",hp1p:"Performance di squadra, avversario e analisi tattica.",
 hp2h:"Atlete e atleti",hp2p:"Analisi della performance e della crescita individuale.",
 hp3h:"Federazioni & programmi di alto livello",hp3p:"Analisi e report tra squadre e competizioni.",
 "k.cta":"Contattaci",finalH:"Pronto a vedere la tua stagione <span class='or'>a fuoco?</span>",
-f1:"Naviga",f2:"Contatti",f3:"Perth, Australia",f4:"Analisi di calcio & calcio a 5 · da remoto",
+f1:"Naviga",f2:"Contatti",f3:"Perth, Australia",
 mq:["Analizzare","Misurare","Decidere","Futsal","Performance","Sviluppo"]},
 
-es:{"offer":"¿Qué ofrecemos?","t1h":"Análisis de equipo","t1p":"Convertir el dato bruto de una liga en una lectura que el cuerpo técnico use antes del próximo partido.","t1o1":"Extracción Wyscout/Instat y etiquetado en vivo — xG, PPDA, posesión, duelos y formaciones.","t1o2":"Paneles comparativos entre todos los equipos de la misma liga, actualizados cada jornada.","t1t":"Datos de partido","t2h":"Rendimiento del atleta","t2p":"Un retrato individual de cómo el atleta carga, recupera y aporta a lo largo de la temporada.","t2o1":"Carga de entrenamiento y zonas de recuperación seguidas partido a partido en un panel personal.","t2o2":"Intercepciones y mapas de calor por atleta, con la evolución comparada entre temporadas.","t2t":"Físico y GPS","t3h":"Scouting para atletas y clubes","t3p":"Un camino eficaz para elevar el rendimiento y ayudar a tu equipo a lograr más resultados en cancha.","t3o1":"Análisis de video, desglose de rendimiento, lectura táctica y feedback personalizado.","t3o2":"Informes de scouting y seguimiento del progreso para decisiones bien informadas.","t3t":"Video y táctica","t4h":"Inteligencia y marca","t4p":"Hacer que el análisis circule — del informe interno al contenido que construye tu nombre.","t4o1":"Estudios comparativos entre competiciones internacionales, a partir de informes técnicos oficiales.","t4o2":"Carruseles de LinkedIn y piezas gráficas bajo la identidad TZR Futsal Coaching.","t4t":"Competición","t1f":"Para clubes y cuerpo técnico","t2f":"Para atletas individuales","t3f":"Para atletas, porteros y clubes","t4f":"Para federaciones y organizadores de competiciones","t5f":"Para atletas listos para destacar","t5h":"Portafolio digital de atleta","t5p":"Tu carrera en un solo enlace — un perfil listo para compartir con clubes, entrenadores y ojeadores.","t5o1":"Un perfil personal con bio, historial, logros, fotos y videos destacados — siempre actualizado, un solo enlace para compartir.","t5o2":"Una versión Pro con estadísticas completas, dominio propio y perfil optimizado para móvil, para una presencia profesional completa.","t5t":"Contáctanos para saber más","k.who":"A quién ayudamos","c1h":"Clubes y cuerpo técnico","c1p":"Análisis del equipo y del rival, listo antes de la sesión de la semana.","c2h":"Atletas individuales","c2p":"Rendimiento personal seguido y explicado, partido a partido.","c3h":"Federaciones y organizadores","c3p":"Investigación y apoyo estratégico para nuevas competiciones y formatos.","c4h":"Bajo demanda","c4p":"Paneles en vivo y el sitio de portafolio de atleta — será un placer mostrarlos en una llamada.","nav6":"Precios","k.price":"Precios","priceH":"Tabla de precios","k.notes":"Notas","pt.h1":"Tipo de sesión","pt.h2":"Tamaño del grupo","pt.h3":"Precio base por sesión","pt.h4":"Descuento South Perth (25%)","pt.h5":"Notas","pt.r1a":"Entrenamiento individual","pt.r1b":"1 jugador/portero","pt.n1":"Mejora técnica, táctica y física personalizada. Incluye análisis de video del partido.","pt.r2a":"Entrenamiento en grupo pequeño","pt.r2b":"2–5 jugadores/portero","pt.n2":"Enfocado en los aspectos técnicos y tácticos del juego, con escenarios de simulación real.","pt.r3a":"Entrenamiento en grupo grande","pt.r3b":"6–10 jugadores","pt.r4a":"Análisis de video","pt.r4b":"Individual o equipo","pt.r4c":"Desde $35 (individual) y $60 (equipo)","pt.n4":"Revisión del rendimiento post-partido con información táctica detallada y puntos de mejora.","pt.r5a":"Paquete de 5 sesiones","pt.r5b":"1 jugador/portero","pt.r5c":"5 sesiones $315","pt.n5":"Se pueden organizar paquetes con más sesiones según las necesidades del atleta o del grupo.","pt.r6b":"2–5 jugadores","pt.r6c":"5 sesiones $155","pt.r7b":"6–10 jugadores","pt.r7c":"5 sesiones $110","pt.each":"(por jugador)","pt.ind":"(individual)","pt.pct":"(10% dto.)","pt.note1b":"Tarifa de cancha:","pt.note1":"Cada sesión incluye una tarifa de alquiler de cancha de $40–50.","pt.note2b":"Duración de la sesión:","pt.note2":"La sesión puede variar según la disponibilidad de la cancha y la condición física del jugador ese día — la duración ideal es de 1 hora.","pt.note3b":"Detalles del análisis de video:","pt.note3":"Desde $35 para revisiones individuales; el costo para equipos se ajusta según el tamaño y la complejidad. Los informes se entregan en 2–3 días hábiles.","pt.note4b":"Descuento South Perth:","pt.note4":"Todos los atletas de South Perth reciben un 25% de descuento en todas las sesiones.","pr1a":"Análisis","pr1b":"$40","pr1c":"Análisis de video, desglose de rendimiento, evaluación de habilidades, información táctica, feedback personalizado y comparación de jugadores — con recomendaciones a medida, informes de scouting y seguimiento del progreso para decisiones informadas.","pr2a":"Análisis + videollamada","pr2b":"$50","pr3a":"Clubes","pr3b":"Desde $70","pr4a":"Informes","pr4b":"$40","pr5a":"Informes + análisis de video","pr5b":"Contáctanos","pr6a":"Sesiones de entrenamiento","pr6b":"Contáctanos","pr7a":"Cobertura completa de competición","pr7b":"Contáctanos","k.portfolio":"Portafolio digital de atleta","pf.lead":"Tu carrera en un solo enlace — listo para compartir con clubes, entrenadores y ojeadores.","pf.d.tier":"Digital","pf.d.note":"Pago único","pf.d.l1":"Perfil, bio, historial y logros","pf.d.l2":"Fotos y videos destacados","pf.d.l3":"Redes sociales, contacto y enlace del portafolio","pf.d.cta":"Empezar","pf.p.tier":"Pro","pf.p.note":"Pago único · dominio propio incluido el primer año","pf.p.l0":"Todo lo de Digital, más:","pf.p.l1":"Estadísticas y datos de rendimiento","pf.p.l2":"Dominio propio, optimizado para móvil, perfil profesional completo","pf.p.cta":"Pasar a Pro","pf.keep.1a":"Mantener online — hosting y actualizaciones mínimas","pf.keep.1b":"A$80/año","pf.keep.2a":"Actualización de temporada — hasta 4 actualizaciones, fotos y destacados","pf.keep.2b":"A$150/año","pf.keep.3a":"Pro performance — actualizaciones regulares, con estadísticas","pf.keep.3b":"A$300/año","pf.match":"¿Necesitas análisis de un partido en concreto? Disponible por separado, desde A$50/partido.","k.video":"Lo que muestra el video","r1h":"Etiquetado en vivo, acción por acción","r1p":"Cada remate, duelo y balón parado etiquetado en tiempo real durante el partido — este es el feed bruto con el que trabaja LiveTag Pro.","r2h":"Distancia y carriles de pase, dibujados en vivo","r2p":"Sobre una transmisión de la Libertadores de Futsal — la línea amarilla y los círculos marcan exactamente la carrera y la distancia que importaron.","r3h":"Dibujo dinámico, sombreado en tiempo real","r3p":"Un carril de pase sombreado en vivo en un partido de selección — la misma herramienta para explicarle una jugada al cuerpo técnico.","contacth":"Construyamos tu próximo <em>panel</em>",
+es:{"svwhy":"Por qué ayuda","svprice":"Ver precio →","w1f":"Para atletas y porteros","w1h":"Análisis individual","w1p":"Tus partidos desglosados en video — rendimiento, decisiones tácticas y feedback personalizado.","w1y":"Ves exactamente dónde eres fuerte y en qué trabajar después.","w2f":"Para clubes y cuerpo técnico","w2h":"Análisis de club","w2p":"Datos Wyscout/Instat y etiquetado en vivo — xG, PPDA, posesión, duelos y formaciones — comparados con todos los equipos de la liga.","w2y":"El cuerpo técnico tiene una lectura clara para actuar antes del próximo partido.","w3f":"Para clubes, entrenadores y atletas","w3h":"Informes","w3p":"Decks previos e informes en PDF — panorama de temporada, cara a cara, formaciones y plan de balón parado.","w3y":"Todo lo que importa en un solo documento, listo antes de tu sesión de análisis.","w4f":"Para atletas, grupos y porteros","w4h":"Sesiones de entrenamiento","w4p":"Sesiones 1 a 1, en grupo y de porteros — trabajo técnico y táctico construido sobre escenarios reales de juego.","w4y":"Desarrollamos personas a través del deporte, con cada sesión a medida del jugador.","w6f":"Para atletas listos para destacar","w6h":"Portafolio digital de atleta","w6p":"Perfil, historial, logros, fotos y videos destacados — y, en la versión Pro, estadísticas y dominio propio.","w6y":"Tu carrera en un solo enlace, lista para compartir con clubes, entrenadores y ojeadores.","nav6":"Precios","k.price":"Precios","priceH":"Tabla de precios","k.notes":"Notas","pt.h1":"Tipo de sesión","pt.h2":"Tamaño del grupo","pt.h3":"Precio base por sesión","pt.h4":"Descuento South Perth (25%)","pt.h5":"Notas","pt.r1a":"Entrenamiento individual","pt.r1b":"1 jugador/portero","pt.n1":"Mejora técnica, táctica y física personalizada. Incluye análisis de video del partido.","pt.r2a":"Entrenamiento en grupo pequeño","pt.r2b":"2–5 jugadores/portero","pt.n2":"Enfocado en los aspectos técnicos y tácticos del juego, con escenarios de simulación real.","pt.r3a":"Entrenamiento en grupo grande","pt.r3b":"6–10 jugadores","pt.r4a":"Análisis de video","pt.r4b":"Individual o equipo","pt.r4c":"Desde $35 (individual) y $60 (equipo)","pt.n4":"Revisión del rendimiento post-partido con información táctica detallada y puntos de mejora.","pt.r5a":"Paquete de 5 sesiones","pt.r5b":"1 jugador/portero","pt.r5c":"5 sesiones $315","pt.n5":"Se pueden organizar paquetes con más sesiones según las necesidades del atleta o del grupo.","pt.r6b":"2–5 jugadores","pt.r6c":"5 sesiones $155","pt.r7b":"6–10 jugadores","pt.r7c":"5 sesiones $110","pt.each":"(por jugador)","pt.ind":"(individual)","pt.pct":"(10% dto.)","pt.note1b":"Tarifa de cancha:","pt.note1":"Cada sesión incluye una tarifa de alquiler de cancha de $40–50.","pt.note2b":"Duración de la sesión:","pt.note2":"La sesión puede variar según la disponibilidad de la cancha y la condición física del jugador ese día — la duración ideal es de 1 hora.","pt.note3b":"Detalles del análisis de video:","pt.note3":"Desde $35 para revisiones individuales; el costo para equipos se ajusta según el tamaño y la complejidad. Los informes se entregan en 2–3 días hábiles.","pt.note4b":"Descuento South Perth:","pt.note4":"Todos los atletas de South Perth reciben un 25% de descuento en todas las sesiones.","pr1a":"Análisis","pr1b":"$40","pr1c":"Por partido. Incluye el informe escrito y los clips.","pr2a":"Análisis + videollamada","pr2b":"$50","pr3a":"Clubes","pr3b":"Desde $70","pr4a":"Informes","pr4b":"$40","pr5a":"Informes + análisis de video","pr5b":"Contáctanos","pr6a":"Sesiones de entrenamiento","pr6b":"Contáctanos","pr7a":"Cobertura completa de competición","pr7b":"Contáctanos","k.portfolio":"Portafolio digital de atleta","pf.lead":"Tu carrera en un solo enlace — listo para compartir con clubes, entrenadores y ojeadores.","pf.d.tier":"Digital","pf.d.note":"Pago único","pf.d.l1":"Perfil, bio, historial y logros","pf.d.l2":"Fotos y videos destacados","pf.d.l3":"Redes sociales, contacto y enlace del portafolio","pf.d.cta":"Empezar","pf.p.tier":"Pro","pf.p.note":"Pago único · dominio propio incluido el primer año","pf.p.l0":"Todo lo de Digital, más:","pf.p.l1":"Estadísticas y datos de rendimiento","pf.p.l2":"Dominio propio, optimizado para móvil, perfil profesional completo","pf.p.cta":"Pasar a Pro","pf.keep.1a":"Mantener online — hosting y actualizaciones mínimas","pf.keep.1b":"A$80/año","pf.keep.2a":"Actualización de temporada — hasta 4 actualizaciones, fotos y destacados","pf.keep.2b":"A$150/año","pf.keep.3a":"Pro performance — actualizaciones regulares, con estadísticas","pf.keep.3b":"A$300/año","pf.match":"¿Necesitas análisis de un partido en concreto? Disponible por separado, desde A$50/partido.","k.video":"Lo que muestra el video","r1h":"Etiquetado en vivo, acción por acción","r1p":"Cada remate, duelo y balón parado etiquetado en tiempo real durante el partido — este es el feed bruto con el que trabaja LiveTag Pro.","r2h":"Distancia y carriles de pase, dibujados en vivo","r2p":"Sobre una transmisión de la Libertadores de Futsal — la línea amarilla y los círculos marcan exactamente la carrera y la distancia que importaron.","r3h":"Dibujo dinámico, sombreado en tiempo real","r3p":"Un carril de pase sombreado en vivo en un partido de selección — la misma herramienta para explicarle una jugada al cuerpo técnico.","contacth":"Construyamos tu próximo <em>panel</em>",
 title:"Analista de Rendimiento",
 nav1:"Sobre nosotros",nav2:"Lo que hacemos",nav3:"Trabajos",nav4:"Cómo trabajamos",nav5:"Contacto",
 h1a:"Analista de",h1b:"Rendimiento",
@@ -935,45 +901,32 @@ ab3:"Catorce temporadas jugando a nivel profesional en Italia, hasta 2024, está
 ab4:"Cada proyecto empieza en la imagen y el dato bruto y termina en algo utilizable: combinamos video, números y lectura táctica, y explicamos el resultado sin jerga.",
 bio4:"En enero de 2025 fundó TZR Futsal Coaching, para compartir todo lo que aprendió en más de una década y formar a la próxima generación de jugadores en Australia.",
 nm1:"Temporadas en las principales ligas de Italia",nm2:"Debut en el primer campeonato profesional de Italia",nm3:"Idiomas de trabajo",nm4:"Entrega remota, ciclo semanal",
-"k.prog":"Lo que hacemos",progH:"Construido sobre lo que necesitas saber",progLead:"Cada club, entrenador y atleta llega con una pregunta distinta. El trabajo se arma con estas piezas — con la profundidad y el ritmo que realmente necesitas.",progNote:"Todo depende de lo que el club, el entrenador o el atleta quiere saber — y necesita.",
+"k.prog":"Lo que hacemos",progH:"Construido sobre lo que necesitas saber",progLead:"Cada club, entrenador y atleta llega con una pregunta distinta. El trabajo se arma con estas piezas — con la profundidad y el ritmo que realmente necesitas.",
 sv1h:"Análisis de video",sv1p:"Imágenes de partido y entrenamiento desglosadas acción por acción.",
 sv2h:"Scouting del rival",sv2p:"Los patrones, fortalezas y puntos débiles del próximo rival.",
 sv3h:"Paneles de rendimiento",sv3p:"Rendimiento de equipo e individual seguido a lo largo de la temporada.",
 sv4h:"Análisis de jugador",sv4p:"Desarrollo individual y comparación lado a lado.",
 sv5h:"Análisis en vivo y remoto",sv5p:"Etiquetado en vivo en la cancha, o a distancia con las imágenes que envíes.",
-"k.gal":"Trabajos seleccionados",galH:"Trabajos seleccionados. De las imágenes a la decisión.",galNote:"Tomamos las imágenes de partido y entrenamiento, entendemos qué está pasando realmente y detectamos los patrones, fortalezas y problemas que importan. Después lo convertimos en información visual simple que entrenadores y jugadores pueden usar de verdad. Aquí abajo puedes ver las distintas formas en que podemos apoyar a tu equipo.","k.more":"Informes y entrega",cta5:"Instagram",twH:"Etiquetado en vivo, acción por acción, durante el partido",twP:"Muestra al equipo y al atleta exactamente dónde está el problema — y háblalo, para que aprendan y sigan desarrollándose.",rvH:"Entregado como cada cliente lo necesita",rvP:"Paneles, decks previos, informes en PDF, clips por acción y tarjetas para redes — el formato y la frecuencia los marca el cliente, no un paquete cerrado.",rv1:"Paneles",rv2:"Decks previos",rv3:"Informes PDF",rv4:"Clips por acción",rv5:"Tarjetas sociales",gc5:"Reel de trabajos — clubes difuminados",reel:"Reel",
-m2:"Analizado",m3:"Entrega",
-pj1c:"Video + etiquetado",pj1h:"Análisis de partido",
-pj2c:"Video + datos",pj2h:"Análisis del rival",
-pj3c:"Físico y GPS",pj3h:"Rendimiento del jugador",
-pj4c:"Datos de temporada",pj4h:"Rendimiento del equipo",
-pj5c:"Análisis de video",pj5h:"Etiquetado en vivo y telestración",pj5s:"El partido dividido en acciones y momentos mientras todavía se juega.",
-cs1s:"Convertir los datos de partido de una liga en lectura táctica que el cuerpo técnico use antes del próximo encuentro.",
+"k.gal":"Trabajos seleccionados",galH:"Trabajos seleccionados. De las imágenes a la decisión.",galNote:"Ejemplos de análisis, informes y proyectos desarrollados para equipos, atletas y competiciones.","k.more":"Informes y entrega",cta5:"Instagram",twH:"Etiquetado en vivo, acción por acción, durante el partido",twP:"Muestra al equipo y al atleta exactamente dónde está el problema — y háblalo, para que aprendan y sigan desarrollándose.",rvH:"Entregado como cada cliente lo necesita",rvP:"Paneles, decks previos, informes en PDF, clips por acción y tarjetas para redes — el formato y la frecuencia los marca el cliente, no un paquete cerrado.",rv1:"Paneles",rv2:"Decks previos",rv3:"Informes PDF",rv4:"Clips por acción",rv5:"Tarjetas sociales",gc5:"Reel de trabajos — clubes difuminados",reel:"Reel",
+m2:"Analizado",
 cs1b:"Datos de partido extraídos de los informes de la propia liga y combinados con etiquetado en vivo: xG, PPDA, posesión, duelos, formaciones, posiciones medias.",
-cs1cO:"Un deck previo al partido — panorama de temporada, cara a cara, formaciones y plan de balón parado.",
-cs2s:"Convertir los datos de una jugadora en una lectura clara de carga, recuperación y aporte a lo largo de la temporada.",
 cs2b:"Exportaciones de GPS y etiquetado por partido mapeados en la cancha: zonas de recuperación e intercepciones, partido a partido.",
-cs2cO:"Un panel personal de rendimiento, actualizado con cada partido jugado.",
-cs3s:"Combinar datos y video para sacar a la luz los patrones, fortalezas y vulnerabilidades que solo se ven en imagen.",
 cs3c2:"Carril de pase sombreado en tiempo real",
 cs3c1:"Distancia y carriles de pase dibujados en vivo",cs3b:"Etiquetado en vivo durante el partido, con distancias y carriles de pase dibujados sobre la transmisión.",
-cs3cO:"Clips exportados por acción, más un informe directo al grano para el cuerpo técnico.",
-p1p:"Convertir el dato bruto de una liga en una lectura que el cuerpo técnico use antes del próximo partido.",
 p1a:"Extracción de datos de partido y etiquetado en vivo — xG, PPDA, posesión, duelos, formaciones.",
-p1b:"Comparación entre todos los equipos de la liga, actualizada cada jornada.",
-vb1:"Etiquetado en vivo, acción por acción, durante el partido",vb3:"Clips exportables por acción para la sala de video",
+vb1:"Etiquetado en vivo, acción por acción, durante el partido",
 gc2:"Portada de informe — plantilla TZR",gc3:"Carrusel de revisión de temporada",gc4:"Tarjeta de rendimiento de equipo",social:"Social",
 "k.path":"Cómo trabajamos",pathH:"100% remoto, en ciclo semanal",pathLead:"Una vez que sabemos qué necesitas, este es el ritmo que lo entrega — los mismos cinco pasos, cada semana, estés donde estés.",
 st1h:"Video",st1p:"Imágenes del partido, etiquetadas en vivo en la cancha o enviadas a nosotros.",
 st2h:"Datos",st2p:"Informes de partido, exportaciones de GPS y etiquetado, organizados y verificados.",
 st3h:"Análisis",st3p:"Los números leídos contra lo que realmente pasó en cancha.",
 st4h:"Lectura",st4p:"Lista antes de tu sesión de análisis — y actualizada cada jornada.",st5h:"Videollamada",st5p:"Una videollamada con el atleta o el cuerpo técnico para repasarlo juntos — también es una opción válida.",
-"k.help":"Con quién trabajamos",helpH:"Entornos distintos. Preguntas distintas.",
+"k.help":"Con quién trabajamos",
 hp1h:"Clubes y cuerpo técnico",hp1p:"Rendimiento del equipo, rival y análisis táctico.",
 hp2h:"Atletas individuales",hp2p:"Análisis de rendimiento y desarrollo individual.",
 hp3h:"Federaciones y programas de alto rendimiento",hp3p:"Análisis e informes entre equipos y competiciones.",
 "k.cta":"Contacto",finalH:"¿Listo para ver tu temporada <span class='or'>en foco?</span>",
-f1:"Navegar",f2:"Contacto",f3:"Perth, Australia",f4:"Análisis de fútbol y futsal · remoto",
+f1:"Navegar",f2:"Contacto",f3:"Perth, Australia",
 mq:["Analizar","Medir","Decidir","Futsal","Rendimiento","Desarrollo"]}
 };
 
@@ -1149,6 +1102,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
   a.addEventListener('click',function(e){
     var id=a.getAttribute('href');if(id==='#'||!document.querySelector(id))return;
     e.preventDefault();
+    closeSvcPrice();
     if(id==='#pricing'){openPricing();}
     else if(id==='#contact'){closePricing();window.scrollTo(0,document.documentElement.scrollHeight);}
     else{closePricing();document.querySelector(id).scrollIntoView({behavior:'auto',block:'start'});}
@@ -1161,6 +1115,36 @@ function openPricing(){priceModal.classList.add('open');document.body.classList.
 function closePricing(){priceModal.classList.remove('open');document.body.classList.remove('price-lock')}
 document.querySelector('.price-close').addEventListener('click',closePricing);
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePricing()});
+
+/* service price sheets — each What we do card opens only its own prices */
+var svcModal=document.getElementById('svc-price');
+function openSvcPrice(key){
+  var found=false;
+  svcModal.querySelectorAll('.svc-sheet').forEach(function(s){var on=s.getAttribute('data-sheet')===key;s.hidden=!on;if(on)found=true});
+  if(!found)return;
+  closePricing();svcModal.classList.add('open');document.body.classList.add('price-lock');svcModal.scrollTop=0;
+}
+function closeSvcPrice(){
+  if(!svcModal||!svcModal.classList.contains('open'))return;
+  svcModal.classList.remove('open');
+  if(!priceModal.classList.contains('open'))document.body.classList.remove('price-lock');
+}
+document.querySelectorAll('.svc[data-price]').forEach(function(c){
+  c.addEventListener('click',function(){openSvcPrice(c.getAttribute('data-price'))});
+  c.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openSvcPrice(c.getAttribute('data-price'))}});
+});
+document.querySelector('.svc-close').addEventListener('click',closeSvcPrice);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSvcPrice()});
+
+/* Contact is the last section: keep it at exactly one real screen. */
+/* min-height:100svh can be miscalculated on mobile Safari while the address bar
+   shows/hides, making this section eat ~2 screens of scroll. Use the true,
+   live viewport height instead, so it always matches exactly one screen. */
+function setFinalVh(){document.documentElement.style.setProperty('--vh-final',innerHeight+'px')}
+setFinalVh();
+addEventListener('resize',setFinalVh);
+addEventListener('orientationchange',function(){setTimeout(setFinalVh,150)});
+if(window.visualViewport)visualViewport.addEventListener('resize',setFinalVh);
 </script>
 </body>
 </html>
