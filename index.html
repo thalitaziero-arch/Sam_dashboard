@@ -321,7 +321,7 @@ section{position:relative}
 body.price-lock{overflow:hidden}
 
 /* ---------- FINAL CTA ---------- */
-.final{min-height:100svh;min-height:var(--vh-final,100svh);padding:clamp(20px,3vw,40px) 0;background:var(--black);color:var(--on-black);display:flex;align-items:center;overflow-x:hidden;overflow-y:visible;position:relative}
+.final{padding:clamp(68px,10vh,132px) 0;background:var(--black);color:var(--on-black);display:flex;align-items:center;overflow-x:hidden;overflow-y:visible;position:relative}
 .final>.w{width:100%}
 
 .final h2{font-size:clamp(34px,6.4vw,96px);max-width:14ch;color:var(--on-black)}
@@ -1135,16 +1135,6 @@ document.querySelectorAll('.svc[data-price]').forEach(function(c){
 });
 document.querySelector('.svc-close').addEventListener('click',closeSvcPrice);
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSvcPrice()});
-
-/* Contact is the last section: keep it at exactly one real screen. */
-/* min-height:100svh can be miscalculated on mobile Safari while the address bar
-   shows/hides, making this section eat ~2 screens of scroll. Use the true,
-   live viewport height instead, so it always matches exactly one screen. */
-function setFinalVh(){document.documentElement.style.setProperty('--vh-final',innerHeight+'px')}
-setFinalVh();
-addEventListener('resize',setFinalVh);
-addEventListener('orientationchange',function(){setTimeout(setFinalVh,150)});
-if(window.visualViewport)visualViewport.addEventListener('resize',setFinalVh);
 </script>
 </body>
 </html>
