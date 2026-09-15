@@ -16,8 +16,8 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-html{overflow-x:hidden;overflow-x:clip}
-body{margin:0;background:var(--ice);color:var(--black);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;max-width:100%}
+html{overflow-x:hidden;overflow-x:clip;overscroll-behavior-y:none}
+body{margin:0;background:var(--ice);color:var(--black);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;overflow-x:clip;max-width:100%;overscroll-behavior-y:none}
 html{scrollbar-width:none}
 ::-webkit-scrollbar{width:0;height:0;display:none}
 img,video{max-width:100%;display:block}
@@ -1089,6 +1089,42 @@ addEventListener('load',function(){ScrollTrigger.refresh()});
   document.querySelectorAll('.fade,.rev').forEach(function(e){e.style.opacity=1});
   buildMarquee();
 }
+
+/* play videos only as they scroll into view — browsers cap how many
+   autoplay videos can start at once, so with 5 on the page some were
+   silently staying paused/frozen on load */
+(function(){
+  var vids=[].slice.call(document.querySelectorAll('video'));
+  function tryPlay(v){ var p=v.play(); if(p&&p.catch)p.catch(function(){}); }
+  if(!('IntersectionObserver' in window)){ vids.forEach(tryPlay); return; }
+  var io=new IntersectionObserver(function(entries){
+    /* several videos (e.g. the 3-up row grid) can become visible in the same
+       tick; starting them all in the same frame makes some browsers silently
+       fail to decode more than ~2 at once, freezing them on their first
+       frame. Staggering the play() calls a little avoids that. */
+    var i=0;
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        setTimeout(function(){ tryPlay(en.target); }, i*220);
+        i++;
+      } else {
+        en.target.pause();
+      }
+    });
+  },{threshold:0.2});
+  vids.forEach(function(v){ io.observe(v); });
+  /* safety net: if a video is marked playing but its clock never actually
+     moves (the freeze we were fighting), nudge it back into motion */
+  setInterval(function(){
+    vids.forEach(function(v){
+      if(v.paused||!v.__lastT) { v.__lastT=v.currentTime; return; }
+      if(v.currentTime===v.__lastT && v.getBoundingClientRect().top<innerHeight && v.getBoundingClientRect().bottom>0){
+        v.pause(); tryPlay(v);
+      }
+      v.__lastT=v.currentTime;
+    });
+  },1500);
+})();
 
 /* mobile menu */
 var nav=document.querySelector('.nav');
