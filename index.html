@@ -1064,10 +1064,6 @@ gsap.utils.toArray('.case-n').forEach(function(el){
     scrollTrigger:{trigger:el.closest('.case'),start:'top 86%'}});
 });
 
-/* final CTA parallax out */
-gsap.to('.final .w',{yPercent:-8,ease:'none',
-  scrollTrigger:{trigger:'.final',start:'top bottom',end:'bottom top',scrub:true}});
-
 /* progress bar */
 gsap.to('.prog-bar',{width:'100%',ease:'none',
   scrollTrigger:{trigger:document.body,start:'top top',end:'bottom bottom',scrub:.2}});
