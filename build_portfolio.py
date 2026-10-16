@@ -16,6 +16,7 @@ season_2026_27.json and re-running this script updates the whole page.
 Shares CSS with build_v2.py by reading the pieces it exports. build_v2.py stays
 untouched as the reference version.
 """
+import base64
 import json
 import re
 from pathlib import Path
@@ -96,23 +97,43 @@ ARCH_FUTSAL = ARCHIVE["futsal"]
 ARCH_SOCCER = ARCHIVE["soccer"]
 SUMMER = [f for f in ARCH_FUTSAL if f["s"] == "Summer"]
 WINTER = [f for f in ARCH_FUTSAL if f["s"] == "Winter"]
-CUR_GAMES = [g for c in CURRENT["competitions"] for g in c["games"]]
+
+# Current season rounds come in two kinds. Rounds tagged in LiveTag style feed
+# the lifetime totals; rounds that carry an "analysis" block (individual video
+# analysis) are a different counting method, so they are shown on their own and
+# never blended into the totals above.
+CUR_ALL = [g for c in CURRENT["competitions"] for g in c["games"]]
+CUR_GAMES = [g for g in CUR_ALL if "analysis" not in g]
+CUR_VIDEO = [g for g in CUR_ALL if "analysis" in g]
+N_VID = len(CUR_VIDEO)
+
+
+def vid(key):
+    return sum(g["analysis"]["m"].get(key, 0) for g in CUR_VIDEO)
+
+
 FUTSAL_ALL = ARCH_FUTSAL + CUR_GAMES
 
+# lifetime (Overview): finished seasons + any live-tagged rounds
 N_FUT, N_SOC = len(FUTSAL_ALL), len(ARCH_SOCCER)
 FUT_G, FUT_A = tot(FUTSAL_ALL, "goal"), tot(FUTSAL_ALL, "assist")
 FUT_INT, FUT_REC, FUT_LOST = tot(FUTSAL_ALL, "int"), tot(FUTSAL_ALL, "rec"), tot(FUTSAL_ALL, "lost")
 FUT_SHOT, FUT_SHOT_OT, FUT_PASS = tot(FUTSAL_ALL, "shot"), tot(FUTSAL_ALL, "shotOT"), tot(FUTSAL_ALL, "pass")
+
+# the finished seasons only (the "Season 2025/2026" blocks on the profile pages)
+PF_N = len(ARCH_FUTSAL)
+PF_G, PF_A = tot(ARCH_FUTSAL, "goal"), tot(ARCH_FUTSAL, "assist")
+PF_INT, PF_REC, PF_LOST = tot(ARCH_FUTSAL, "int"), tot(ARCH_FUTSAL, "rec"), tot(ARCH_FUTSAL, "lost")
+PF_SHOT, PF_SHOT_OT, PF_PASS = tot(ARCH_FUTSAL, "shot"), tot(ARCH_FUTSAL, "shotOT"), tot(ARCH_FUTSAL, "pass")
+
 SOC_G, SOC_A = tot(ARCH_SOCCER, "goal"), tot(ARCH_SOCCER, "assist")
 SOC_INT, SOC_MIN = tot(ARCH_SOCCER, "intercept"), tot(ARCH_SOCCER, "min")
 SOC_REC = tot(ARCH_SOCCER, "recOwn") + tot(ARCH_SOCCER, "recOpp")
 SOC_DW, SOC_DT = tot(ARCH_SOCCER, "duelW"), tot(ARCH_SOCCER, "duelT")
 SOC_SHOT, SOC_SHOT_OT = tot(ARCH_SOCCER, "shot"), tot(ARCH_SOCCER, "shotOT")
 WIN_G, WIN_SHOT_OT = tot(WINTER, "goal"), tot(WINTER, "shotOT")
-# assists split by season, e.g. "6+2" (+ a third term once 2026/27 has data)
-_parts = [tot(SUMMER, "assist"), tot(WINTER, "assist")] + ([tot(CUR_GAMES, "assist")] if CUR_GAMES else [])
-FUT_ASSIST_SPLIT = "+".join(str(p) for p in _parts)
-FUT_ASSIST_LABEL = "summer + winter" + (" + 26/27" if CUR_GAMES else "")
+# assists split by finished season, e.g. "6+2"
+PF_ASSIST_SPLIT = f"{tot(SUMMER, 'assist')}+{tot(WINTER, 'assist')}"
 
 
 def futsal_cards(rows, creation_third, defensive_third):
@@ -141,7 +162,8 @@ WINTER_CARDS = futsal_cards(WINTER, (tot(WINTER, "lost"), "losses"),
 # are no empty dashes: minutes/starts differ between soccer and futsal and
 # live in the summary cards instead.
 # (season, code, club, competition, position, apps, goals); club None = unknown
-CAREER = []
+# an 8th item (note) replaces the numbers for rows that are not a played season
+CAREER = [("2027", "Soccer", "Fremantle City", "WA NPL Women", "LAMF · LAMR", "", "", "Confirmed for 2027")]
 for _c in CURRENT["competitions"]:
     _gm = _c["games"]
     # club not confirmed yet -> the competition itself is the headline of the row
@@ -156,16 +178,21 @@ CAREER += [
     ("2025/26", "Futsal", "Cockburn Wolves", "Supa-Liga · Summer", "Fixo · Ala",  len(SUMMER), tot(SUMMER, "goal")),
 ]
 _NO_CLUB = {c["name"] for c in CURRENT["competitions"] if not c["club"]}
-CAREER_SEASONS = len({r[0] for r in CAREER})
-CAREER_CLUBS = len({r[2] for r in CAREER if r[2] not in _NO_CLUB})
+_PLAYED = [r for r in CAREER if len(r) < 8]
+CAREER_SEASONS = len({r[0] for r in _PLAYED})
+CAREER_CLUBS = len({r[2] for r in _PLAYED if r[2] not in _NO_CLUB})
 
 
 def career_rows(rows):
     out = ""
-    for season, code, club, comp, pos, apps, goals in rows:
+    for row in rows:
+        season, code, club, comp, pos, apps, goals = row[:7]
+        note = row[7] if len(row) > 7 else None
         cls = "soccer" if code == "Soccer" else "futsal"
         # Rows with no stats yet get one quiet note instead of empty dashes.
-        if apps == "":
+        if note:
+            stats = f'<span class="c-soon">{note}</span>'
+        elif apps == "":
             stats = '<span class="c-soon">Season in progress</span>'
         else:
             stats = (f'<span class="c-v" data-k="Apps">{apps}</span>'
@@ -186,6 +213,9 @@ CAREER_HEAD = ('<div class="c-row head"><span>Season</span><span>Code</span><spa
 # ------------------------------------------------------------ honours
 # Year -> list of (code, headline, detail, is_major)
 HONOURS = [
+    ("2027", [
+        ("Soccer", "Fremantle City — WNPL", "Confirmed for the 2027 season", True),
+    ]),
     ("2026", [
         ("Soccer", "Fremantle FC — WNPL", "Signed as a paid contracted player", True),
         ("Futsal", "FAF Women's team — Association side", "Federation of Australian Futsal · won the Indonesian Cup in Surabaya (June)", True),
@@ -237,8 +267,71 @@ def split_block(soccer_rows, futsal_rows):
                 f'<span class="sp-games">{games}</span></div>{body}</div>')
     return ('<div class="split">'
             + card("Soccer", f"{N_SOC} games", soccer_rows)
-            + card("Futsal", f"{N_FUT} games", futsal_rows)
+            + card("Futsal", f"{PF_N} games", futsal_rows)
             + '</div>')
+
+# ------------------------------------------------- current season blocks
+def _res(r):
+    return r.replace("-", "–")
+
+
+def now_strip():
+    """Overview: where she is right now, one card per competition + the 2027 soccer deal."""
+    cards = ""
+    for c in CURRENT["competitions"]:
+        gm = c["games"]
+        if gm:
+            last = gm[-1]
+            line = (f'R{last["round"]} · {_res(last["res"])} vs {last["opp"]}'
+                    if last.get("res") and last.get("opp") else f'{len(gm)} round(s) logged')
+        else:
+            line = "Round data coming soon"
+        cards += (f'<div class="now-c"><span class="now-n">{c["name"]}</span>'
+                  + (f'<span class="now-s">{c["club"]}</span>' if c["club"] else "")
+                  + f'<span class="now-d">{line}</span></div>')
+    cards += ('<div class="now-c"><span class="now-n">Fremantle City</span>'
+              '<span class="now-s">WA NPL Women</span><span class="now-d">Confirmed for 2027</span></div>')
+    return (f'<div class="now"><div class="now-k"><span class="c-code futsal">Now</span>'
+            f'{CURRENT["label"]} · season in progress</div><div class="now-grid">{cards}</div></div>')
+
+
+def now_block(kind):
+    """Profile pages: the current season in view, from the video-analysed rounds."""
+    if not CUR_VIDEO:
+        return f'<div class="now-empty">{CURRENT["label"]} · first round data coming soon.</div>'
+    n = N_VID
+    head = (f'<div class="rank-note"><span class="c-code futsal">Futsal</span>'
+            f'{CURRENT["label"]} · {n} round{"s" if n > 1 else ""} · video analysis</div>')
+    sog, goals = vid("shots_on_goal"), vid("goals")
+    p_ok, p_bad = vid("passes_ok"), vid("passes_fail")
+    if kind == "att":
+        tiles = [
+            (goals, "Goals", f"{sog} on goal · {goals} scored"),
+            (f'{vid("dribbles_ok")}/{vid("dribbles")}', "Dribbles", "successful"),
+            (vid("wing_runs"), "Wing runs", f'right {vid("wing_right")} · left {vid("wing_left")}'),
+            (vid("carries"), "Carries", "ball carries"),
+            (f"{p_ok}/{p_ok + p_bad}", "Passes completed", "with a visible destination"),
+            (vid("attack_runs"), "Attack involvement", "appeared in the play without touching"),
+        ]
+    else:
+        tiles = [
+            (vid("recoveries"), "Recoveries", "steals, interceptions, loose balls won"),
+            (vid("pressures"), "Pressure", "on the player with the ball"),
+            (vid("duels"), "1v1 duels", f'{vid("duels_lost")} lost'),
+            (vid("ball_losses"), "Ball losses", "includes failed dribbles"),
+        ]
+    cells = "".join(f'<div class="nc"><span class="nc-v">{v}</span><span class="nc-k">{k}</span>'
+                    f'<span class="nc-s">{sub}</span></div>' for v, k, sub in tiles)
+    return (head + f'<div class="nc-grid">{cells}</div>'
+            '<p class="now-note">Individual video analysis — a verified sample of each match, not 100% '
+            'of it. Counted differently from the 2025/2026 LiveTag numbers below, so the two are shown separately.</p>')
+
+
+def past_block(inner, sub):
+    """Everything from the finished seasons, tucked behind a click."""
+    return (f'<details class="past"><summary><span class="pt">Season 2025/2026</span>'
+            f'<span class="ps">{sub}</span></summary><div class="past-body">{inner}</div></details>')
+
 
 # ---------------------------------------------------------------- extra CSS
 EXTRA_CSS = """
@@ -428,6 +521,99 @@ EXTRA_CSS += """
 }
 """
 
+
+# Cover photo, "now" strip, current-season tiles, collapsible past block, round card
+EXTRA_CSS += """
+/* COVER PHOTO: darkened and tinted into the ink background; the moving lines stay on top */
+.hero-photo{position:absolute;top:64px;bottom:68px;left:0;right:0;z-index:0;overflow:hidden;pointer-events:none}
+.hero-photo::before{content:"";position:absolute;top:0;bottom:0;right:0;aspect-ratio:685/852;
+  background-repeat:no-repeat;background-size:cover;background-position:center;
+  filter:grayscale(.2) sepia(.2) saturate(.9) brightness(.72) contrast(1.08);
+  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.5) 24%,#000 56%);
+  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.5) 24%,#000 56%)}
+.hero-photo::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,#0B0B0C 0%,rgba(11,11,12,.55) 40%,rgba(11,11,12,0) 72%),
+             linear-gradient(0deg,#0B0B0C 0%,rgba(11,11,12,0) 22%),
+             linear-gradient(180deg,#0B0B0C 0%,rgba(11,11,12,0) 18%)}
+.hero-slide .bg-lines path,.hero-slide .bg-lines circle,.hero-slide .bg-lines ellipse{stroke:rgba(255,255,255,.17)}
+@media(max-width:700px){.hero-photo{top:56px;bottom:60px}}
+@media(max-width:900px){
+  .hero-photo::before{left:0;aspect-ratio:auto;background-position:62% 0%;
+    -webkit-mask-image:none;mask-image:none}
+  .hero-photo::after{background:linear-gradient(180deg,rgba(11,11,12,.7) 0%,rgba(11,11,12,.55) 40%,rgba(11,11,12,.9) 100%)}
+}
+
+/* OVERVIEW: where she is right now */
+.now{margin-top:30px;border:1px solid var(--line-dark);background:rgba(255,255,255,.03)}
+.now-k{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line-dark);
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:rgba(255,255,255,.7)}
+.now-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.now-c{padding:18px 20px 20px;border-right:1px solid var(--line-dark)}
+.now-c:last-child{border-right:none}
+.now-c span{display:block}
+.now-n{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase;line-height:1.05}
+.now-s{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
+.now-d{font-size:13.5px;color:var(--orange);font-weight:600;margin-top:10px}
+@media(max-width:700px){
+  .now-grid{grid-template-columns:1fr}
+  .now-c{border-right:none;border-bottom:1px solid var(--line-dark)}
+  .now-c:last-child{border-bottom:none}
+}
+
+/* PROFILES: current season tiles + the finished seasons behind a click */
+.nc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:18px}
+.nc{border:1px solid var(--line-dark);padding:18px 20px 16px;background:rgba(255,255,255,.03)}
+.nc span{display:block}
+.nc-v{font-family:'Anton',sans-serif;font-size:40px;line-height:1;color:var(--orange)}
+.nc-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#fff;margin-top:10px}
+.nc-s{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px;line-height:1.4}
+.now-note{margin-top:14px;font-size:12px;color:rgba(255,255,255,.45);line-height:1.55;max-width:70ch}
+.now-empty{margin-top:26px;padding:26px 24px;border:1px dashed var(--line-dark);
+  color:rgba(255,255,255,.6);font-size:14px;text-align:center}
+.past{margin-top:34px;border:1px solid var(--line-dark)}
+.past summary{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;padding:20px 24px;
+  cursor:pointer;list-style:none}
+.past summary::-webkit-details-marker{display:none}
+.past summary::after{content:"+";margin-left:auto;font-family:'Anton',sans-serif;font-size:30px;
+  color:var(--orange);line-height:1}
+.past[open] summary::after{content:"−"}
+.past summary:hover{background:rgba(255,255,255,.04)}
+.past .pt{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase}
+.past .ps{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,.45)}
+.past-body{padding:4px 24px 28px;border-top:1px solid var(--line-dark)}
+@media(max-width:700px){.past summary{padding:18px}.past-body{padding:2px 16px 22px}}
+
+/* MY AREA: a round that comes from the individual video analysis */
+.round-card{margin-top:18px;border:1px solid var(--line);background:var(--paper)}
+.rc-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:8px 14px;padding:18px 22px;
+  border-bottom:1px solid var(--line)}
+.rc-r{font-family:'Anton',sans-serif;font-size:22px;text-transform:uppercase}
+.rc-opp{font-size:15px;font-weight:700}
+.rc-res{margin-left:auto;font-family:'Anton',sans-serif;font-size:20px;color:var(--orange)}
+.rc-sub{padding:14px 22px 0;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  font-weight:700;color:var(--grey)}
+.rc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px 22px 6px}
+.rc-t{border:1px solid var(--line);background:#FAFAF8;padding:14px 14px 12px}
+.rc-t span{display:block}
+.rc-v{font-family:'Anton',sans-serif;font-size:28px;line-height:1.1;color:var(--orange)}
+.rc-k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-top:6px}
+.rc-s{font-size:11.5px;color:var(--grey);margin-top:3px;line-height:1.4}
+.rc-read{padding:10px 22px 4px 42px;font-size:14px;color:var(--steel);line-height:1.55}
+.rc-read li{margin:6px 0}
+.rc-foot{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px;padding:14px 22px 18px}
+.rc-video{display:inline-flex;gap:10px;align-items:center;background:var(--ink);color:#fff;
+  padding:10px 16px;text-decoration:none;font-size:12px;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:700}
+.rc-video i{background:#FF0000;padding:3px 7px;font-style:normal}
+.rc-note{font-size:12px;color:var(--grey);line-height:1.5;flex:1;min-width:220px}
+@media(max-width:700px){.rc-head,.rc-sub,.rc-grid,.rc-foot{padding-left:16px;padding-right:16px}
+  .rc-read{padding-left:34px;padding-right:16px}.rc-res{margin-left:0}}
+"""
+
+COVER = "data:image/webp;base64," + base64.b64encode((DATA / "cover.webp").read_bytes()).decode()
+COVER_CSS = ".hero-photo::before{background-image:url(" + COVER + ")}"
+
 # Career table stays tabular down to phone width, where it stacks into cards.
 EXTRA_CSS += """
 @media(max-width:700px){
@@ -443,10 +629,59 @@ EXTRA_CSS += """
 }
 """
 
+# ---------------------------------------- finished-seasons content (collapsed)
+DEF_PAST = f"""<p class="lede">Ball-winning is the strongest part of her game — she is involved in defensive actions constantly in both codes.</p>
+      {split_block(
+        [(SOC_INT, f"Interceptions · {per(SOC_INT, N_SOC)} per game"),
+         (SOC_REC, f"Recoveries · {per(SOC_REC, N_SOC)} per game"),
+         (SOC_DW, f"Duels won of {SOC_DT} contested"),
+         (SOC_MIN, "Minutes played")],
+        [(PF_INT, f"Interceptions · {per(PF_INT, PF_N)} per game"),
+         (PF_REC, f"Recoveries · {per(PF_REC, PF_N)} per game"),
+         (PF_LOST, "Balls lost"),
+         (PF_N, "Games analysed")])}
+      <div style="margin-top:34px;border-top:2px solid var(--orange)">
+        <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
+          <p>{SOC_DW} duels won from {SOC_DT} contested in soccer — a {round(100 * SOC_DW / SOC_DT)}% success rate across {N_SOC} games in 2026. She competes for everything.</p></div>
+        <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
+          <p>{SOC_REC} in soccer and {PF_REC} in futsal, {SOC_REC + PF_REC} in total. Works both halves of the pitch, not just behind the ball.</p></div>
+        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
+          <p>{SOC_INT} in soccer and {PF_INT} in futsal. Reads passing lanes early rather than reacting late.</p></div>
+      </div>"""
+
+ATT_PAST = f"""<p class="lede">Sharpest in futsal — {PF_G} goals and {PF_A} assists in {PF_N} games, at {per(WIN_SHOT_OT, WIN_G)} shots on target per goal in the Winter season.</p>
+      <div class="rank-note"><span class="c-code futsal">Futsal</span>Where the attacking output comes from</div>
+      <div class="prof-grid">
+        <div class="prof"><span class="prof-rank">{PF_G + SOC_G}</span><span class="prof-k">Goals</span>
+          <span class="prof-v">{PF_G}+{SOC_G}</span><span class="prof-u">futsal + soccer</span></div>
+        <div class="prof"><span class="prof-rank">{PF_A}</span><span class="prof-k">Assists</span>
+          <span class="prof-v">{PF_ASSIST_SPLIT}</span><span class="prof-u">summer + winter futsal</span></div>
+        <div class="prof"><span class="prof-rank">{per(WIN_SHOT_OT, WIN_G)}</span><span class="prof-k">Shot Efficiency</span>
+          <span class="prof-v">{round(100 * PF_SHOT_OT / PF_SHOT)}%</span><span class="prof-u">futsal on-target rate</span></div>
+      </div>
+      {split_block(
+        [(SOC_G, "Goals"),
+         (SOC_A, "Assists"),
+         (SOC_SHOT, f"Shots · {SOC_SHOT_OT} on target"),
+         (SOC_MIN, "Minutes played")],
+        [(PF_G, "Goals"),
+         (PF_A, "Assists"),
+         (PF_SHOT, f"Shots · {PF_SHOT_OT} on target"),
+         (PF_PASS, "Accurate passes")])}
+      <div style="margin-top:34px;border-top:2px solid var(--orange)">
+        <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
+          <p>Winter 2026 futsal: <strong>{WIN_G} goals from {WIN_SHOT_OT} shots on target</strong> — {per(WIN_SHOT_OT, WIN_G)} shots on target per goal. Ruthless once the chance is created.</p></div>
+        <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
+          <p>{PF_SHOT} futsal shots across {PF_N} games ({per(PF_SHOT, PF_N)} per game) plus {PF_A} assists. In soccer the role is deeper: {SOC_SHOT} shots across {N_SOC} games in 2026.</p></div>
+        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
+          <p>{PF_PASS} accurate futsal passes, {round(PF_PASS / PF_N)} per game. Consistently involved in build-up rather than only at the end of moves.</p></div>
+      </div>"""
+
+
 # ---------------------------------------------------------------- slides
 SLIDES = [
     # 1 · HERO
-    ('dark hero-slide', ARCS, f"""<div class="wrap hero">
+    ('dark hero-slide', '<div class="hero-photo"></div>' + ARCS, f"""<div class="wrap hero">
       <div class="hero-meta"><span>Sam Brady</span><span>2024 – 2026</span></div>
       <h1 class="display">SAM<br><em>BRADY</em></h1>
       <p class="origin">Perth · '08</p>
@@ -456,7 +691,7 @@ SLIDES = [
           <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span>
           <span class="club-p">LAMF · LAMR</span></div>
         <div class="club"><span class="club-k">Futsal · current club</span>
-          <span class="club-n">Cockburn Wolves</span><span class="club-c">Supa-Liga</span>
+          <span class="club-n">Cockburn Wolves</span><span class="club-c">Community League</span>
           <span class="club-p">Fixo · Ala</span></div>
       </div>
       <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
@@ -467,6 +702,7 @@ SLIDES = [
       <div class="eyebrow">Career at a Glance</div>
       <h2 class="display">Combined Output</h2>
       <p class="lede">{N_FUT} futsal games and {N_SOC} soccer games tracked to date.</p>
+      {now_strip()}
       <div class="scoreboard">
         <div class="cell"><span class="num">{N_FUT + N_SOC}</span><span class="k">Total Games</span><span class="lbl">{N_FUT} futsal<br>{N_SOC} soccer</span></div>
         <div class="cell"><span class="num">{FUT_G + SOC_G}</span><span class="k">Goals</span><span class="lbl">{FUT_G} futsal<br>{SOC_G} soccer</span></div>
@@ -482,9 +718,9 @@ SLIDES = [
         <div class="badge"><span class="b-k">Leadership</span>
           <span class="b-v">Captain</span>
           <span class="b-u">AFA U16 &amp; Futsal WA state teams</span></div>
-        <div class="badge"><span class="b-k">2026</span>
-          <span class="b-v">Contracted</span>
-          <span class="b-u">Paid player at Fremantle FC, WNPL</span></div>
+        <div class="badge"><span class="b-k">2027</span>
+          <span class="b-v">Confirmed</span>
+          <span class="b-u">Fremantle City, WNPL · 2027 season</span></div>
         <div class="badge"><span class="b-k">Honours</span>
           <span class="b-v">League MVP</span>
           <span class="b-u">Supa-Liga Women's B, 22/23</span></div>
@@ -513,62 +749,22 @@ SLIDES = [
     ('dark', WAVES, f"""<div class="wrap">
       <div class="eyebrow">Player Profile</div>
       <h2 class="display">Defensive<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Ball-winning is the strongest part of her game — she is involved in defensive actions constantly in both codes.</p>
+      <p class="lede">Ball-winning is the strongest part of her game. This season in view, the finished seasons one click away.</p>
 
-      {split_block(
-        [(SOC_INT, f"Interceptions · {per(SOC_INT, N_SOC)} per game"),
-         (SOC_REC, f"Recoveries · {per(SOC_REC, N_SOC)} per game"),
-         (SOC_DW, f"Duels won of {SOC_DT} contested"),
-         (SOC_MIN, "Minutes played")],
-        [(FUT_INT, f"Interceptions · {per(FUT_INT, N_FUT)} per game"),
-         (FUT_REC, f"Recoveries · {per(FUT_REC, N_FUT)} per game"),
-         (FUT_LOST, "Balls lost"),
-         (N_FUT, "Games analysed")])}
+      {now_block("def")}
 
-      <div style="margin-top:34px;border-top:2px solid var(--orange)">
-        <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
-          <p>{SOC_DW} duels won from {SOC_DT} contested in soccer — a {round(100 * SOC_DW / SOC_DT)}% success rate across {N_SOC} games in 2026. She competes for everything.</p></div>
-        <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
-          <p>{SOC_REC} in soccer and {FUT_REC} in futsal, {SOC_REC + FUT_REC} in total. Works both halves of the pitch, not just behind the ball.</p></div>
-        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
-          <p>{SOC_INT} in soccer and {FUT_INT} in futsal. Reads passing lanes early rather than reacting late.</p></div>
-      </div>
+      {past_block(DEF_PAST, f"Soccer {N_SOC} games · Futsal {PF_N} games")}
     </div>"""),
 
     # 5 · ATTACKING PROFILE
     ('dark', ARCS, f"""<div class="wrap">
       <div class="eyebrow">Player Profile</div>
       <h2 class="display">Attacking<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Sharpest in futsal — {FUT_G} goals and {FUT_A} assists in {N_FUT} games, at {per(WIN_SHOT_OT, WIN_G)} shots on target per goal in the Winter season.</p>
+      <p class="lede">How she carries, creates and finishes. This season in view, the finished seasons one click away.</p>
 
-      <div class="rank-note"><span class="c-code futsal">Futsal</span>Where the attacking output comes from</div>
-      <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">{FUT_G + SOC_G}</span><span class="prof-k">Goals</span>
-          <span class="prof-v">{FUT_G}+{SOC_G}</span><span class="prof-u">futsal + soccer</span></div>
-        <div class="prof"><span class="prof-rank">{FUT_A}</span><span class="prof-k">Assists</span>
-          <span class="prof-v">{FUT_ASSIST_SPLIT}</span><span class="prof-u">{FUT_ASSIST_LABEL} futsal</span></div>
-        <div class="prof"><span class="prof-rank">{per(WIN_SHOT_OT, WIN_G)}</span><span class="prof-k">Shot Efficiency</span>
-          <span class="prof-v">{round(100 * FUT_SHOT_OT / FUT_SHOT)}%</span><span class="prof-u">futsal on-target rate</span></div>
-      </div>
+      {now_block("att")}
 
-      {split_block(
-        [(SOC_G, "Goals"),
-         (SOC_A, "Assists"),
-         (SOC_SHOT, f"Shots · {SOC_SHOT_OT} on target"),
-         (SOC_MIN, "Minutes played")],
-        [(FUT_G, "Goals"),
-         (FUT_A, "Assists"),
-         (FUT_SHOT, f"Shots · {FUT_SHOT_OT} on target"),
-         (FUT_PASS, "Accurate passes")])}
-
-      <div style="margin-top:34px;border-top:2px solid var(--orange)">
-        <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
-          <p>Winter 2026 futsal: <strong>{WIN_G} goals from {WIN_SHOT_OT} shots on target</strong> — {per(WIN_SHOT_OT, WIN_G)} shots on target per goal. Ruthless once the chance is created.</p></div>
-        <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
-          <p>{FUT_SHOT} futsal shots across {N_FUT} games ({per(FUT_SHOT, N_FUT)} per game) plus {FUT_A} assists. In soccer the role is deeper: {SOC_SHOT} shots across {N_SOC} games in 2026.</p></div>
-        <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
-          <p>{FUT_PASS} accurate futsal passes, {round(FUT_PASS / N_FUT)} per game. Consistently involved in build-up rather than only at the end of moves.</p></div>
-      </div>
+      {past_block(ATT_PAST, f"Soccer {N_SOC} games · Futsal {PF_N} games")}
     </div>"""),
 
     # 6 · MY AREA — locked; contents are decrypted into #pin-content
@@ -737,22 +933,39 @@ function buildArea(){
   };
   const roundLabel=r=>r.round?('Round '+r.round):(r.g||'Game');
   const CUR=SEASON.current, curAll=CUR.competitions.flatMap(c=>c.games);
+  const curLive=curAll.filter(g=>!g.analysis);
+  const roundCard=r=>{
+    const an=r.analysis;
+    return '<div class="round-card"><div class="rc-head"><span class="rc-r">'+roundLabel(r)+'</span>'
+      +(r.opp?'<span class="rc-opp">vs '+r.opp+'</span>':'')
+      +(r.res?'<span class="rc-res">'+r.res.replace('-','–')+'</span>':'')+'</div>'
+      +'<div class="rc-sub">'+an.title+'</div>'
+      +'<div class="rc-grid">'+an.items.map(i=>'<div class="rc-t"><span class="rc-v">'+i[1]+'</span><span class="rc-k">'+i[0]
+        +'</span><span class="rc-s">'+i[2]+'</span></div>').join('')+'</div>'
+      +(an.read&&an.read.length?'<ul class="rc-read">'+an.read.map(t=>'<li>'+t+'</li>').join('')+'</ul>':'')
+      +'<div class="rc-foot">'
+      +(r.video?'<a class="rc-video" href="'+r.video+'" target="_blank" rel="noopener"><i>&#9654;</i>Watch the match</a>':'')
+      +(an.note?'<span class="rc-note">'+an.note+'</span>':'')+'</div></div>';
+  };
   document.getElementById('cur-head').innerHTML=
     '<span class="c-code futsal">Futsal</span><span class="sb-t">'+CUR.label+'</span>'
     +'<span class="sb-s">'+(curAll.length?curAll.length+' game'+(curAll.length>1?'s':'')+' logged':'Season in progress')+'</span>';
   let cur='';
-  if(curAll.length>1 && CUR.competitions.filter(c=>c.games.length).length>1){
-    cur+='<div class="cur-block-title">Season total · all competitions</div>'+futsalCards(curAll);
+  if(curLive.length>1 && CUR.competitions.filter(c=>c.games.some(g=>!g.analysis)).length>1){
+    cur+='<div class="cur-block-title">Season total · all competitions</div>'+futsalCards(curLive);
   }
   CUR.competitions.forEach(c=>{
+    const live=c.games.filter(g=>!g.analysis), vids=c.games.filter(g=>g.analysis);
     cur+='<div class="comp-head"><span class="comp-n">'+c.name+'</span>'
       +(c.club?'<span class="comp-c">'+c.club+'</span>':'')
       +'<span class="comp-r">'+(c.games.length?c.games.length+' round'+(c.games.length>1?'s':'')+' logged':'No rounds logged yet')+'</span></div>';
     if(!c.games.length){ cur+='<div class="cur-empty">Round data coming soon.</div>'; return; }
-    cur+=futsalCards(c.games)
+    cur+=vids.map(roundCard).join('');
+    if(!live.length) return;
+    cur+=futsalCards(live)
       +'<div class="tbl tbl-futsal">'
       +'<div class="t-row head"><span>Round</span><span>Goals</span><span>Assists</span><span>Shots</span><span>Passes</span><span>Recov.</span><span>Intercept</span></div>'
-      +c.games.map(r=>'<div class="t-row"><span class="gm">'+roundLabel(r)
+      +live.map(r=>'<div class="t-row"><span class="gm">'+roundLabel(r)
           +'<span class="dt">'+[r.opp,r.res,r.d].filter(Boolean).join(' · ')+'</span></span>'
           +cell(r.goal||0,'Goals',true)+cell(r.assist||0,'Assists')+cell(r.shot||0,'Shots')
           +cell(r.pass||0,'Passes')+cell(r.rec||0,'Recov.')+cell(r.int||0,'Intercept')+'</div>').join('')
@@ -764,12 +977,13 @@ function buildArea(){
   });
   document.getElementById('cur-body').innerHTML=cur;
   CUR.competitions.forEach(c=>{
-    if(!c.games.length) return;
-    const L=c.games.map(roundLabel);
-    mk('cur-'+c.key+'-ga',L,[{label:'Goals',data:c.games.map(r=>r.goal||0),backgroundColor:O,borderRadius:2},
-                            {label:'Assists',data:c.games.map(r=>r.assist||0),backgroundColor:Osoft,borderRadius:2}]);
-    mk('cur-'+c.key+'-sh',L,[{label:'Total shots',data:c.games.map(r=>r.shot||0),backgroundColor:Osoft,borderRadius:2},
-                            {label:'On target',data:c.games.map(r=>r.shotOT||0),backgroundColor:O,borderRadius:2}]);
+    const live=c.games.filter(g=>!g.analysis);
+    if(!live.length) return;
+    const L=live.map(roundLabel);
+    mk('cur-'+c.key+'-ga',L,[{label:'Goals',data:live.map(r=>r.goal||0),backgroundColor:O,borderRadius:2},
+                            {label:'Assists',data:live.map(r=>r.assist||0),backgroundColor:Osoft,borderRadius:2}]);
+    mk('cur-'+c.key+'-sh',L,[{label:'Total shots',data:live.map(r=>r.shot||0),backgroundColor:Osoft,borderRadius:2},
+                            {label:'On target',data:live.map(r=>r.shotOT||0),backgroundColor:O,borderRadius:2}]);
   });
 
   document.querySelectorAll('.sub-tab').forEach(btn=>{
@@ -869,7 +1083,7 @@ html = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<style>{CSS}{STAT_ROW_CSS}{EXTRA_CSS}</style>
+<style>{CSS}{STAT_ROW_CSS}{EXTRA_CSS}{COVER_CSS}</style>
 </head>
 <body>
 
