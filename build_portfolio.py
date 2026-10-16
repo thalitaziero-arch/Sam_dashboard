@@ -3,20 +3,44 @@
 
 Public slides (anyone, phone-friendly): Hero, Overview, Career Record,
 Defensive Profile, Attacking Profile.
-Behind the PIN in My Area: Summer, Winter, Soccer detail, Training Log, videos.
+Behind the PIN in My Area: the CURRENT season (2026/27), the Training Log, and
+an Archive of finished seasons (Summer 25/26, Winter 2026, Soccer 2026).
 
-Shares CSS/JS with build_v2.py by reading the pieces it exports. Re-run after
-changing data or layout. build_v2.py stays untouched as the reference version.
+Data lives in data/ (git-ignored on purpose: it is the private detail):
+  data/archive.json          finished seasons: futsal rows + soccer rows
+  data/season_2026_27.json   the live season, per competition, per round
+  data/logo.b64              TZR wordmark
+Every public total is computed from those files, so adding a round to
+season_2026_27.json and re-running this script updates the whole page.
+
+Shares CSS with build_v2.py by reading the pieces it exports. build_v2.py stays
+untouched as the reference version.
 """
 import json
 import re
 from pathlib import Path
 
 HERE = Path(__file__).parent
+DATA = HERE / "data"
 OUT = HERE / "sam_brady_portfolio.html"
 
-A = json.load(open("/tmp/sam_assets.json"))
-TRAINING = json.load(open("/tmp/training_for_deck.json"))
+# analysis images + training log come straight from the dashboard file in the repo
+_dash = (HERE / "tzr_sam_dashboard.html").read_text()
+
+
+def _dash_var(var):
+    si = _dash.index(f"let {var}")
+    m = re.search(r"\)\s*\|\|\s*([\[\{])", _dash[si:si + 400])
+    s0 = si + m.start(1)
+    close = "];\n" if m.group(1) == "[" else "};\n"
+    return json.loads(_dash[s0:_dash.index(close, s0) + 1])
+
+
+A = {v: _dash_var(v) for v in ["coachImgData", "coachCapsData", "wImgByGame", "wCapsByGame"]}
+A["logo"] = (DATA / "logo.b64").read_text().strip()
+TRAINING = json.loads(re.search(r"let TRAINING = (\[.*?\]);", _dash, re.DOTALL).group(1))
+ARCHIVE = json.load(open(DATA / "archive.json"))
+CURRENT = json.load(open(DATA / "season_2026_27.json"))
 PLAYLIST = "https://www.youtube.com/playlist?list=PLCiTolkeqpjdu0zgk4ok0wzRsKHx8I0dH"
 
 # ---- reuse the styling and data blocks from the v2 builder ----
@@ -57,16 +81,83 @@ def hl(k, big, sub, rows):
             f'<span class="hl-sub">{sub}</span><div class="hl-rows">{r}</div></div>')
 
 
+# ------------------------------------------------------------ totals (computed)
+# Nothing below is typed by hand: every public number is derived from the data
+# files, so a new round in season_2026_27.json flows through the whole page.
+def tot(rows, key):
+    return sum(r.get(key, 0) for r in rows)
+
+
+def per(n, d, nd=1):
+    return f"{n / d:.{nd}f}" if d else "—"
+
+
+ARCH_FUTSAL = ARCHIVE["futsal"]
+ARCH_SOCCER = ARCHIVE["soccer"]
+SUMMER = [f for f in ARCH_FUTSAL if f["s"] == "Summer"]
+WINTER = [f for f in ARCH_FUTSAL if f["s"] == "Winter"]
+CUR_GAMES = [g for c in CURRENT["competitions"] for g in c["games"]]
+FUTSAL_ALL = ARCH_FUTSAL + CUR_GAMES
+
+N_FUT, N_SOC = len(FUTSAL_ALL), len(ARCH_SOCCER)
+FUT_G, FUT_A = tot(FUTSAL_ALL, "goal"), tot(FUTSAL_ALL, "assist")
+FUT_INT, FUT_REC, FUT_LOST = tot(FUTSAL_ALL, "int"), tot(FUTSAL_ALL, "rec"), tot(FUTSAL_ALL, "lost")
+FUT_SHOT, FUT_SHOT_OT, FUT_PASS = tot(FUTSAL_ALL, "shot"), tot(FUTSAL_ALL, "shotOT"), tot(FUTSAL_ALL, "pass")
+SOC_G, SOC_A = tot(ARCH_SOCCER, "goal"), tot(ARCH_SOCCER, "assist")
+SOC_INT, SOC_MIN = tot(ARCH_SOCCER, "intercept"), tot(ARCH_SOCCER, "min")
+SOC_REC = tot(ARCH_SOCCER, "recOwn") + tot(ARCH_SOCCER, "recOpp")
+SOC_DW, SOC_DT = tot(ARCH_SOCCER, "duelW"), tot(ARCH_SOCCER, "duelT")
+SOC_SHOT, SOC_SHOT_OT = tot(ARCH_SOCCER, "shot"), tot(ARCH_SOCCER, "shotOT")
+WIN_G, WIN_SHOT_OT = tot(WINTER, "goal"), tot(WINTER, "shotOT")
+# assists split by season, e.g. "6+2" (+ a third term once 2026/27 has data)
+_parts = [tot(SUMMER, "assist"), tot(WINTER, "assist")] + ([tot(CUR_GAMES, "assist")] if CUR_GAMES else [])
+FUT_ASSIST_SPLIT = "+".join(str(p) for p in _parts)
+FUT_ASSIST_LABEL = "summer + winter" + (" + 26/27" if CUR_GAMES else "")
+
+
+def futsal_cards(rows, creation_third, defensive_third):
+    """The three Finishing / Creation / Defensive cards for a set of futsal games."""
+    g, ot, shot = tot(rows, "goal"), tot(rows, "shotOT"), tot(rows, "shot")
+    rec, it = tot(rows, "rec"), tot(rows, "int")
+    return (
+        hl("Finishing", per(ot, g), "shots on target per goal",
+           [(shot, "total shots"), (ot, "on target"), (g, "goals")])
+        + hl("Creation", tot(rows, "assist"), "assists",
+             [(tot(rows, "pass"), "accurate passes"),
+              (round(tot(rows, "pass") / len(rows)), "passes / game"), creation_third])
+        + hl("Defensive", rec + it, "recoveries + intercepts",
+             [(rec, "recoveries"), (it, "interceptions"), defensive_third])
+    )
+
+
+SUMMER_CARDS = futsal_cards(SUMMER, (round(tot(SUMMER, "min")), "minutes"),
+                            (tot(SUMMER, "lost"), "losses"))
+WINTER_CARDS = futsal_cards(WINTER, (tot(WINTER, "lost"), "losses"),
+                            (tot(WINTER, "block"), "blocks"))
+
+
 # ---------------------------------------------------------------- career rows
 # One table for both codes. Only columns that exist for every row, so there
 # are no empty dashes: minutes/starts differ between soccer and futsal and
 # live in the summary cards instead.
-# (season, code, club, competition, position, apps, goals)
-CAREER = [
-    ("2026",    "Soccer", "Fremantle City",  "WA NPL Women",            "LAMF · LAMR", 16, 1),
-    ("2026",    "Futsal", "Cockburn Wolves", "Supa-Liga · Winter",      "Fixo · Ala",   3, 7),
-    ("2025/26", "Futsal", "Cockburn Wolves", "Supa-Liga · Summer",      "Fixo · Ala",   8, 2),
+# (season, code, club, competition, position, apps, goals); club None = unknown
+CAREER = []
+for _c in CURRENT["competitions"]:
+    _gm = _c["games"]
+    # club not confirmed yet -> the competition itself is the headline of the row
+    CAREER.append((
+        "2026/27", "Futsal", _c["club"] or _c["name"],
+        f"{_c['name']} · Summer" if _c["club"] else CURRENT["label"],
+        "Fixo · Ala" if _c["club"] else "—",
+        len(_gm) if _gm else "", tot(_gm, "goal") if _gm else ""))
+CAREER += [
+    ("2026",    "Soccer", "Fremantle City",  "WA NPL Women",       "LAMF · LAMR", N_SOC, SOC_G),
+    ("2026",    "Futsal", "Cockburn Wolves", "Supa-Liga · Winter", "Fixo · Ala",  len(WINTER), WIN_G),
+    ("2025/26", "Futsal", "Cockburn Wolves", "Supa-Liga · Summer", "Fixo · Ala",  len(SUMMER), tot(SUMMER, "goal")),
 ]
+_NO_CLUB = {c["name"] for c in CURRENT["competitions"] if not c["club"]}
+CAREER_SEASONS = len({r[0] for r in CAREER})
+CAREER_CLUBS = len({r[2] for r in CAREER if r[2] not in _NO_CLUB})
 
 
 def career_rows(rows):
@@ -83,7 +174,7 @@ def career_rows(rows):
                 f'<span class="c-season">{season}</span>'
                 f'<span class="c-code {cls}">{code}</span>'
                 f'<span class="c-club">{club}<span class="c-comp">{comp}</span></span>'
-                f'<span class="c-pos">{pos}</span>'
+                f'<span class="c-pos">{"" if pos == "—" else pos}</span>'
                 f'{stats}'
                 '</div>')
     return out
@@ -145,8 +236,8 @@ def split_block(soccer_rows, futsal_rows):
                 f'<span class="c-code {cls}">{code}</span>'
                 f'<span class="sp-games">{games}</span></div>{body}</div>')
     return ('<div class="split">'
-            + card("Soccer", "16 games", soccer_rows)
-            + card("Futsal", "11 games", futsal_rows)
+            + card("Soccer", f"{N_SOC} games", soccer_rows)
+            + card("Futsal", f"{N_FUT} games", futsal_rows)
             + '</div>')
 
 # ---------------------------------------------------------------- extra CSS
@@ -254,20 +345,24 @@ PRIVATE_HTML = f"""<script type="application/json" id="training-data">__TRAINING
         </a>
 
         <div class="sub-tabs">
-          <button class="sub-tab on" data-p="p-train">Training Log</button>
-          <button class="sub-tab" data-p="p-summer">Summer</button>
-          <button class="sub-tab" data-p="p-winter">Winter</button>
-          <button class="sub-tab" data-p="p-soccer">Soccer</button>
+          <button class="sub-tab on" data-p="p-current">2026/27</button>
+          <button class="sub-tab" data-p="p-train">Training Log</button>
+          <span class="sub-sep">Archive</span>
+          <button class="sub-tab alt" data-p="p-summer">Summer 25/26</button>
+          <button class="sub-tab alt" data-p="p-winter">Winter 2026</button>
+          <button class="sub-tab alt" data-p="p-soccer">Soccer 2026</button>
         </div>
 
-        <div class="sub-panel on" id="p-train"><div id="tlog"></div></div>
+        <div class="sub-panel on" id="p-current">
+          <div class="season-banner" id="cur-head"></div>
+          <div id="cur-body"></div>
+        </div>
+
+        <div class="sub-panel" id="p-train"><div id="tlog"></div></div>
 
         <div class="sub-panel" id="p-summer">
-          <div class="hl-grid">
-            {hl('Output','2.7','shots per game',[(53,'total shots'),(20,'on target'),(2,'goals')])}
-            {hl('Creation','6','assists',[(225,'accurate passes'),(28,'passes / game'),(196,'minutes')])}
-            {hl('Defensive','61','recoveries + intercepts',[(45,'recoveries'),(16,'interceptions'),(25,'losses')])}
-          </div>
+          <div class="arch-note"><b>Archive</b> Summer 2025/26 · Supa-Liga · season complete</div>
+          <div class="hl-grid">{SUMMER_CARDS}</div>
           <div class="tbl tbl-futsal" id="tbl-summer"></div>
           <div class="chart-grid">
             <div class="chart-box"><div class="ct">Goals &amp; assists per game</div><canvas id="su-ga"></canvas></div>
@@ -278,11 +373,8 @@ PRIVATE_HTML = f"""<script type="application/json" id="training-data">__TRAINING
         </div>
 
         <div class="sub-panel" id="p-winter">
-          <div class="hl-grid">
-            {hl('Finishing','1.1','shots on target per goal',[(16,'total shots'),(8,'on target'),(7,'goals')])}
-            {hl('Creation','2','assists',[(87,'accurate passes'),(29,'passes / game'),(11,'losses')])}
-            {hl('Defensive','41','recoveries + intercepts',[(22,'recoveries'),(19,'interceptions'),(5,'blocks')])}
-          </div>
+          <div class="arch-note"><b>Archive</b> Winter 2026 · Supa-Liga · season complete</div>
+          <div class="hl-grid">{WINTER_CARDS}</div>
           <div class="tbl tbl-futsal" id="tbl-winter"></div>
           <div class="chart-grid">
             <div class="chart-box"><div class="ct">Goals &amp; assists per game</div><canvas id="wi-ga"></canvas></div>
@@ -291,16 +383,50 @@ PRIVATE_HTML = f"""<script type="application/json" id="training-data">__TRAINING
         </div>
 
         <div class="sub-panel" id="p-soccer">
+          <div class="arch-note"><b>Archive</b> Soccer 2026 · Fremantle City · WA NPL Women · season complete</div>
           <div class="blk-grid" id="sm-totals"></div>
           <div class="chart-box" style="margin-top:20px"><div class="ct">Interceptions — avg per 5-match block</div><canvas id="sm-int"></canvas></div>
           <div class="chart-box" style="margin-top:16px"><div class="ct">Recoveries — avg per 5-match block</div><canvas id="sm-rec"></canvas></div>
-          <div class="chart-box" style="margin-top:16px"><div class="ct">Minutes — avg per 5-match block</div><canvas id="sm-min"></canvas><div class="chart-note"><span><b>53.5</b>average minutes / game</span><span><b>1765</b>total minutes</span><span><b>97</b>longest match</span></div></div>
+          <div class="chart-box" style="margin-top:16px"><div class="ct">Minutes — avg per 5-match block</div><canvas id="sm-min"></canvas><div class="chart-note"><span><b>{per(SOC_MIN, N_SOC)}</b>average minutes / game</span><span><b>{SOC_MIN}</b>total minutes</span><span><b>{max(g["min"] for g in ARCH_SOCCER)}</b>longest match</span></div></div>
           <div class="ct" style="margin-top:26px">Best matches — interceptions</div>
           <div class="lead" id="sm-lead-int"></div>
           <div class="sec-rule"><span>Game by Game</span></div>
           <div class="tbl tbl-soccer" id="tbl-soccer"></div>
         </div>"""
 
+
+# Current season + archive styling
+EXTRA_CSS += """
+.sub-sep{align-self:center;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:700;color:var(--grey);padding:2px 6px 2px 14px;margin-left:6px;
+  border-left:1px solid var(--line)}
+.sub-tab.alt{background:var(--bone)}
+.sub-tab.alt.on{background:var(--orange)}
+.arch-note{display:flex;align-items:center;gap:12px;margin:22px 0 0;padding:11px 16px;
+  background:var(--bone);border-left:3px solid var(--grey);font-size:12.5px;color:var(--steel)}
+.arch-note b{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
+.season-banner{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-top:24px;
+  padding:18px 22px;background:var(--ink);color:#fff}
+.season-banner .sb-t{font-family:'Anton',sans-serif;font-size:26px;text-transform:uppercase;line-height:1}
+.season-banner .sb-s{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--orange);margin-left:auto}
+.cur-block-title{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+  color:var(--steel);margin:30px 0 4px;display:flex;align-items:center;gap:10px}
+.cur-block-title::before{content:"";width:19px;height:3px;background:var(--orange)}
+.comp-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;margin-top:34px;
+  padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.comp-n{font-family:'Anton',sans-serif;font-size:28px;text-transform:uppercase;line-height:1}
+.comp-c{font-size:13px;color:var(--steel);font-weight:600}
+.comp-r{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+  color:var(--grey);margin-left:auto}
+.cur-empty{margin-top:16px;padding:26px 24px;border:1px dashed var(--line);background:#FAFAF8;
+  color:var(--steel);font-size:14px;text-align:center}
+@media(max-width:700px){
+  .sub-sep{flex-basis:100%;border-left:none;margin:10px 0 0;padding:0}
+  .season-banner .sb-s{margin-left:0;flex-basis:100%}
+  .comp-r{margin-left:0;flex-basis:100%}
+}
+"""
 
 # Career table stays tabular down to phone width, where it stacks into cards.
 EXTRA_CSS += """
@@ -337,16 +463,16 @@ SLIDES = [
     </div>"""),
 
     # 2 · OVERVIEW
-    ('dark', WAVES, """<div class="wrap">
+    ('dark', WAVES, f"""<div class="wrap">
       <div class="eyebrow">Career at a Glance</div>
       <h2 class="display">Combined Output</h2>
-      <p class="lede">11 futsal games and 16 soccer games tracked in the 2026 season.</p>
+      <p class="lede">{N_FUT} futsal games and {N_SOC} soccer games tracked to date.</p>
       <div class="scoreboard">
-        <div class="cell"><span class="num">27</span><span class="k">Total Games</span><span class="lbl">11 futsal<br>16 soccer</span></div>
-        <div class="cell"><span class="num">10</span><span class="k">Goals</span><span class="lbl">9 futsal<br>1 soccer</span></div>
-        <div class="cell"><span class="num">8</span><span class="k">Assists</span><span class="lbl">8 futsal<br>0 soccer</span></div>
-        <div class="cell"><span class="num">96</span><span class="k">Interceptions</span><span class="lbl">35 futsal<br>61 soccer</span></div>
-        <div class="cell"><span class="num">154</span><span class="k">Recoveries</span><span class="lbl">67 futsal<br>87 soccer</span></div>
+        <div class="cell"><span class="num">{N_FUT + N_SOC}</span><span class="k">Total Games</span><span class="lbl">{N_FUT} futsal<br>{N_SOC} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_G + SOC_G}</span><span class="k">Goals</span><span class="lbl">{FUT_G} futsal<br>{SOC_G} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_A + SOC_A}</span><span class="k">Assists</span><span class="lbl">{FUT_A} futsal<br>{SOC_A} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_INT + SOC_INT}</span><span class="k">Interceptions</span><span class="lbl">{FUT_INT} futsal<br>{SOC_INT} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_REC + SOC_REC}</span><span class="k">Recoveries</span><span class="lbl">{FUT_REC} futsal<br>{SOC_REC} soccer</span></div>
       </div>
 
       <div class="badges">
@@ -371,10 +497,10 @@ SLIDES = [
       <h2 class="display">Clubs &amp; Seasons</h2>
       <p class="lede">Senior record across NPL Women soccer and futsal.</p>
       <div class="c-tot">
-        <div class="t"><span class="tk">Seasons</span><span class="tv">2</span></div>
-        <div class="t"><span class="tk">Clubs</span><span class="tv">2</span></div>
-        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">1004</span></div>
-        <div class="t"><span class="tk">Soccer apps</span><span class="tv">16</span></div>
+        <div class="t"><span class="tk">Seasons</span><span class="tv">{CAREER_SEASONS}</span></div>
+        <div class="t"><span class="tk">Clubs</span><span class="tv">{CAREER_CLUBS}</span></div>
+        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">{SOC_MIN}</span></div>
+        <div class="t"><span class="tk">Soccer apps</span><span class="tv">{N_SOC}</span></div>
       </div>
       <div class="sec-rule"><span>Clubs by season</span></div>
       <div class="c-table">{CAREER_HEAD}{career_rows(CAREER)}</div>
@@ -390,22 +516,22 @@ SLIDES = [
       <p class="lede">Ball-winning is the strongest part of her game — she is involved in defensive actions constantly in both codes.</p>
 
       {split_block(
-        [("61","Interceptions · 3.8 per game"),
-         ("87","Recoveries · 5.4 per game"),
-         ("94","Duels won of 210 contested"),
-         ("1004","Minutes played")],
-        [("35","Interceptions · 3.2 per game"),
-         ("67","Recoveries · 6.1 per game"),
-         ("36","Balls lost"),
-         ("11","Games analysed")])}
+        [(SOC_INT, f"Interceptions · {per(SOC_INT, N_SOC)} per game"),
+         (SOC_REC, f"Recoveries · {per(SOC_REC, N_SOC)} per game"),
+         (SOC_DW, f"Duels won of {SOC_DT} contested"),
+         (SOC_MIN, "Minutes played")],
+        [(FUT_INT, f"Interceptions · {per(FUT_INT, N_FUT)} per game"),
+         (FUT_REC, f"Recoveries · {per(FUT_REC, N_FUT)} per game"),
+         (FUT_LOST, "Balls lost"),
+         (N_FUT, "Games analysed")])}
 
       <div style="margin-top:34px;border-top:2px solid var(--orange)">
         <div class="stat-row"><span class="n">01</span><h3>Duels</h3>
-          <p>94 duels won from 210 contested in soccer — a 45% success rate across 16 games this season. She competes for everything.</p></div>
+          <p>{SOC_DW} duels won from {SOC_DT} contested in soccer — a {round(100 * SOC_DW / SOC_DT)}% success rate across {N_SOC} games in 2026. She competes for everything.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Recoveries</h3>
-          <p>87 in soccer and 67 in futsal, 154 in total. Works both halves of the pitch, not just behind the ball.</p></div>
+          <p>{SOC_REC} in soccer and {FUT_REC} in futsal, {SOC_REC + FUT_REC} in total. Works both halves of the pitch, not just behind the ball.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Interceptions</h3>
-          <p>61 in soccer and 35 in futsal. Reads passing lanes early rather than reacting late.</p></div>
+          <p>{SOC_INT} in soccer and {FUT_INT} in futsal. Reads passing lanes early rather than reacting late.</p></div>
       </div>
     </div>"""),
 
@@ -413,35 +539,35 @@ SLIDES = [
     ('dark', ARCS, f"""<div class="wrap">
       <div class="eyebrow">Player Profile</div>
       <h2 class="display">Attacking<br><em style="font-style:normal;color:var(--orange)">Profile</em></h2>
-      <p class="lede">Sharpest in futsal — 9 goals and 8 assists in 11 games, at 1.1 shots on target per goal in the Winter season.</p>
+      <p class="lede">Sharpest in futsal — {FUT_G} goals and {FUT_A} assists in {N_FUT} games, at {per(WIN_SHOT_OT, WIN_G)} shots on target per goal in the Winter season.</p>
 
       <div class="rank-note"><span class="c-code futsal">Futsal</span>Where the attacking output comes from</div>
       <div class="prof-grid">
-        <div class="prof"><span class="prof-rank">10</span><span class="prof-k">Goals</span>
-          <span class="prof-v">9+1</span><span class="prof-u">futsal + soccer</span></div>
-        <div class="prof"><span class="prof-rank">8</span><span class="prof-k">Assists</span>
-          <span class="prof-v">6+2</span><span class="prof-u">summer + winter futsal</span></div>
-        <div class="prof"><span class="prof-rank">1.1</span><span class="prof-k">Shot Efficiency</span>
-          <span class="prof-v">41%</span><span class="prof-u">futsal on-target rate</span></div>
+        <div class="prof"><span class="prof-rank">{FUT_G + SOC_G}</span><span class="prof-k">Goals</span>
+          <span class="prof-v">{FUT_G}+{SOC_G}</span><span class="prof-u">futsal + soccer</span></div>
+        <div class="prof"><span class="prof-rank">{FUT_A}</span><span class="prof-k">Assists</span>
+          <span class="prof-v">{FUT_ASSIST_SPLIT}</span><span class="prof-u">{FUT_ASSIST_LABEL} futsal</span></div>
+        <div class="prof"><span class="prof-rank">{per(WIN_SHOT_OT, WIN_G)}</span><span class="prof-k">Shot Efficiency</span>
+          <span class="prof-v">{round(100 * FUT_SHOT_OT / FUT_SHOT)}%</span><span class="prof-u">futsal on-target rate</span></div>
       </div>
 
       {split_block(
-        [("1","Goals"),
-         ("1","Assists"),
-         ("18","Shots · 6 on target"),
-         ("1004","Minutes played")],
-        [("9","Goals"),
-         ("8","Assists"),
-         ("69","Shots · 28 on target"),
-         ("312","Accurate passes")])}
+        [(SOC_G, "Goals"),
+         (SOC_A, "Assists"),
+         (SOC_SHOT, f"Shots · {SOC_SHOT_OT} on target"),
+         (SOC_MIN, "Minutes played")],
+        [(FUT_G, "Goals"),
+         (FUT_A, "Assists"),
+         (FUT_SHOT, f"Shots · {FUT_SHOT_OT} on target"),
+         (FUT_PASS, "Accurate passes")])}
 
       <div style="margin-top:34px;border-top:2px solid var(--orange)">
         <div class="stat-row"><span class="n">01</span><h3>Finishing</h3>
-          <p>Winter 2026 futsal: <strong>7 goals from 8 shots on target</strong> — 1.1 shots on target per goal. Ruthless once the chance is created.</p></div>
+          <p>Winter 2026 futsal: <strong>{WIN_G} goals from {WIN_SHOT_OT} shots on target</strong> — {per(WIN_SHOT_OT, WIN_G)} shots on target per goal. Ruthless once the chance is created.</p></div>
         <div class="stat-row"><span class="n">02</span><h3>Volume &amp; Creation</h3>
-          <p>69 futsal shots across 11 games (6.3 per game) plus 8 assists. In soccer the role is deeper: 18 shots across 16 games this season.</p></div>
+          <p>{FUT_SHOT} futsal shots across {N_FUT} games ({per(FUT_SHOT, N_FUT)} per game) plus {FUT_A} assists. In soccer the role is deeper: {SOC_SHOT} shots across {N_SOC} games in 2026.</p></div>
         <div class="stat-row" style="border-bottom:none"><span class="n">03</span><h3>Distribution</h3>
-          <p>312 accurate futsal passes, 28 per game. Consistently involved in build-up rather than only at the end of moves.</p></div>
+          <p>{FUT_PASS} accurate futsal passes, {round(FUT_PASS / N_FUT)} per game. Consistently involved in build-up rather than only at the end of moves.</p></div>
       </div>
     </div>"""),
 
@@ -594,6 +720,58 @@ function buildArea(){
       +cell(s.min,'Min')+cell(s.goal,'Goals',true)+cell(s.shot,'Shots')+cell(s.pass,'Passes')
       +cell(s.duelW,'Duels W')+cell(s.recOwn+s.recOpp,'Recov.')+cell(s.intercept,'Intercept')+'</div>').join('');
 
+  /* ---- current season: one block per competition, one row per round ---- */
+  const sumK=(a,k)=>a.reduce((s,r)=>s+(r[k]||0),0);
+  const perN=(n,d)=>d?(n/d).toFixed(1):'—';
+  const hlHtml=(k,big,sub,rows)=>'<div class="hl"><div class="hl-k">'+k+'</div><span class="hl-big">'+big
+    +'</span><span class="hl-sub">'+sub+'</span><div class="hl-rows">'
+    +rows.map(r=>'<span class="hl-row"><b>'+r[0]+'</b>'+r[1]+'</span>').join('')+'</div></div>';
+  const futsalCards=a=>{
+    const g=sumK(a,'goal'), ot=sumK(a,'shotOT'), sh=sumK(a,'shot'), ps=sumK(a,'pass');
+    const rc=sumK(a,'rec'), it=sumK(a,'int');
+    return '<div class="hl-grid">'
+      +hlHtml('Finishing',perN(ot,g),'shots on target per goal',[[sh,'total shots'],[ot,'on target'],[g,'goals']])
+      +hlHtml('Creation',sumK(a,'assist'),'assists',[[ps,'accurate passes'],[Math.round(ps/a.length),'passes / game'],[a.length,'games']])
+      +hlHtml('Defensive',rc+it,'recoveries + intercepts',[[rc,'recoveries'],[it,'interceptions'],[sumK(a,'lost'),'balls lost']])
+      +'</div>';
+  };
+  const roundLabel=r=>r.round?('Round '+r.round):(r.g||'Game');
+  const CUR=SEASON.current, curAll=CUR.competitions.flatMap(c=>c.games);
+  document.getElementById('cur-head').innerHTML=
+    '<span class="c-code futsal">Futsal</span><span class="sb-t">'+CUR.label+'</span>'
+    +'<span class="sb-s">'+(curAll.length?curAll.length+' game'+(curAll.length>1?'s':'')+' logged':'Season in progress')+'</span>';
+  let cur='';
+  if(curAll.length>1 && CUR.competitions.filter(c=>c.games.length).length>1){
+    cur+='<div class="cur-block-title">Season total · all competitions</div>'+futsalCards(curAll);
+  }
+  CUR.competitions.forEach(c=>{
+    cur+='<div class="comp-head"><span class="comp-n">'+c.name+'</span>'
+      +(c.club?'<span class="comp-c">'+c.club+'</span>':'')
+      +'<span class="comp-r">'+(c.games.length?c.games.length+' round'+(c.games.length>1?'s':'')+' logged':'No rounds logged yet')+'</span></div>';
+    if(!c.games.length){ cur+='<div class="cur-empty">Round data coming soon.</div>'; return; }
+    cur+=futsalCards(c.games)
+      +'<div class="tbl tbl-futsal">'
+      +'<div class="t-row head"><span>Round</span><span>Goals</span><span>Assists</span><span>Shots</span><span>Passes</span><span>Recov.</span><span>Intercept</span></div>'
+      +c.games.map(r=>'<div class="t-row"><span class="gm">'+roundLabel(r)
+          +'<span class="dt">'+[r.opp,r.res,r.d].filter(Boolean).join(' · ')+'</span></span>'
+          +cell(r.goal||0,'Goals',true)+cell(r.assist||0,'Assists')+cell(r.shot||0,'Shots')
+          +cell(r.pass||0,'Passes')+cell(r.rec||0,'Recov.')+cell(r.int||0,'Intercept')+'</div>').join('')
+      +'</div>'
+      +'<div class="chart-grid">'
+      +'<div class="chart-box"><div class="ct">Goals &amp; assists per round</div><canvas id="cur-'+c.key+'-ga"></canvas></div>'
+      +'<div class="chart-box"><div class="ct">Shots — total vs on target</div><canvas id="cur-'+c.key+'-sh"></canvas></div>'
+      +'</div>';
+  });
+  document.getElementById('cur-body').innerHTML=cur;
+  CUR.competitions.forEach(c=>{
+    if(!c.games.length) return;
+    const L=c.games.map(roundLabel);
+    mk('cur-'+c.key+'-ga',L,[{label:'Goals',data:c.games.map(r=>r.goal||0),backgroundColor:O,borderRadius:2},
+                            {label:'Assists',data:c.games.map(r=>r.assist||0),backgroundColor:Osoft,borderRadius:2}]);
+    mk('cur-'+c.key+'-sh',L,[{label:'Total shots',data:c.games.map(r=>r.shot||0),backgroundColor:Osoft,borderRadius:2},
+                            {label:'On target',data:c.games.map(r=>r.shotOT||0),backgroundColor:O,borderRadius:2}]);
+  });
+
   document.querySelectorAll('.sub-tab').forEach(btn=>{
     btn.onclick=()=>{
       document.querySelectorAll('.sub-tab').forEach(b=>b.classList.toggle('on', b===btn));
@@ -720,10 +898,7 @@ const SECTIONS=[
 # Encrypt the private payload with the PIN before it ever reaches the file.
 from encrypt_area import encrypt
 PIN = "2109"
-season = {
-    "futsal": json.loads(re.sub(r"([{,])(\w+):", r'\1"\2":', _grab(r"const FUTSAL=(\[.*?\]);"))),
-    "soccer": json.loads(_grab(r"const SOCCER=(\[.*?\]);")),
-}
+season = {"futsal": ARCH_FUTSAL, "soccer": ARCH_SOCCER, "current": CURRENT}
 private_filled = (PRIVATE_HTML
     .replace("__TRAINING_JSON__", json.dumps(TRAINING, ensure_ascii=False))
     .replace("__SEASON_JSON__", json.dumps(season, ensure_ascii=False)))
