@@ -1099,6 +1099,7 @@ document.addEventListener('touchend',e=>{
 go(0);
 """
 
+GIBSON_CSS = (DATA / "gibson.css").read_text()
 html = f"""<!DOCTYPE html>
 <html lang="en-AU">
 <head>
@@ -1107,9 +1108,9 @@ html = f"""<!DOCTYPE html>
 <title>Sam Brady · Performance Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<style>{CSS}{STAT_ROW_CSS}{EXTRA_CSS}{COVER_CSS}</style>
+<style>{GIBSON_CSS}{CSS}{STAT_ROW_CSS}{EXTRA_CSS}{COVER_CSS}</style>
 </head>
 <body>
 
@@ -1144,6 +1145,7 @@ private_filled = (PRIVATE_HTML
     .replace("__SEASON_JSON__", json.dumps(season, ensure_ascii=False)))
 html = html.replace("__ENCRYPTED_BLOB__", json.dumps(encrypt(private_filled, PIN)))
 
+html = html.replace("'Archivo'", "'Gibson'").replace('font-weight:500','font-weight:400')
 OUT.write_text(html, encoding="utf-8")
 # Same page under a clean per-athlete path: <domain>/sambrady/
 athlete_dir = HERE / "sambrady"
