@@ -103,8 +103,8 @@ WINTER = [f for f in ARCH_FUTSAL if f["s"] == "Winter"]
 # analysis) are a different counting method, so they are shown on their own and
 # never blended into the totals above.
 CUR_ALL = [g for c in CURRENT["competitions"] for g in c["games"]]
-CUR_GAMES = [g for g in CUR_ALL if "analysis" not in g]
-CUR_VIDEO = [g for g in CUR_ALL if "analysis" in g]
+CUR_GAMES = [g for g in CUR_ALL if "analysis" not in g]   # live-tagged rounds feed the lifetime totals
+CUR_VIDEO = [g for g in CUR_ALL if g.get("analysis", {}).get("m")]   # rounds with real numbers
 N_VID = len(CUR_VIDEO)
 
 
@@ -171,7 +171,8 @@ for _c in CURRENT["competitions"]:
         "2026/27", "Futsal", _c["club"] or _c["name"],
         f"{_c['name']} · Summer" if _c["club"] else CURRENT["label"],
         "Fixo · Ala" if _c["club"] else "—",
-        len(_gm) if _gm else "", tot(_gm, "goal") if _gm else ""))
+        len(_gm) if _gm else "",
+        (tot(_gm, "goal") if all("goal" in g for g in _gm) else "—") if _gm else ""))
 CAREER += [
     ("2026",    "Soccer", "Fremantle City",  "WA NPL Women",       "LAMF · LAMR", N_SOC, SOC_G),
     ("2026",    "Futsal", "Cockburn Wolves", "Supa-Liga · Winter", "Fixo · Ala",  len(WINTER), WIN_G),
@@ -270,6 +271,8 @@ def split_block(soccer_rows, futsal_rows):
             + card("Futsal", f"{PF_N} games", futsal_rows)
             + '</div>')
 
+HERO_COMPS = " · ".join(c["name"] for c in CURRENT["competitions"] if c["club"] == "Cockburn Wolves")
+
 # ------------------------------------------------- current season blocks
 def _res(r):
     return r.replace("-", "–")
@@ -282,8 +285,8 @@ def now_strip():
         gm = c["games"]
         if gm:
             last = gm[-1]
-            line = (f'R{last["round"]} · {_res(last["res"])} vs {last["opp"]}'
-                    if last.get("res") and last.get("opp") else f'{len(gm)} round(s) logged')
+            parts = [f'R{last["round"]}'] + ([_res(last["res"])] if last.get("res") else [])
+            line = " · ".join(parts) + (f' vs {last["opp"]}' if last.get("opp") else "")
         else:
             line = "Round data coming soon"
         cards += (f'<div class="now-c"><span class="now-n">{c["name"]}</span>'
@@ -607,6 +610,10 @@ EXTRA_CSS += """
   text-transform:uppercase;font-weight:700}
 .rc-video i{background:#FF0000;padding:3px 7px;font-style:normal}
 .rc-note{font-size:12px;color:var(--grey);line-height:1.5;flex:1;min-width:220px}
+.rc-video.off{background:#E9E8E3;color:var(--steel);cursor:default}
+.rc-pending{margin:14px 22px 4px;padding:18px 20px;border:1px dashed var(--line);background:#FAFAF8;
+  color:var(--steel);font-size:14px}
+@media(max-width:700px){.rc-pending{margin-left:16px;margin-right:16px}}
 @media(max-width:700px){.rc-head,.rc-sub,.rc-grid,.rc-foot{padding-left:16px;padding-right:16px}
   .rc-read{padding-left:34px;padding-right:16px}.rc-res{margin-left:0}}
 """
@@ -691,7 +698,7 @@ SLIDES = [
           <span class="club-n">Fremantle City</span><span class="club-c">NPLW</span>
           <span class="club-p">LAMF · LAMR</span></div>
         <div class="club"><span class="club-k">Futsal · current club</span>
-          <span class="club-n">Cockburn Wolves</span><span class="club-c">Community League</span>
+          <span class="club-n">Cockburn Wolves</span><span class="club-c">{HERO_COMPS}</span>
           <span class="club-p">Fixo · Ala</span></div>
       </div>
       <img src="{A['logo']}" alt="TZR Futsal Coaching" class="tzr-logo">
@@ -940,11 +947,13 @@ function buildArea(){
       +(r.opp?'<span class="rc-opp">vs '+r.opp+'</span>':'')
       +(r.res?'<span class="rc-res">'+r.res.replace('-','–')+'</span>':'')+'</div>'
       +'<div class="rc-sub">'+an.title+'</div>'
+      +(an.items.length?'':'<div class="rc-pending">'+(an.pending||'Numbers coming soon.')+'</div>')
       +'<div class="rc-grid">'+an.items.map(i=>'<div class="rc-t"><span class="rc-v">'+i[1]+'</span><span class="rc-k">'+i[0]
         +'</span><span class="rc-s">'+i[2]+'</span></div>').join('')+'</div>'
       +(an.read&&an.read.length?'<ul class="rc-read">'+an.read.map(t=>'<li>'+t+'</li>').join('')+'</ul>':'')
       +'<div class="rc-foot">'
-      +(r.video?'<a class="rc-video" href="'+r.video+'" target="_blank" rel="noopener"><i>&#9654;</i>Watch the match</a>':'')
+      +(r.video?'<a class="rc-video" href="'+r.video+'" target="_blank" rel="noopener"><i>&#9654;</i>Watch the match</a>'
+                :'<span class="rc-video off"><i>&#9654;</i>Video coming soon</span>')
       +(an.note?'<span class="rc-note">'+an.note+'</span>':'')+'</div></div>';
   };
   document.getElementById('cur-head').innerHTML=
