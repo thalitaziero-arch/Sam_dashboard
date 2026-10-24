@@ -330,9 +330,9 @@ def now_block(kind):
             'of it. Counted differently from the 2025/2026 LiveTag numbers below, so the two are shown separately.</p>')
 
 
-def past_block(inner, sub):
+def past_block(inner, sub, title="Season 2025/2026"):
     """Everything from the finished seasons, tucked behind a click."""
-    return (f'<details class="past"><summary><span class="pt">Season 2025/2026</span>'
+    return (f'<details class="past"><summary><span class="pt">{title}</span>'
             f'<span class="ps">{sub}</span></summary><div class="past-body">{inner}</div></details>')
 
 
@@ -685,6 +685,34 @@ ATT_PAST = f"""<p class="lede">Sharpest in futsal — {PF_G} goals and {PF_A} as
       </div>"""
 
 
+OV_NOW = (f'<div class="rank-note"><span class="c-code futsal">Futsal</span>{CURRENT["label"]} · '
+          f'{N_VID} round{"s" if N_VID != 1 else ""} · video analysis</div>' if CUR_VIDEO else
+          f'<div class="now-empty">{CURRENT["label"]} · first round data coming soon.</div>')
+if CUR_VIDEO:
+    OV_NOW += ('<div class="scoreboard">'
+        + "".join(f'<div class="cell"><span class="num">{v}</span><span class="k">{k}</span><span class="lbl">{l}</span></div>'
+                  for v, k, l in [(len(CUR_ALL), "Rounds", "logged"),
+                                  (vid("goals"), "Goals", f'{vid("shots_on_goal")} shots on goal'),
+                                  (vid("recoveries"), "Recoveries", "video sample"),
+                                  (vid("duels"), "1v1 duels", f'{vid("duels_lost")} lost')])
+        + '</div>')
+OV_PAST = f"""<div class="scoreboard">
+        <div class="cell"><span class="num">{N_FUT + N_SOC}</span><span class="k">Total Games</span><span class="lbl">{N_FUT} futsal<br>{N_SOC} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_G + SOC_G}</span><span class="k">Goals</span><span class="lbl">{FUT_G} futsal<br>{SOC_G} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_A + SOC_A}</span><span class="k">Assists</span><span class="lbl">{FUT_A} futsal<br>{SOC_A} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_INT + SOC_INT}</span><span class="k">Interceptions</span><span class="lbl">{FUT_INT} futsal<br>{SOC_INT} soccer</span></div>
+        <div class="cell"><span class="num">{FUT_REC + SOC_REC}</span><span class="k">Recoveries</span><span class="lbl">{FUT_REC} futsal<br>{SOC_REC} soccer</span></div>
+      </div>"""
+
+CAREER_NOW = [r for r in CAREER if r[0] in ("2027", "2026/27")]
+CAREER_ARCH = f"""<div class="c-tot">
+        <div class="t"><span class="tk">Seasons</span><span class="tv">{CAREER_SEASONS}</span></div>
+        <div class="t"><span class="tk">Clubs</span><span class="tv">{CAREER_CLUBS}</span></div>
+        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">{SOC_MIN}</span></div>
+        <div class="t"><span class="tk">Soccer apps</span><span class="tv">{N_SOC}</span></div>
+      </div>
+      <div class="c-table">{CAREER_HEAD}{career_rows([r for r in CAREER if r not in CAREER_NOW])}</div>"""
+
 # ---------------------------------------------------------------- slides
 SLIDES = [
     # 1 · HERO
@@ -708,15 +736,10 @@ SLIDES = [
     ('dark', WAVES, f"""<div class="wrap">
       <div class="eyebrow">Career at a Glance</div>
       <h2 class="display">Combined Output</h2>
-      <p class="lede">{N_FUT} futsal games and {N_SOC} soccer games tracked to date.</p>
+      <p class="lede">{CURRENT["label"]} · Community League and F League with Cockburn Wolves. Everything before this season is in the archive.</p>
       {now_strip()}
-      <div class="scoreboard">
-        <div class="cell"><span class="num">{N_FUT + N_SOC}</span><span class="k">Total Games</span><span class="lbl">{N_FUT} futsal<br>{N_SOC} soccer</span></div>
-        <div class="cell"><span class="num">{FUT_G + SOC_G}</span><span class="k">Goals</span><span class="lbl">{FUT_G} futsal<br>{SOC_G} soccer</span></div>
-        <div class="cell"><span class="num">{FUT_A + SOC_A}</span><span class="k">Assists</span><span class="lbl">{FUT_A} futsal<br>{SOC_A} soccer</span></div>
-        <div class="cell"><span class="num">{FUT_INT + SOC_INT}</span><span class="k">Interceptions</span><span class="lbl">{FUT_INT} futsal<br>{SOC_INT} soccer</span></div>
-        <div class="cell"><span class="num">{FUT_REC + SOC_REC}</span><span class="k">Recoveries</span><span class="lbl">{FUT_REC} futsal<br>{SOC_REC} soccer</span></div>
-      </div>
+      {OV_NOW}
+      {past_block(OV_PAST, f"Soccer {N_SOC} games · Futsal {N_FUT} games", "Archive · before 2026/27")}
 
       <div class="badges">
         <div class="badge"><span class="b-k">Representative</span>
@@ -738,15 +761,9 @@ SLIDES = [
     ('bone', ARCS, f"""<div class="wrap">
       <div class="eyebrow">Career Record</div>
       <h2 class="display">Clubs &amp; Seasons</h2>
-      <p class="lede">Senior record across NPL Women soccer and futsal.</p>
-      <div class="c-tot">
-        <div class="t"><span class="tk">Seasons</span><span class="tv">{CAREER_SEASONS}</span></div>
-        <div class="t"><span class="tk">Clubs</span><span class="tv">{CAREER_CLUBS}</span></div>
-        <div class="t"><span class="tk">Soccer minutes</span><span class="tv">{SOC_MIN}</span></div>
-        <div class="t"><span class="tk">Soccer apps</span><span class="tv">{N_SOC}</span></div>
-      </div>
-      <div class="sec-rule"><span>Clubs by season</span></div>
-      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER)}</div>
+      <p class="lede">Where she plays now. Earlier seasons are in the archive.</p>
+      <div class="c-table">{CAREER_HEAD}{career_rows(CAREER_NOW)}</div>
+      {past_block(CAREER_ARCH, f"{CAREER_SEASONS} seasons · {CAREER_CLUBS} clubs", "Archive · before 2026/27")}
 
       <div class="sec-rule"><span>Honours &amp; Selections</span></div>
       <div class="honours">{honours_html()}</div>
