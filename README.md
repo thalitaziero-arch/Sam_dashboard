@@ -28,3 +28,9 @@ on the machine that runs the build:
 After adding a round to `season_2026_27.json`, run `python3 build_portfolio.py`,
 then commit `sambrady/index.html` and `sam_brady_portfolio.html`. Every public
 total is recomputed from the data files.
+
+## Current-season game analysis
+
+`python3 update_season.py` reads `~/Desktop/Sam_2026_27_analise.xlsx` (one row per game: shots on target,
+goals, passes, interceptions, duels, ...), updates `data/season_2026_27.json`, rebuilds the site and pushes.
+`--init` creates the spreadsheet, `--no-push` stops before git.
